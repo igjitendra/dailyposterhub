@@ -1,0 +1,73 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { templates, categories } from '../../data/site.js';
+
+// Demo: repeat templates to fill the grid. Baad me R2/DB se aayega.
+const all = [...templates, ...templates].map((t, i) => ({ ...t, id: i + 1 }));
+---
+<Layout title='सभी पोस्टर — Daily PosterHub'>
+  <section class='page-hero'>
+    <div class='container'>
+      <h1>सभी <span class='grad-text'>पोस्टर</span></h1>
+      <p>अपनी पसंद का पोस्टर चुनें, एडिट करें और डाउनलोड करें</p>
+    </div>
+  </section>
+
+  <section class='section' style='padding-top:28px'>
+    <div class='container'>
+      <!-- Filter chips -->
+      <div class='filters'>
+        <button class='chip active'>सभी</button>
+        {categories.map((c) => (
+          <a href={'/categories/' + c.slug} class='chip'>{c.icon} {c.name}</a>
+        ))}
+      </div>
+
+      <div class='tpl-grid'>
+        {all.map((t) => (
+          <article class='tpl-card card'>
+            <div class='tpl-thumb'>
+              <img src={t.img} alt={t.title} loading='lazy' />
+              <span class={'badge ' + (t.type === 'pro' ? 'badge-pro' : 'badge-free')}>
+                {t.type === 'pro' ? '⭐ Pro' : 'फ्री'}
+              </span>
+            </div>
+            <div class='tpl-body'>
+              <h4>{t.title}</h4>
+              <span class='tpl-cat'>{t.category}</span>
+              <a href='/posters' class='btn btn-primary btn-sm tpl-btn'>एडिट करें</a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .page-hero { background: var(--grad-soft); padding: 44px 0; text-align: center; }
+  .page-hero h1 { font-size: 36px; font-weight: 800; }
+  .page-hero p { color: var(--muted); margin-top: 8px; }
+
+  .filters { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 28px; }
+  .chip {
+    font-size: 14px; font-weight: 600;
+    padding: 8px 16px; border-radius: 999px;
+    background: #fff; border: 1px solid var(--line);
+    cursor: pointer; font-family: inherit;
+  }
+  .chip.active, .chip:hover { background: var(--purple); color: #fff; border-color: var(--purple); }
+
+  .tpl-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 22px; }
+  .tpl-thumb { position: relative; }
+  .tpl-thumb img { aspect-ratio: 4/5; object-fit: cover; width: 100%; border-radius: var(--radius) var(--radius) 0 0; background: linear-gradient(135deg,#EDE9FE,#E0E7FF); }
+  .tpl-thumb .badge { position: absolute; top: 12px; left: 12px; }
+  .tpl-body { padding: 14px 16px 18px; }
+  .tpl-body h4 { font-size: 15px; }
+  .tpl-cat { display: block; font-size: 13px; color: var(--muted); margin: 4px 0 12px; }
+  .tpl-btn { width: 100%; }
+
+  @media (max-width: 1024px) { .tpl-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 760px) { .tpl-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 480px) { .tpl-grid { grid-template-columns: 1fr; } }
+</style>

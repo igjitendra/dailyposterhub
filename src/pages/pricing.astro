@@ -1,0 +1,98 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { pricing, site } from '../data/site.js';
+
+const freeFeatures = [
+  { ok: true, text: 'सभी फ्री टेम्पलेट्स' },
+  { ok: true, text: 'नाम, फोटो व संदेश जोड़ें' },
+  { ok: true, text: 'ब्राउज़र में सेव (लोकल)' },
+  { ok: false, text: 'वॉटरमार्क हटाएं' },
+  { ok: false, text: 'क्लाउड लॉगिन व सिंक' },
+  { ok: false, text: 'HD डाउनलोड व Pro टेम्पलेट' },
+];
+const proFeatures = [
+  { ok: true, text: 'सभी फ्री + Pro टेम्पलेट्स' },
+  { ok: true, text: 'कोई वॉटरमार्क नहीं' },
+  { ok: true, text: 'क्लाउड लॉगिन — कहीं भी सेव' },
+  { ok: true, text: 'HD / फुल क्वालिटी डाउनलोड' },
+  { ok: true, text: 'प्रोफाइल एक बार — हर पोस्टर में ऑटो' },
+  { ok: true, text: 'प्रायॉरिटी सपोर्ट' },
+];
+---
+<Layout title='प्राइसिंग — Daily PosterHub'>
+  <section class='page-hero'>
+    <div class='container'>
+      <h1>सिंपल और <span class='grad-text'>सस्ती</span> प्राइसिंग</h1>
+      <p>फ्री में शुरू करें, जब चाहें Pro पर अपग्रेड करें</p>
+    </div>
+  </section>
+
+  <section class='section' style='padding-top:34px'>
+    <div class='container'>
+      <div class='plans'>
+        <!-- FREE -->
+        <div class='plan card'>
+          <h3>फ्री</h3>
+          <div class='price'><span class='amt'>{pricing.currency}0</span><span class='per'>/हमेशा</span></div>
+          <p class='plan-note'>शुरुआत के लिए बेहतरीन</p>
+          <ul class='feat'>
+            {freeFeatures.map((f) => (
+              <li class={f.ok ? 'yes' : 'no'}>{f.ok ? '✅' : '✖️'} {f.text}</li>
+            ))}
+          </ul>
+          <a href='/posters' class='btn btn-outline btn-lg'>फ्री में शुरू करें</a>
+        </div>
+
+        <!-- PRO -->
+        <div class='plan plan-pro card'>
+          <span class='ribbon'>⭐ सबसे लोकप्रिय</span>
+          <h3>Pro</h3>
+          <div class='price'>
+            <span class='amt'>{pricing.currency}{pricing.monthly}</span><span class='per'>/माह</span>
+          </div>
+          <p class='plan-note'>या {pricing.currency}{pricing.yearly}/साल — <strong>2 महीने फ्री</strong></p>
+          <ul class='feat'>
+            {proFeatures.map((f) => (
+              <li class='yes'>✅ {f.text}</li>
+            ))}
+          </ul>
+          <a href='/login' class='btn btn-gold btn-lg'>⭐ Pro खरीदें</a>
+        </div>
+      </div>
+
+      <p class='guarantee'>🔒 सुरक्षित भुगतान • कभी भी कैंसिल करें • कोई छिपा शुल्क नहीं</p>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .page-hero { background: var(--grad-soft); padding: 44px 0; text-align: center; }
+  .page-hero h1 { font-size: 36px; font-weight: 800; }
+  .page-hero p { color: var(--muted); margin-top: 8px; }
+
+  .plans { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 24px; max-width: 800px; margin: 0 auto; }
+  .plan { padding: 34px 30px; }
+  .plan h3 { font-size: 22px; font-weight: 800; }
+  .price { margin: 14px 0 4px; }
+  .amt { font-size: 44px; font-weight: 800; }
+  .per { color: var(--muted); font-size: 15px; }
+  .plan-note { color: var(--muted); font-size: 14px; margin-bottom: 20px; }
+
+  .feat { display: flex; flex-direction: column; gap: 12px; margin-bottom: 26px; }
+  .feat li { font-size: 15px; }
+  .feat .no { color: var(--muted); }
+
+  .plan .btn { width: 100%; }
+
+  .plan-pro { position: relative; border: 2px solid var(--purple); box-shadow: var(--shadow); }
+  .ribbon {
+    position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+    background: var(--gold); color: #3a2a00;
+    font-size: 13px; font-weight: 700;
+    padding: 6px 16px; border-radius: 999px; white-space: nowrap;
+  }
+
+  .guarantee { text-align: center; color: var(--muted); font-size: 14px; margin-top: 26px; }
+
+  @media (max-width: 640px) { .plans { grid-template-columns: 1fr; } }
+</style>
