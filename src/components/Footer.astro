@@ -1,20 +1,20 @@
 ---
-import { site, footerLinks } from '../data/site.js';
+import Icon from './Icon.astro';
+import { site, footerLinks, socials, contact } from '../data/site.js';
 const year = new Date().getFullYear();
 ---
 <footer class='site-footer'>
   <div class='container footer-grid'>
     <div class='footer-brand'>
       <a href='/' class='brand'>
-        <span class='brand-logo'>🎨</span>
-        <span class='brand-name'>Daily PosterHub</span>
+        <span class='brand-logo'>D</span>
+        <span class='brand-name'>Daily<span class='grad-text'>PosterHub</span></span>
       </a>
-      <p class='footer-desc'>{site.tagline}। अपना नाम, फोटो और संदेश जोड़कर सेकंडों में पोस्टर बनाएं।</p>
+      <p class='footer-desc'>Hindi poster templates और custom poster बनाने की आसान और बेहतरीन वेबसाइट! अपने नाम, फोटो और संदेश के साथ पोस्टर बनाएं और डाउनलोड करें।</p>
       <div class='socials'>
-        <a href='#' aria-label='WhatsApp'>💬</a>
-        <a href='#' aria-label='Instagram'>📷</a>
-        <a href='#' aria-label='YouTube'>▶️</a>
-        <a href='#' aria-label='Facebook'>👍</a>
+        {socials.map((s) => (
+          <a href={s.href} aria-label={s.label}><Icon name={s.icon} size={18} /></a>
+        ))}
       </div>
     </div>
 
@@ -22,61 +22,60 @@ const year = new Date().getFullYear();
       <div class='footer-col'>
         <h4>{col.title}</h4>
         <ul>
-          {col.links.map((l) => (
-            <li><a href={l.href}>{l.label}</a></li>
-          ))}
+          {col.links.map((l) => (<li><a href={l.href}>{l.label}</a></li>))}
         </ul>
       </div>
     ))}
+
+    <div class='footer-col footer-contact'>
+      <h4>संपर्क करें</h4>
+      <ul>
+        <li><Icon name='phone' size={16} /> <a href={'tel:' + contact.phoneRaw}>{contact.phone}</a></li>
+        <li><Icon name='mail' size={16} /> <a href={'mailto:' + contact.email}>{contact.email}</a></li>
+        <li><Icon name='map-pin' size={16} /> {contact.location}</li>
+        <li><Icon name='clock' size={16} /> {contact.hours}</li>
+      </ul>
+    </div>
   </div>
 
   <div class='footer-bottom'>
     <div class='container footer-bottom-inner'>
-      <p>© {year} {site.name}. सर्वाधिकार सुरक्षित।</p>
-      <p>बनाया गया ❤️ के साथ — {site.domain}</p>
+      <p>© {year} {site.name}.com | सभी अधिकार सुरक्षित।</p>
+      <div class='footer-bottom-links'>
+        <a href='/sitemap.xml'>साइटमैप</a>
+        <a href='/privacy'>प्राइवेसी</a>
+        <a href='/terms'>Terms</a>
+        <a href='/contact'>संपर्क</a>
+      </div>
     </div>
   </div>
 </footer>
 
 <style>
-  .site-footer { background: var(--dark); color: #cfc9e6; margin-top: 40px; }
-  .footer-grid {
-    display: grid;
-    grid-template-columns: 1.6fr 1fr 1fr 1fr 1fr;
-    gap: 32px;
-    padding: 56px 20px 40px;
-  }
-  .brand { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 19px; color: #fff; }
-  .brand-logo { display: grid; place-items: center; width: 36px; height: 36px; background: var(--grad); border-radius: 9px; font-size: 19px; }
-  .footer-desc { margin-top: 14px; font-size: 14px; line-height: 1.7; max-width: 300px; }
+  .site-footer { background: var(--dark); color: #b9b3d6; margin-top: 48px; }
+  .footer-grid { display: grid; grid-template-columns: 1.7fr 1fr 1.1fr 1fr 1.2fr; gap: 30px; padding: 56px 20px 40px; }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand-logo { display: grid; place-items: center; width: 38px; height: 38px; background: var(--grad); border-radius: 10px; color: #fff; font-weight: 800; font-size: 20px; font-family: 'Poppins', sans-serif; }
+  .brand-name { font-weight: 800; font-size: 19px; color: #fff; font-family: 'Poppins', sans-serif; }
+  .footer-desc { margin-top: 14px; font-size: 13.5px; line-height: 1.7; max-width: 300px; }
+
   .socials { display: flex; gap: 10px; margin-top: 18px; }
-  .socials a {
-    display: grid; place-items: center;
-    width: 38px; height: 38px;
-    background: rgba(255,255,255,.08);
-    border-radius: 10px;
-    font-size: 16px;
-    transition: background .2s;
-  }
+  .socials a { display: grid; place-items: center; width: 38px; height: 38px; background: rgba(255,255,255,.08); border-radius: 10px; color: #fff; transition: background .2s; }
   .socials a:hover { background: var(--purple); }
 
   .footer-col h4 { color: #fff; font-size: 15px; margin-bottom: 16px; }
-  .footer-col ul { display: flex; flex-direction: column; gap: 10px; }
-  .footer-col a { font-size: 14px; color: #cfc9e6; transition: color .15s; }
+  .footer-col ul { display: flex; flex-direction: column; gap: 11px; }
+  .footer-col a { font-size: 14px; color: #b9b3d6; transition: color .15s; }
   .footer-col a:hover { color: #fff; }
+  .footer-contact li { display: flex; align-items: center; gap: 9px; font-size: 14px; }
+  .footer-contact :global(.icon) { color: var(--purple); flex-shrink: 0; }
 
   .footer-bottom { border-top: 1px solid rgba(255,255,255,.08); }
-  .footer-bottom-inner {
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 12px; padding: 20px; font-size: 13px; flex-wrap: wrap;
-  }
+  .footer-bottom-inner { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 20px; font-size: 13px; flex-wrap: wrap; }
+  .footer-bottom-links { display: flex; gap: 18px; }
+  .footer-bottom-links a:hover { color: #fff; }
 
-  @media (max-width: 900px) {
-    .footer-grid { grid-template-columns: 1fr 1fr; gap: 28px; }
-    .footer-brand { grid-column: 1 / -1; }
-  }
-  @media (max-width: 560px) {
-    .footer-grid { grid-template-columns: 1fr; }
-    .footer-bottom-inner { flex-direction: column; text-align: center; }
-  }
+  @media (max-width: 992px) { .footer-grid { grid-template-columns: 1fr 1fr 1fr; } .footer-brand { grid-column: 1 / -1; } }
+  @media (max-width: 620px) { .footer-grid { grid-template-columns: 1fr 1fr; } .footer-bottom-inner { flex-direction: column; text-align: center; } }
+  @media (max-width: 420px) { .footer-grid { grid-template-columns: 1fr; } }
 </style>

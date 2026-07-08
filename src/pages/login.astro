@@ -1,11 +1,12 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
 ---
 <Layout title='लॉगिन — Daily PosterHub'>
   <section class='auth-wrap'>
     <div class='auth-card card'>
       <div class='auth-head'>
-        <span class='brand-logo'>🎨</span>
+        <span class='brand-logo'>D</span>
         <h1>लॉगिन करें</h1>
         <p>Pro फीचर्स और क्लाउड सेव के लिए लॉगिन करें</p>
       </div>
@@ -15,13 +16,13 @@ import Layout from '../layouts/Layout.astro';
           <input type='email' placeholder='you@example.com' required />
         </label>
         <label>पासवर्ड
-          <input type='password' placeholder='••••••••' required />
+          <input type='password' placeholder='********' required />
         </label>
         <button class='btn btn-primary btn-lg' type='submit'>लॉगिन</button>
       </form>
 
       <div class='divider'><span>या</span></div>
-      <button class='btn btn-outline btn-lg oauth'>🔑 Google से लॉगिन</button>
+      <button class='btn btn-outline btn-lg oauth'><Icon name='globe' size={18} /> Google से लॉगिन</button>
 
       <p class='auth-foot'>खाता नहीं है? <a href='/login'>नया खाता बनाएं</a></p>
       <p class='auth-note'>नोट: फ्री यूज़र बिना लॉगिन के भी पोस्टर बना सकते हैं — डेटा ब्राउज़र में सेव होता है।</p>
@@ -33,7 +34,7 @@ import Layout from '../layouts/Layout.astro';
   .auth-wrap { min-height: 70vh; display: grid; place-items: center; padding: 50px 20px; background: var(--grad-soft); }
   .auth-card { width: 100%; max-width: 420px; padding: 36px 32px; background: #fff; }
   .auth-head { text-align: center; margin-bottom: 24px; }
-  .brand-logo { display: inline-grid; place-items: center; width: 52px; height: 52px; background: var(--grad); border-radius: 14px; font-size: 26px; margin-bottom: 12px; }
+  .brand-logo { display: inline-grid; place-items: center; width: 52px; height: 52px; background: var(--grad); border-radius: 14px; color: #fff; font-weight: 800; font-size: 26px; font-family: 'Poppins', sans-serif; margin-bottom: 12px; }
   .auth-head h1 { font-size: 24px; font-weight: 800; }
   .auth-head p { color: var(--muted); font-size: 14px; margin-top: 6px; }
 
@@ -45,7 +46,7 @@ import Layout from '../layouts/Layout.astro';
 
   .divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; color: var(--muted); font-size: 13px; }
   .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--line); }
-  .oauth { width: 100%; }
+  .oauth { width: 100%; gap: 8px; }
 
   .auth-foot { text-align: center; font-size: 14px; margin-top: 20px; }
   .auth-foot a { color: var(--purple); font-weight: 700; }

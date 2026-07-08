@@ -62,20 +62,15 @@ daily-posterhub/
 
 Homepage in images ko dhoondta hai. Same naam se `public/img/` me daal dein:
 
-**Hero previews**
-- `preview-morning.webp`
-- `preview-birthday.webp`
-- `preview-god.webp`
+**Hero preview cards**
+- `preview-morning.webp`, `preview-birthday.webp`, `preview-god.webp`
 
 **Avatars (social proof)**
-- `avatar-1.webp`, `avatar-2.webp`, `avatar-3.webp`, `avatar-4.webp`
+- `avatar-1.webp`, `avatar-2.webp`, `avatar-3.webp`
 
-**Templates**
-- `t-morning-1.webp`, `t-morning-2.webp`
-- `t-birthday-1.webp`
-- `t-god-1.webp`
-- `t-festival-1.webp`
-- `t-business-1.webp`
+**Templates (6)**
+- `t-morning-1.webp`, `t-birthday-1.webp`, `t-hanuman-1.webp`
+- `t-wedding-1.webp`, `t-shiv-1.webp`, `t-offer-1.webp`
 
 **SEO / share**
 - `og-image.webp` (1200x630)
@@ -101,6 +96,23 @@ Homepage in images ko dhoondta hai. Same naam se `public/img/` me daal dein:
 
 - **Free** — ₹0 (watermark + branding strip, local save)
 - **Pro** — ₹21/month ya ₹99/year (no watermark, cloud login + sync, HD)
+
+---
+
+## 💳 UPI Payment
+
+Pricing page par UPI box hai:
+- **UPI ID:** canvapro@upi
+- **UPI Number:** 6387617678
+
+(edit karne ke liye `src/data/site.js` ka `payment` object)
+
+---
+
+## 🎨 Icons
+
+Koi emoji use nahi hua — sabhi icons `src/components/Icon.astro` me inline SVG hain.
+Use karne ka tareeka: `<Icon name='crown' size={20} />`
 
 ---
 

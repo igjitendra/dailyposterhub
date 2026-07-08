@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
 ---
 <Layout title='पेज नहीं मिला — Daily PosterHub'>
   <section class='nf'>
@@ -7,7 +8,7 @@ import Layout from '../layouts/Layout.astro';
       <div class='nf-code grad-text'>404</div>
       <h1>ओहो! यह पेज नहीं मिला</h1>
       <p>हो सकता है यह पोस्टर हट गया हो या लिंक गलत हो।</p>
-      <a href='/' class='btn btn-primary btn-lg'>🏠 होम पर जाएं</a>
+      <a href='/' class='btn btn-primary btn-lg'><Icon name='arrow-left' size={18} /> होम पर जाएं</a>
     </div>
   </section>
 </Layout>
@@ -17,4 +18,5 @@ import Layout from '../layouts/Layout.astro';
   .nf-code { font-size: 96px; font-weight: 800; line-height: 1; }
   .nf h1 { font-size: 26px; font-weight: 800; margin: 10px 0; }
   .nf p { color: var(--muted); margin-bottom: 24px; }
+  .nf .btn { gap: 8px; }
 </style>
