@@ -1,0 +1,15 @@
+---
+import Layout from './Layout.astro';
+import PageHero from '../components/PageHero.astro';
+const { title, updated } = Astro.props;
+---
+<Layout title={title + ' — Daily PosterHub'}>
+  <PageHero title={title} subtitle={updated ? 'अंतिम अपडेट: ' + updated : undefined} />
+  <section class='section'>
+    <div class='container'>
+      <article class='prose'>
+        <slot />
+      </article>
+    </div>
+  </section>
+</Layout>

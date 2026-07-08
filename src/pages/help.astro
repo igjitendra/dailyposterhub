@@ -1,0 +1,88 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import { contact } from '../data/site.js';
+
+const faqs = [
+  { q: 'क्या पोस्टर बनाना फ्री है?', a: 'हां! आप बिना लॉगिन के फ्री टेम्पलेट्स से पोस्टर बना सकते हैं। फ्री पोस्टर पर एक छोटा वॉटरमार्क होता है। Pro में कोई वॉटरमार्क नहीं।' },
+  { q: 'Pro प्लान कितने का है?', a: 'Pro प्लान सिर्फ़ ₹21/माह या ₹99/साल है — सालाना प्लान में 2 महीने फ्री।' },
+  { q: 'Pro का भुगतान कैसे करें?', a: 'प्राइसिंग पेज पर दिए UPI ID (canvapro@upi) या नंबर पर भुगतान करें और screenshot हमें भेजें — आपका Pro एक्टिवेट हो जाएगा।' },
+  { q: 'क्या मेरी फोटो और नाम सेव रहता है?', a: 'फ्री में आपकी फोटो/नाम ब्राउज़र में सेव होता है। Pro में क्लाउड लॉगिन से हर डिवाइस पर सिंक होता है।' },
+  { q: 'पोस्टर में अपनी फोटो कैसे जोड़ें?', a: 'एडिटर में फोटो अपलोड करें, फिर उसे slide करके और छोटा/बड़ा करके सही जगह सेट करें।' },
+  { q: 'डाउनलोड की गई फ़ाइल किस फॉर्मेट में होती है?', a: 'पोस्टर PNG/JPG में डाउनलोड होते हैं। Pro में HD क्वालिटी मिलती है।' },
+];
+
+const topics = [
+  { icon: 'edit', title: 'पोस्टर बनाना', href: '/tools#how' },
+  { icon: 'download', title: 'डाउनलोड कैसे करें', href: '/tools#how' },
+  { icon: 'crown', title: 'Pro और भुगतान', href: '/pricing' },
+  { icon: 'user', title: 'अकाउंट व लॉगिन', href: '/login' },
+];
+---
+<Layout title='हेल्प सेंटर — Daily PosterHub'>
+  <PageHero
+    title='हेल्प <span class="grad-text">सेंटर</span>'
+    crumb='हेल्प सेंटर'
+    subtitle='आपके सभी सवालों के जवाब एक जगह'
+  />
+  <section class='section'>
+    <div class='container'>
+      <div class='topics'>
+        {topics.map((t) => (
+          <a href={t.href} class='topic card'>
+            <span class='topic-icon'><Icon name={t.icon} size={22} /></span>
+            <strong>{t.title}</strong>
+          </a>
+        ))}
+      </div>
+
+      <h2 class='faq-title'>अक्सर पूछे जाने वाले सवाल</h2>
+      <div class='faqs'>
+        {faqs.map((f) => (
+          <details class='faq'>
+            <summary>
+              <span>{f.q}</span>
+              <span class='faq-ic'><Icon name='chevron-down' size={18} /></span>
+            </summary>
+            <p>{f.a}</p>
+          </details>
+        ))}
+      </div>
+
+      <div class='help-cta card'>
+        <div>
+          <h3>और मदद चाहिए?</h3>
+          <p>हमारी टीम से सीधे संपर्क करें।</p>
+        </div>
+        <div class='help-cta-btns'>
+          <a href={'tel:' + contact.phoneRaw} class='btn btn-outline'><Icon name='phone' size={16} /> कॉल करें</a>
+          <a href='/contact' class='btn btn-primary'><Icon name='mail' size={16} /> मैसेज करें</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .topics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 40px; }
+  .topic { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 24px 16px; text-align: center; }
+  .topic-icon { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 14px; background: #EDE9FE; color: var(--purple); }
+
+  .faq-title { font-size: 24px; font-weight: 800; text-align: center; margin-bottom: 22px; }
+  .faqs { max-width: 780px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+  .faq { background: #fff; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow-sm); }
+  .faq summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 20px; font-weight: 700; font-size: 15.5px; cursor: pointer; list-style: none; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq-ic { color: var(--purple); transition: transform .2s; flex-shrink: 0; }
+  .faq[open] .faq-ic { transform: rotate(180deg); }
+  .faq p { padding: 0 20px 18px; color: var(--muted); line-height: 1.7; }
+
+  .help-cta { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; max-width: 780px; margin: 40px auto 0; padding: 26px 30px; background: var(--grad-soft); border: none; }
+  .help-cta h3 { font-size: 20px; font-weight: 800; }
+  .help-cta p { color: var(--muted); margin-top: 4px; }
+  .help-cta-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  @media (max-width: 820px) { .topics { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 480px) { .topics { grid-template-columns: 1fr; } .help-cta { flex-direction: column; align-items: flex-start; } }
+</style>

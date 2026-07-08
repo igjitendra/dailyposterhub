@@ -1,0 +1,40 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import PageHero from '../../components/PageHero.astro';
+import Icon from '../../components/Icon.astro';
+import { categories } from '../../data/site.js';
+const cats = categories.filter((c) => c.slug !== 'all');
+---
+<Layout title='सभी श्रेणियां — Daily PosterHub'>
+  <PageHero
+    title='सभी <span class="grad-text">श्रेणियां</span>'
+    crumb='सभी श्रेणियां'
+    subtitle='अपनी पसंद की श्रेणी चुनें और सैकड़ों पोस्टर में से चुनें'
+  />
+  <section class='section'>
+    <div class='container'>
+      <div class='cat-grid'>
+        {cats.map((c) => (
+          <a href={'/categories/' + c.slug} class='cat-card card'>
+            <span class='cat-icon' style={'color:' + c.color + ';background:' + c.bg}>
+              <Icon name={c.icon} size={30} />
+            </span>
+            <span class='cat-name'>{c.name}</span>
+            <span class='cat-link'>पोस्टर देखें <Icon name='arrow-right' size={14} /></span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+  .cat-card { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 30px 16px; text-align: center; }
+  .cat-icon { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 18px; }
+  .cat-name { font-weight: 700; font-size: 16px; }
+  .cat-link { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; color: var(--purple); font-weight: 600; }
+  @media (max-width: 900px) { .cat-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 600px) { .cat-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 380px) { .cat-grid { grid-template-columns: 1fr; } }
+</style>

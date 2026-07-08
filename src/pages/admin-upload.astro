@@ -1,0 +1,242 @@
+---
+import '../styles/global.css';
+import { categories } from '../data/site.js';
+const cats = categories.filter((c) => c.slug !== 'all');
+---
+<!doctype html>
+<html lang='hi'>
+<head>
+  <meta charset='utf-8' />
+  <meta name='viewport' content='width=device-width, initial-scale=1' />
+  <meta name='robots' content='noindex, nofollow' />
+  <title>Admin — Daily PosterHub</title>
+  <link rel='preconnect' href='https://fonts.googleapis.com' />
+  <link rel='preconnect' href='https://fonts.gstatic.com' crossorigin />
+  <link href='https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=Poppins:wght@600;700;800&display=swap' rel='stylesheet' />
+</head>
+<body class='admin'>
+  <!-- ============ LOGIN ============ -->
+  <div id='loginView' class='login-wrap'>
+    <div class='login-card'>
+      <span class='brand-logo'>D</span>
+      <h1>Admin लॉगिन</h1>
+      <p>पोस्टर अपलोड करने के लिए admin key डालें</p>
+      <input id='adminKey' type='password' placeholder='Admin Key' autocomplete='current-password' />
+      <button id='loginBtn' class='btn btn-primary btn-lg'>लॉगिन</button>
+      <p id='loginMsg' class='msg'></p>
+    </div>
+  </div>
+
+  <!-- ============ PANEL ============ -->
+  <div id='panelView' class='panel' style='display:none'>
+    <header class='admin-bar'>
+      <div class='admin-brand'><span class='brand-logo sm'>D</span> <strong>Admin — पोस्टर अपलोड</strong></div>
+      <div class='bar-actions'>
+        <a href='/' class='btn btn-outline btn-sm'>साइट देखें</a>
+        <button id='logoutBtn' class='btn btn-outline btn-sm'>लॉगआउट</button>
+      </div>
+    </header>
+
+    <div class='admin-grid'>
+      <!-- Upload form -->
+      <form id='uploadForm' class='up-card'>
+        <h2>नया पोस्टर अपलोड करें</h2>
+        <label>शीर्षक (Title)
+          <input name='title' required placeholder='जैसे: सुप्रभात — फूल' />
+        </label>
+        <label>श्रेणी (Category)
+          <select name='category' required>
+            <option value=''>चुनें...</option>
+            {cats.map((c) => (<option value={c.name}>{c.name}</option>))}
+          </select>
+        </label>
+        <div class='type-row'>
+          <span>प्रकार:</span>
+          <label class='rad'><input type='radio' name='type' value='free' checked /> फ्री</label>
+          <label class='rad'><input type='radio' name='type' value='pro' /> Pro</label>
+        </div>
+        <label>टैग (comma से अलग)
+          <input name='tags' placeholder='सुप्रभात, फूल, motivational' />
+        </label>
+        <label>एडिटेबल फील्ड्स (comma से अलग)
+          <input name='fields' placeholder='name, mobile, business' />
+        </label>
+        <label class='chk'><input type='checkbox' name='hasPhotoSlot' /> फोटो स्लॉट है (यूज़र फोटो जोड़ सकते हैं)</label>
+        <label>विवरण (Description)
+          <textarea name='description' rows='2' placeholder='छोटा विवरण...'></textarea>
+        </label>
+        <label>पोस्टर इमेज (WebP / PNG / JPG)
+          <input id='imageInput' name='image' type='file' accept='image/*' required />
+        </label>
+        <img id='preview' class='preview' style='display:none' alt='preview' />
+        <button id='submitBtn' type='submit' class='btn btn-primary btn-lg'>अपलोड करें</button>
+        <p id='formMsg' class='msg'></p>
+      </form>
+
+      <!-- List -->
+      <div class='list-card'>
+        <h2>अपलोड किए गए पोस्टर</h2>
+        <div id='list' class='list'></div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    * { box-sizing: border-box; }
+    body.admin { margin: 0; background: var(--bg); min-height: 100vh; font-family: 'Noto Sans Devanagari', 'Poppins', sans-serif; color: var(--ink); }
+
+    .login-wrap { min-height: 100vh; display: grid; place-items: center; padding: 24px; background: var(--grad-soft); }
+    .login-card { width: 100%; max-width: 380px; background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: 34px 30px; text-align: center; box-shadow: var(--shadow); }
+    .login-card h1 { font-size: 22px; font-weight: 800; margin: 12px 0 0; }
+    .login-card p { color: var(--muted); font-size: 14px; margin: 6px 0 18px; }
+    .login-card input { width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; font-family: inherit; font-size: 15px; margin-bottom: 14px; outline: none; }
+    .login-card input:focus { border-color: var(--purple); }
+    .login-card .btn { width: 100%; }
+
+    .brand-logo { display: inline-grid; place-items: center; width: 52px; height: 52px; background: var(--grad); border-radius: 14px; color: #fff; font-weight: 800; font-size: 26px; font-family: 'Poppins', sans-serif; }
+    .brand-logo.sm { width: 34px; height: 34px; font-size: 18px; border-radius: 10px; }
+    .msg { font-size: 13px; color: var(--muted); margin-top: 10px; min-height: 18px; }
+
+    .admin-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: #fff; border-bottom: 1px solid var(--line); padding: 14px 22px; position: sticky; top: 0; z-index: 10; }
+    .admin-brand { display: flex; align-items: center; gap: 10px; font-size: 16px; }
+    .bar-actions { display: flex; gap: 10px; }
+
+    .admin-grid { max-width: 1100px; margin: 0 auto; padding: 24px 20px 60px; display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: start; }
+    .up-card, .list-card { background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 24px; box-shadow: var(--shadow-sm); }
+    .up-card h2, .list-card h2 { font-size: 18px; font-weight: 800; margin: 0 0 16px; }
+    .up-card label { display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 600; margin-bottom: 14px; }
+    .up-card input, .up-card select, .up-card textarea { border: 1px solid var(--line); border-radius: 10px; padding: 11px 13px; font-family: inherit; font-size: 14.5px; outline: none; background: #fff; }
+    .up-card input:focus, .up-card select:focus, .up-card textarea:focus { border-color: var(--purple); }
+    .up-card input[type=radio], .up-card input[type=checkbox] { width: auto; padding: 0; border: none; }
+    .type-row { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; font-size: 14px; font-weight: 600; }
+    .rad, .chk { flex-direction: row !important; align-items: center; gap: 7px; font-weight: 500 !important; }
+    .chk { margin-bottom: 14px; font-size: 14px; }
+    .preview { width: 100%; max-width: 220px; border-radius: 12px; margin-bottom: 14px; border: 1px solid var(--line); }
+    .up-card .btn { width: 100%; }
+
+    .list { display: flex; flex-direction: column; gap: 12px; }
+    .list .row { display: flex; align-items: center; gap: 12px; border: 1px solid var(--line); border-radius: 12px; padding: 10px; }
+    .list .row img { width: 48px; height: 60px; object-fit: cover; border-radius: 8px; background: var(--grad-soft); flex-shrink: 0; }
+    .row-info { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    .row-info strong { font-size: 14px; }
+    .row-info span { font-size: 12.5px; color: var(--muted); }
+    .list .del { background: #FEE2E2; color: #DC2626; border: none; border-radius: 8px; padding: 8px 14px; font-family: inherit; font-weight: 700; font-size: 13px; cursor: pointer; flex-shrink: 0; }
+    .list .del:hover { background: #FCA5A5; }
+    .muted { color: var(--muted); font-size: 14px; }
+
+    @media (max-width: 820px) { .admin-grid { grid-template-columns: 1fr; } }
+  </style>
+
+  <script>
+    const KEY_STORE = 'ph_admin_key';
+    const $ = (s) => document.querySelector(s);
+    const loginView = $('#loginView');
+    const panelView = $('#panelView');
+    const keyInput = $('#adminKey');
+    const loginMsg = $('#loginMsg');
+
+    const getKey = () => sessionStorage.getItem(KEY_STORE) || '';
+    const authHeaders = () => ({ 'x-admin-key': getKey() });
+
+    async function ping(k) {
+      try {
+        const r = await fetch('/api/admin/ping', { method: 'POST', headers: { 'x-admin-key': k } });
+        return r.ok;
+      } catch (e) { return false; }
+    }
+
+    async function showPanel() {
+      loginView.style.display = 'none';
+      panelView.style.display = 'block';
+      await loadList();
+    }
+
+    $('#loginBtn').addEventListener('click', async () => {
+      const k = keyInput.value.trim();
+      if (!k) { loginMsg.textContent = 'key डालें'; return; }
+      loginMsg.textContent = 'जाँच हो रही है...';
+      const ok = await ping(k);
+      if (ok) { sessionStorage.setItem(KEY_STORE, k); loginMsg.textContent = ''; showPanel(); }
+      else { loginMsg.textContent = 'गलत key'; }
+    });
+    keyInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') $('#loginBtn').click(); });
+
+    $('#logoutBtn').addEventListener('click', () => { sessionStorage.removeItem(KEY_STORE); location.reload(); });
+
+    const fileInput = $('#imageInput');
+    const preview = $('#preview');
+    fileInput.addEventListener('change', () => {
+      const f = fileInput.files[0];
+      if (f) { preview.src = URL.createObjectURL(f); preview.style.display = 'block'; }
+      else { preview.style.display = 'none'; }
+    });
+
+    const form = $('#uploadForm');
+    const formMsg = $('#formMsg');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = $('#submitBtn');
+      const fd = new FormData(form);
+      formMsg.textContent = 'अपलोड हो रहा है...';
+      btn.disabled = true;
+      try {
+        const r = await fetch('/api/admin/upload', { method: 'POST', headers: authHeaders(), body: fd });
+        const data = await r.json();
+        if (r.ok && data.ok) {
+          formMsg.textContent = '✓ अपलोड सफल!';
+          form.reset();
+          preview.style.display = 'none';
+          await loadList();
+        } else {
+          formMsg.textContent = 'त्रुटि: ' + (data.error || 'अपलोड विफल');
+        }
+      } catch (err) {
+        formMsg.textContent = 'नेटवर्क त्रुटि';
+      }
+      btn.disabled = false;
+    });
+
+    const listEl = $('#list');
+    function esc(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+
+    async function loadList() {
+      listEl.innerHTML = '<p class=\'muted\'>लोड हो रहा है...</p>';
+      try {
+        const r = await fetch('/api/templates');
+        const list = await r.json();
+        if (!Array.isArray(list) || !list.length) {
+          listEl.innerHTML = '<p class=\'muted\'>अभी कोई पोस्टर नहीं। ऊपर से अपलोड करें।</p>';
+          return;
+        }
+        listEl.innerHTML = '';
+        list.forEach((t) => {
+          const row = document.createElement('div');
+          row.className = 'row';
+          const badge = t.type === 'pro' ? 'Pro' : 'फ्री';
+          row.innerHTML = `<img src='${esc(t.img)}' alt='' loading='lazy'><div class='row-info'><strong>${esc(t.title)}</strong><span>${esc(t.category)} • ${badge}</span></div><button class='del' data-id='${esc(t.id)}'>हटाएं</button>`;
+          listEl.appendChild(row);
+        });
+        listEl.querySelectorAll('.del').forEach((b) => {
+          b.addEventListener('click', async () => {
+            if (!confirm('इस पोस्टर को हटाएं?')) return;
+            b.disabled = true;
+            try {
+              const r = await fetch('/api/admin/delete', {
+                method: 'POST',
+                headers: Object.assign({ 'content-type': 'application/json' }, authHeaders()),
+                body: JSON.stringify({ id: b.getAttribute('data-id') }),
+              });
+              if (r.ok) { await loadList(); } else { b.disabled = false; alert('हटाने में त्रुटि'); }
+            } catch (e) { b.disabled = false; alert('नेटवर्क त्रुटि'); }
+          });
+        });
+      } catch (e) {
+        listEl.innerHTML = '<p class=\'muted\'>सूची लोड नहीं हुई</p>';
+      }
+    }
+
+    // auto-login agar key pehle se saved hai
+    (async () => { const k = getKey(); if (k && await ping(k)) showPanel(); })();
+  </script>
+</body>
+</html>

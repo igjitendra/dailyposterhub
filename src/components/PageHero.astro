@@ -1,0 +1,25 @@
+---
+import Icon from './Icon.astro';
+const { title, subtitle, crumb } = Astro.props;
+---
+<section class='page-hero'>
+  <div class='container'>
+    <nav class='crumb'>
+      <a href='/'>होम</a>
+      <Icon name='chevron-right' size={14} />
+      <span>{crumb || title}</span>
+    </nav>
+    <h1 set:html={title}></h1>
+    {subtitle && <p>{subtitle}</p>}
+  </div>
+</section>
+
+<style>
+  .page-hero { background: var(--grad-soft); padding: 40px 0 44px; text-align: center; border-bottom: 1px solid var(--line); }
+  .crumb { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+  .crumb a:hover { color: var(--purple); }
+  .crumb :global(.icon) { opacity: .6; }
+  .page-hero h1 { font-size: 34px; font-weight: 800; }
+  .page-hero p { color: var(--muted); margin-top: 8px; max-width: 620px; margin-left: auto; margin-right: auto; }
+  @media (max-width: 560px) { .page-hero h1 { font-size: 26px; } }
+</style>

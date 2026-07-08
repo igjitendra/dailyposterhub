@@ -1,0 +1,41 @@
+# Decap CMS config — git-based (GitHub) backend
+# NOTE: neeche 3 jagah apni value daalein: repo, branch, base_url
+backend:
+  name: github
+  repo: AtulPal/daily-posterhub      # <-- apna GitHub owner/repo (jaise username/repo-name)
+  branch: main                       # <-- apni default branch
+  base_url: https://posterhub.pages.dev   # <-- apna LIVE domain (OAuth ke liye)
+  auth_endpoint: auth
+
+# Site language
+locale: 'en'
+
+# Decap jo images upload karega wo repo me yahan jaayengi
+media_folder: "public/img/blog"
+public_folder: "/img/blog"
+
+publish_mode: simple
+
+collections:
+  - name: "blog"
+    label: "ब्लॉग पोस्ट"
+    label_singular: "पोस्ट"
+    folder: "src/content/blog"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    summary: "{{title}}"
+    sortable_fields: ["date", "title"]
+    fields:
+      - { name: "title", label: "शीर्षक", widget: "string" }
+      - { name: "date", label: "तारीख़", widget: "datetime" }
+      - {
+          name: "tag",
+          label: "श्रेणी",
+          widget: "select",
+          options: ["टिप्स", "गाइड", "फेस्टिवल", "न्यूज़", "बिज़नेस"],
+          default: "टिप्स"
+        }
+      - { name: "cover", label: "कवर इमेज", widget: "image", required: false }
+      - { name: "excerpt", label: "छोटा विवरण", widget: "text", required: false }
+      - { name: "draft", label: "ड्राफ्ट रखें (publish न करें)", widget: "boolean", default: false }
+      - { name: "body", label: "कंटेंट", widget: "markdown" }

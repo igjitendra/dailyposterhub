@@ -1,0 +1,81 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import { steps } from '../data/site.js';
+
+const tools = [
+  { icon: 'edit', title: 'पोस्टर एडिटर', desc: 'नाम, फोटो और संदेश जोड़कर पोस्टर बनाएं।', href: '/posters' },
+  { icon: 'image', title: 'फोटो जोड़ें व एडजस्ट', desc: 'अपनी फोटो slide और resize करके सेट करें।', href: '/posters' },
+  { icon: 'crown', title: 'लोगो व ब्रांडिंग', desc: 'अपना लोगो और बिज़नेस डिटेल जोड़ें (Pro)।', href: '/pricing' },
+  { icon: 'download', title: 'HD डाउनलोड', desc: 'बिना वॉटरमार्क HD क्वालिटी पोस्टर (Pro)।', href: '/pricing' },
+  { icon: 'grid', title: 'टेम्पलेट लाइब्रेरी', desc: '1000+ हिंदी पोस्टर टेम्पलेट्स ब्राउज़ करें।', href: '/posters' },
+  { icon: 'sparkles', title: 'डेली नया पोस्टर', desc: 'रोज़ नए पोस्टर और फेस्टिवल स्पेशल पैक।', href: '/posters' },
+];
+---
+<Layout title='टूल्स — Daily PosterHub'>
+  <PageHero
+    title='हमारे <span class="grad-text">टूल्स</span>'
+    crumb='टूल्स'
+    subtitle='पोस्टर बनाने और एडिट करने के आसान टूल्स'
+  />
+
+  <section class='section'>
+    <div class='container'>
+      <div class='tools-grid'>
+        {tools.map((t) => (
+          <a href={t.href} class='tool-card card'>
+            <span class='tool-icon'><Icon name={t.icon} size={24} /></span>
+            <h3>{t.title}</h3>
+            <p>{t.desc}</p>
+            <span class='tool-link'>खोलें <Icon name='arrow-right' size={14} /></span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- How to download -->
+  <section class='section how' id='how'>
+    <div class='container'>
+      <div class='section-head'>
+        <h2 class='deco'>डाउनलोड कैसे करें?</h2>
+        <p>सिर्फ़ 4 आसान स्टेप में अपना पोस्टर तैयार</p>
+      </div>
+      <div class='steps'>
+        {steps.map((s) => (
+          <div class='step card'>
+            <span class='step-no'>{s.no}</span>
+            <span class='step-icon'><Icon name={s.icon} size={22} /></span>
+            <h4>{s.title}</h4>
+            <p>{s.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .tools-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .tool-card { padding: 28px 24px; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+  .tool-icon { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 14px; background: #EDE9FE; color: var(--purple); margin-bottom: 8px; }
+  .tool-card h3 { font-size: 17px; font-weight: 700; }
+  .tool-card p { font-size: 14px; color: var(--muted); }
+  .tool-link { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; color: var(--purple); font-weight: 700; margin-top: 8px; }
+
+  .deco { display: inline-flex; align-items: center; gap: 14px; }
+  .deco::before, .deco::after { content: ''; width: 40px; height: 2px; background: linear-gradient(90deg, transparent, var(--purple)); }
+  .deco::after { background: linear-gradient(90deg, var(--purple), transparent); }
+
+  .how { background: #fff; border-radius: 28px; }
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .step { position: relative; padding: 26px 20px; }
+  .step-no { position: absolute; top: 16px; right: 18px; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--grad); color: #fff; font-weight: 800; font-size: 14px; }
+  .step-icon { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 14px; background: #EDE9FE; color: var(--purple); }
+  .step h4 { margin: 14px 0 6px; font-size: 16px; }
+  .step p { font-size: 13.5px; color: var(--muted); }
+
+  @media (max-width: 900px) { .tools-grid { grid-template-columns: repeat(2, 1fr); } .steps { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .tools-grid { grid-template-columns: 1fr; } .steps { grid-template-columns: 1fr; } }
+</style>

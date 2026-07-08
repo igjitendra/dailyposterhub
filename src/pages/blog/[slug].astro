@@ -1,0 +1,49 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+export function getStaticPaths() {
+  const mods = import.meta.glob('../../content/blog/*.md', { eager: true });
+  return Object.entries(mods).map(([path, mod]) => ({
+    params: { slug: path.split('/').pop().replace(/\.md$/, '') },
+    props: { mod },
+  }));
+}
+
+const { mod } = Astro.props;
+const fm = mod.frontmatter;
+const { Content } = mod;
+
+const fmt = (d) => {
+  try { return new Intl.DateTimeFormat('hi-IN', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(d)); }
+  catch (e) { return d; }
+};
+---
+<Layout title={fm.title + ' — Daily PosterHub'}>
+  <article class='section'>
+    <div class='container post-wrap'>
+      <a href='/blog' class='back'>← सभी पोस्ट</a>
+      {fm.cover ? <img class='post-cover' src={fm.cover} alt={fm.title} /> : null}
+      <span class='post-tag'>{fm.tag}</span>
+      <h1 class='post-title'>{fm.title}</h1>
+      <div class='post-meta'>{fmt(fm.date)}</div>
+      <div class='post-body'><Content /></div>
+    </div>
+  </article>
+</Layout>
+
+<style>
+  .post-wrap { max-width: 780px; margin: 0 auto; }
+  .back { display: inline-block; color: var(--purple); font-weight: 700; font-size: 14px; margin-bottom: 20px; }
+  .post-cover { width: 100%; border-radius: 18px; margin: 6px 0 22px; aspect-ratio: 16/9; object-fit: cover; background: var(--grad-soft); }
+  .post-tag { display: inline-block; background: var(--purple); color: #fff; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 999px; }
+  .post-title { font-size: 32px; font-weight: 800; line-height: 1.25; margin: 14px 0 8px; }
+  .post-meta { color: var(--muted); font-size: 14px; margin-bottom: 20px; }
+  .post-body :global(p) { color: var(--ink); line-height: 1.85; margin-bottom: 16px; }
+  .post-body :global(h2) { font-size: 22px; font-weight: 800; margin: 26px 0 10px; }
+  .post-body :global(h3) { font-size: 18px; font-weight: 700; margin: 20px 0 8px; }
+  .post-body :global(ul), .post-body :global(ol) { padding-left: 22px; margin-bottom: 16px; color: var(--ink); }
+  .post-body :global(li) { margin-bottom: 8px; line-height: 1.7; }
+  .post-body :global(img) { max-width: 100%; border-radius: 12px; margin: 10px 0; }
+  .post-body :global(a) { color: var(--purple); text-decoration: underline; }
+  @media (max-width: 560px) { .post-title { font-size: 24px; } }
+</style>

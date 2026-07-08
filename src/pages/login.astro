@@ -7,48 +7,93 @@ import Icon from '../components/Icon.astro';
     <div class='auth-card card'>
       <div class='auth-head'>
         <span class='brand-logo'>D</span>
-        <h1>लॉगिन करें</h1>
+        <h1>स्वागत है</h1>
         <p>Pro फीचर्स और क्लाउड सेव के लिए लॉगिन करें</p>
       </div>
 
-      <form class='auth-form' onsubmit='return false'>
+      <div class='tabs'>
+        <button class='tab active' data-tab='login'>लॉगिन</button>
+        <button class='tab' data-tab='signup'>नया खाता</button>
+      </div>
+
+      <!-- LOGIN -->
+      <form class='auth-form' data-form='login' onsubmit='return false'>
         <label>ईमेल
           <input type='email' placeholder='you@example.com' required />
         </label>
         <label>पासवर्ड
           <input type='password' placeholder='********' required />
         </label>
-        <button class='btn btn-primary btn-lg' type='submit'>लॉगिन</button>
+        <div class='form-row'>
+          <label class='remember'><input type='checkbox' /> मुझे याद रखें</label>
+          <a href='/login' class='forgot'>पासवर्ड भूल गए?</a>
+        </div>
+        <button class='btn btn-primary btn-lg' type='submit'>लॉगिन करें</button>
       </form>
 
-      <div class='divider'><span>या</span></div>
-      <button class='btn btn-outline btn-lg oauth'><Icon name='globe' size={18} /> Google से लॉगिन</button>
+      <!-- SIGNUP -->
+      <form class='auth-form hidden' data-form='signup' onsubmit='return false'>
+        <label>पूरा नाम
+          <input type='text' placeholder='आपका नाम' required />
+        </label>
+        <label>ईमेल
+          <input type='email' placeholder='you@example.com' required />
+        </label>
+        <label>मोबाइल
+          <input type='tel' placeholder='मोबाइल नंबर' />
+        </label>
+        <label>पासवर्ड
+          <input type='password' placeholder='मज़बूत पासवर्ड बनाएं' required />
+        </label>
+        <button class='btn btn-primary btn-lg' type='submit'>खाता बनाएं</button>
+      </form>
 
-      <p class='auth-foot'>खाता नहीं है? <a href='/login'>नया खाता बनाएं</a></p>
-      <p class='auth-note'>नोट: फ्री यूज़र बिना लॉगिन के भी पोस्टर बना सकते हैं — डेटा ब्राउज़र में सेव होता है।</p>
+      <p class='auth-note'>
+        <Icon name='shield-check' size={15} />
+        फ्री यूज़र बिना लॉगिन के भी पोस्टर बना सकते हैं — डेटा ब्राउज़र में सेव होता है।
+      </p>
+      <a href='/posters' class='guest-link'>बिना लॉगिन के पोस्टर बनाएं <Icon name='arrow-right' size={14} /></a>
     </div>
   </section>
 </Layout>
 
 <style>
-  .auth-wrap { min-height: 70vh; display: grid; place-items: center; padding: 50px 20px; background: var(--grad-soft); }
-  .auth-card { width: 100%; max-width: 420px; padding: 36px 32px; background: #fff; }
-  .auth-head { text-align: center; margin-bottom: 24px; }
+  .auth-wrap { min-height: 72vh; display: grid; place-items: center; padding: 50px 20px; background: var(--grad-soft); }
+  .auth-card { width: 100%; max-width: 430px; padding: 36px 32px; background: #fff; }
+  .auth-head { text-align: center; margin-bottom: 22px; }
   .brand-logo { display: inline-grid; place-items: center; width: 52px; height: 52px; background: var(--grad); border-radius: 14px; color: #fff; font-weight: 800; font-size: 26px; font-family: 'Poppins', sans-serif; margin-bottom: 12px; }
   .auth-head h1 { font-size: 24px; font-weight: 800; }
   .auth-head p { color: var(--muted); font-size: 14px; margin-top: 6px; }
 
+  .tabs { display: flex; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 4px; margin-bottom: 22px; }
+  .tab { flex: 1; padding: 10px; border-radius: 9px; font-family: inherit; font-size: 14.5px; font-weight: 700; color: var(--muted); cursor: pointer; background: transparent; border: none; transition: all .2s; }
+  .tab.active { background: #fff; color: var(--purple); box-shadow: var(--shadow-sm); }
+
   .auth-form { display: flex; flex-direction: column; gap: 16px; }
+  .auth-form.hidden { display: none; }
   .auth-form label { font-size: 14px; font-weight: 600; display: flex; flex-direction: column; gap: 6px; }
   .auth-form input { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; font-family: inherit; font-size: 15px; outline: none; }
   .auth-form input:focus { border-color: var(--purple); }
   .auth-form .btn { margin-top: 4px; }
 
-  .divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; color: var(--muted); font-size: 13px; }
-  .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--line); }
-  .oauth { width: 100%; gap: 8px; }
+  .form-row { display: flex; align-items: center; justify-content: space-between; margin-top: -4px; }
+  .remember { flex-direction: row; align-items: center; gap: 7px; font-size: 13px; font-weight: 500; color: var(--muted); }
+  .remember input { width: auto; }
+  .forgot { font-size: 13px; color: var(--purple); font-weight: 600; }
 
-  .auth-foot { text-align: center; font-size: 14px; margin-top: 20px; }
-  .auth-foot a { color: var(--purple); font-weight: 700; }
-  .auth-note { text-align: center; font-size: 12.5px; color: var(--muted); margin-top: 14px; line-height: 1.6; }
+  .auth-note { display: flex; align-items: flex-start; gap: 8px; text-align: left; font-size: 12.5px; color: var(--muted); margin-top: 22px; line-height: 1.6; background: var(--bg); padding: 12px 14px; border-radius: 10px; }
+  .auth-note :global(.icon) { color: #16A34A; flex-shrink: 0; margin-top: 1px; }
+  .guest-link { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 16px; font-size: 14px; font-weight: 700; color: var(--purple); }
 </style>
+
+<script>
+  const tabs = document.querySelectorAll('.tab');
+  const forms = document.querySelectorAll('.auth-form');
+  tabs.forEach((t) => {
+    t.addEventListener('click', () => {
+      const name = t.getAttribute('data-tab');
+      tabs.forEach((x) => x.classList.toggle('active', x === t));
+      forms.forEach((f) => f.classList.toggle('hidden', f.getAttribute('data-form') !== name));
+    });
+  });
+</script>

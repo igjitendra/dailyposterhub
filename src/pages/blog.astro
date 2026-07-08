@@ -1,0 +1,68 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+
+// Git-based blog: har post src/content/blog/*.md file hai (GitHub par).
+const modules = import.meta.glob('../content/blog/*.md', { eager: true });
+const posts = Object.entries(modules)
+  .map(([path, mod]) => ({
+    slug: path.split('/').pop().replace(/\.md$/, ''),
+    ...mod.frontmatter,
+  }))
+  .filter((p) => !p.draft)
+  .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+const fmt = (d) => {
+  try { return new Intl.DateTimeFormat('hi-IN', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(d)); }
+  catch (e) { return d; }
+};
+---
+<Layout title='ब्लॉग — Daily PosterHub'>
+  <PageHero
+    title='हमारा <span class="grad-text">ब्लॉग</span>'
+    crumb='ब्लॉग'
+    subtitle='पोस्टर डिज़ाइन टिप्स, गाइड और अपडेट्स'
+  />
+  <section class='section'>
+    <div class='container'>
+      {posts.length === 0 ? (
+        <p class='empty'>अभी कोई पोस्ट नहीं। <a href='/admin'>/admin</a> से पहला पोस्ट बनाएं।</p>
+      ) : (
+        <div class='blog-grid'>
+          {posts.map((p) => (
+            <article class='blog-card card'>
+              <a class='blog-thumb' href={'/blog/' + p.slug}>
+                {p.cover ? <img src={p.cover} alt={p.title} loading='lazy' /> : <span class='ph'></span>}
+                <span class='blog-tag'>{p.tag}</span>
+              </a>
+              <div class='blog-body'>
+                <span class='blog-date'><Icon name='clock' size={13} /> {fmt(p.date)}</span>
+                <h3><a href={'/blog/' + p.slug}>{p.title}</a></h3>
+                <p>{p.excerpt}</p>
+                <a href={'/blog/' + p.slug} class='blog-link'>पढ़ें <Icon name='arrow-right' size={14} /></a>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .blog-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  .blog-thumb { position: relative; display: block; }
+  .blog-thumb img, .blog-thumb .ph { aspect-ratio: 16/10; object-fit: cover; width: 100%; display: block; border-radius: var(--radius) var(--radius) 0 0; background: linear-gradient(135deg,#EDE9FE,#E0E7FF); }
+  .blog-tag { position: absolute; top: 12px; left: 12px; background: var(--purple); color: #fff; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 999px; }
+  .blog-body { padding: 18px; }
+  .blog-date { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; color: var(--muted); }
+  .blog-body h3 { font-size: 17px; font-weight: 700; margin: 8px 0; line-height: 1.4; }
+  .blog-body h3 a { color: inherit; }
+  .blog-body p { font-size: 14px; color: var(--muted); margin-bottom: 14px; }
+  .blog-link { display: inline-flex; align-items: center; gap: 5px; color: var(--purple); font-weight: 700; font-size: 14px; }
+  .empty { text-align: center; color: var(--muted); padding: 40px 0; }
+  .empty a { color: var(--purple); font-weight: 700; }
+  @media (max-width: 900px) { .blog-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .blog-grid { grid-template-columns: 1fr; } }
+</style>

@@ -1,0 +1,13 @@
+name = "daily-posterhub"
+compatibility_date = "2024-07-01"
+pages_build_output_dir = "dist"
+
+# R2 bucket jisme poster images + templates.json store honge.
+# Cloudflare Dashboard me bucket banao (naam niche wala) aur binding add karo.
+[[r2_buckets]]
+binding = "POSTERS"
+bucket_name = "posterhub-templates"
+
+# ADMIN_KEY ek SECRET hai -> yahan mat likho.
+# Set karo: Pages > Settings > Environment variables (Production + Preview)
+# ya local: .dev.vars file (dekho .dev.vars.example)
