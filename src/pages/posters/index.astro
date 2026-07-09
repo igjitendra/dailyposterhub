@@ -175,8 +175,8 @@ const fallback = templates;
         card.className = 'tpl-card card';
         var badge = t.type === 'pro' ? '<span class="badge badge-pro">Pro</span>' : '<span class="badge badge-free">फ़्री</span>';
         card.innerHTML = "<div class='tpl-thumb'><img src='" + esc(t.img) + "' alt='" + esc(t.title) + "' loading='lazy'>" + badge + "</div>" +
-          "<div class='tpl-body'>" +
-          "<a href='/editor?img=" + encodeURIComponent(t.img || '') + "&title=" + encodeURIComponent(t.title || '') + "&type=" + encodeURIComponent(t.type || 'free') + "' class='btn btn-primary tpl-btn'>एडिट करें</a></div>";
+          "<div class='tpl-body' style='padding:12px'>" +
+          "<a href='/editor?img=" + encodeURIComponent(t.img || '') + "&title=" + encodeURIComponent(t.title || '') + "&type=" + encodeURIComponent(t.type || 'free') + "' class='btn btn-primary tpl-btn' style='display:flex;width:100%;justify-content:center;padding:13px 12px;font-size:15px'>एडिट करें</a></div>";
         grid.appendChild(card);
       });
     }
