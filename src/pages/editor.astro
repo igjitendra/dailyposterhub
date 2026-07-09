@@ -9,62 +9,44 @@ import Layout from '../layouts/Layout.astro';
       <div class='ed-stage-col'>
         <div class='stage-frame'>
           <div class='capture' id='capture'>
-            <!-- Free plan branding strip (ABOVE image, outside poster) -->
+
+            <!-- TOP strip: website branding (free plan, outside image) -->
             <div class='brand-strip' id='brandStrip'>
               <span class='bs-logo'>D</span>
               <span class='bs-txt'><b>DailyPosterHub</b><small>फ्री पोस्टर रोज़ — posterhub.pages.dev</small></span>
             </div>
+
+            <!-- POSTER + photo circle only -->
             <div class='stage' id='stage'>
               <img id='posterImg' class='poster-img' alt='poster' crossorigin='anonymous' />
+              <div class='photo-circle empty' id='photoCircle'>फोटो</div>
+            </div>
 
-              <!-- Free watermark (inside image) -->
-              <div class='watermark' id='watermark'>▶ @jitendrauno</div>
-
-              <!-- Personal brand kit (liquid glass) -->
-              <div id='brandCard' class='kit'>
-                <button class='kit-close' id='kitClose' title='हटाएं' aria-label='हटाएं'>×</button>
-                <div class='kit-photo' id='kitPhoto'><span id='kitPhotoLetter'>D</span></div>
-                <div class='kit-info'>
-                  <div class='kit-name' id='kitName'>आपका नाम</div>
-                  <div class='kit-line'></div>
-                  <div class='kit-row'><span class='kit-ic'><svg viewBox='0 0 24 24' width='11' height='11' fill='#fff'><path d='M10 2h4a2 2 0 0 1 2 2v2h3a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3V4a2 2 0 0 1 2-2zm4 4V4h-4v2h4z'/></svg></span><span id='kitProf'>प्रोफेशन यहाँ लिखें</span></div>
-                  <div class='kit-row'><span class='kit-ic'><svg viewBox='0 0 24 24' width='11' height='11' fill='#fff'><path d='M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.1 21 3 13.9 3 5c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.4 0 .8-.3 1l-2.2 2.2z'/></svg></span><span id='kitPhone'>98765 43210</span></div>
-                  <div class='kit-row'><span class='kit-ic'><svg viewBox='0 0 24 24' width='11' height='11' fill='#fff'><path d='M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-4 0-8 2-8 5v1h16v-1c0-3-4-5-8-5z'/></svg></span><span id='kitUser'>@yourusername</span></div>
-                  <div class='kit-socials'>
-                    <span class='soc' style='background:#1877F2'><svg viewBox='0 0 24 24' width='11' height='11' fill='#fff'><path d='M13 22v-8h2.5l.5-3H13V9c0-.9.3-1.5 1.6-1.5H16V5c-.3 0-1.2-.1-2.2-.1C11.6 4.9 10 6.2 10 8.7V11H7.5v3H10v8h3z'/></svg></span>
-                    <span class='soc' style='background:#E4405F'><svg viewBox='0 0 24 24' width='11' height='11' fill='#fff'><path d='M12 8.5A3.5 3.5 0 1 0 12 15.5 3.5 3.5 0 0 0 12 8.5zM17 3H7a4 4 0 0 0-4 4v10a4 4 0 0 0 4 4h10a4 4 0 0 0 4-4V7a4 4 0 0 0-4-4zm-5 14a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm5.5-9a1 1 0 1 1 0-2 1 1 0 0 1 0 2z'/></svg></span>
-                    <span class='soc' style='background:#25D366'><svg viewBox='0 0 24 24' width='11' height='11' fill='#fff'><path d='M12 2a10 10 0 0 0-8.6 15l-1 3.7 3.8-1A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .3-3.3-.7-2.8-1.1-4.5-3.9-4.6-4.1-.1-.2-1-1.3-1-2.5s.6-1.8.9-2 .5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.1.1.3 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.2.7 1.1 1.5 1.7 1 .9 1.8 1.1 2 1.2.2.1.4.1.5-.1l.7-.9c.2-.2.3-.2.6-.1l1.8.9c.2.1.4.2.5.3.1.1.1.7-.1 1.3z'/></svg></span>
-                    <span class='soc' style='background:#FF0000'><svg viewBox='0 0 24 24' width='11' height='11' fill='#fff'><path d='M22 12s0-3.3-.4-4.8c-.2-.9-.9-1.5-1.7-1.7C18.3 5 12 5 12 5s-6.3 0-7.9.4c-.8.2-1.5.9-1.7 1.8C2 8.7 2 12 2 12s0 3.3.4 4.8c.2.9.9 1.5 1.7 1.8C5.7 19 12 19 12 19s6.3 0 7.9-.4c.8-.2 1.5-.9 1.7-1.7.4-1.6.4-4.9.4-4.9zm-12 3V9l5 3-5 3z'/></svg></span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- shown only when kit removed -->
-              <button class='re-add btn btn-primary btn-sm' id='reAdd' hidden>＋ ब्रांड किट जोड़ें</button>
+            <!-- BOTTOM strip: name + number (outside image) -->
+            <div class='name-strip' id='nameStrip'>
+              <b id='nsName'>आपका नाम</b>
+              <span id='nsPhone'>98765 43210</span>
             </div>
           </div>
         </div>
 
-        <!-- controls OUTSIDE the image -->
+        <!-- resize control OUTSIDE the image -->
         <div class='stage-controls'>
-          <div class='sc-row'><span>साइज़</span><input id='sizeRange' type='range' min='55' max='160' value='100' /></div>
-          <div class='sc-row'><span>बैकग्राउंड</span><input id='bgRange' type='range' min='0' max='100' value='40' /></div>
-          <p class='sc-hint'>बैकग्राउंड कम करें → पीछे का पोस्टर झलकेगा (glass इफेक्ट)।</p>
+          <div class='sc-row'><span>फोटो साइज़</span><input id='sizeRange' type='range' min='22' max='85' value='45' /></div>
+          <p class='sc-hint'>फोटो को उंगली/माउस से खींचकर गोल फ्रेम पर रखें, स्लाइडर से छोटा-बड़ा करें।</p>
         </div>
       </div>
 
       <!-- INFO PANEL -->
       <div class='ed-panel'>
         <h1>पोस्टर एडिट करें</h1>
-        <p class='ed-sub'>अपनी जानकारी भरें—ब्रांड किट पोस्टर पर आ जाएगी। उसे खींचकर खाली जगह पर रखें, ‘साइज़’ से छोटा-बड़ा करें।</p>
+        <p class='ed-sub'>अपनी फोटो, नाम और नंबर डालें। फोटो गोल फ्रेम पर आ जाएगी—खींचकर जमाएं। नाम/नंबर पोस्टर के नीचे अलग पट्टी में आएगा।</p>
 
         <div class='ed-kitbox'>
           <div class='ed-seltitle'>आपकी जानकारी</div>
-          <label class='ed-fld'>नाम<input id='inName' type='text' placeholder='आपका नाम' /></label>
-          <label class='ed-fld'>प्रोफेशन<input id='inProf' type='text' placeholder='जैसे: फोटोग्राफर' /></label>
-          <label class='ed-fld'>मोबाइल<input id='inPhone' type='text' placeholder='98765 43210' /></label>
-          <label class='ed-fld'>यूज़रनेम<input id='inUser' type='text' placeholder='@yourusername' /></label>
           <label class='ed-fld'>फोटो<input id='inPhoto' type='file' accept='image/*' /></label>
+          <label class='ed-fld'>नाम<input id='inName' type='text' placeholder='आपका नाम' /></label>
+          <label class='ed-fld'>मोबाइल नंबर<input id='inPhone' type='text' placeholder='98765 43210' /></label>
           <button id='saveKit' class='btn btn-gold btn-sm'>जानकारी सेव करें</button>
         </div>
 
@@ -72,7 +54,7 @@ import Layout from '../layouts/Layout.astro';
           <button id='btnDownload' class='btn btn-primary btn-lg'>⬇ डाउनलोड करें</button>
           <button id='btnShare' class='btn btn-gold btn-lg'>WhatsApp पर शेयर</button>
         </div>
-        <p class='ed-note' id='proNote'>फ्री प्लान में ऊपर ब्रांडिंग पट्टी और हल्का वॉटरमार्क रहेगा। <a href='/payment'>Pro लें</a> — बिना ब्रांडिंग और HD डाउनलोड।</p>
+        <p class='ed-note' id='proNote'>फ्री प्लान में ऊपर वेबसाइट ब्रांडिंग पट्टी रहेगी। <a href='/payment'>Pro लें</a> — बिना ब्रांडिंग और HD डाउनलोड।</p>
       </div>
     </div>
   </section>
@@ -85,36 +67,19 @@ import Layout from '../layouts/Layout.astro';
   .ed-grid { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 420px 1fr; gap: 32px; align-items: start; }
 
   .stage-frame { background: #fff; border-radius: 18px; padding: 12px; box-shadow: 0 10px 30px rgba(124,58,237,.10); }
-  .capture { border-radius: 12px; overflow: hidden; }
+  .capture { border-radius: 12px; overflow: hidden; background: #fff; }
   .stage { position: relative; width: 100%; line-height: 0; background: #f0eef7; overflow: hidden; }
   .poster-img { width: 100%; height: auto; display: block; }
 
-  .watermark { position: absolute; right: 9px; bottom: 9px; color: rgba(255,255,255,.85); font-size: 13px; font-weight: 800;
-    text-shadow: 0 1px 4px rgba(0,0,0,.65); pointer-events: none; line-height: 1; letter-spacing: .3px; }
+  /* only the user's photo, as a circle */
+  .photo-circle { position: absolute; left: 50%; top: 52%; transform: translate(-50%,-50%); width: 45%; aspect-ratio: 1 / 1;
+    border-radius: 50%; background-size: cover; background-position: center; border: 4px solid #fff;
+    box-shadow: 0 4px 16px rgba(0,0,0,.35); cursor: grab; touch-action: none; overflow: hidden; }
+  .photo-circle:active { cursor: grabbing; }
+  .photo-circle.empty { background: rgba(255,255,255,.65); border: 3px dashed #B4145A; display: grid; place-items: center;
+    color: #B4145A; font-weight: 800; font-size: 15px; line-height: 1; }
 
-  /* liquid glass brand kit */
-  .kit { position: absolute; left: 50%; top: 70%; transform: translate(-50%,-50%) scale(1); width: 82%; max-width: 360px;
-    display: flex; gap: 14px; align-items: center; padding: 14px 16px; border-radius: 20px;
-    background: rgba(255,255,255,.20); backdrop-filter: blur(14px) saturate(150%); -webkit-backdrop-filter: blur(14px) saturate(150%);
-    border: 1px solid rgba(255,255,255,.5); box-shadow: 0 8px 32px rgba(0,0,0,.28);
-    cursor: grab; touch-action: none; user-select: none; }
-  .kit:active { cursor: grabbing; }
-  .kit-close { position: absolute; top: -11px; right: -11px; width: 27px; height: 27px; border-radius: 50%; background: #fff;
-    color: #B4145A; border: none; font-size: 17px; font-weight: 800; cursor: pointer; box-shadow: 0 2px 7px rgba(0,0,0,.35);
-    display: grid; place-items: center; line-height: 1; z-index: 3; }
-  .kit-photo { flex-shrink: 0; width: 92px; height: 92px; border-radius: 16px; overflow: hidden; background: rgba(255,255,255,.4);
-    border: 3px solid rgba(255,255,255,.85); display: grid; place-items: center; color: #B4145A; font-weight: 800; font-size: 34px;
-    background-size: cover; background-position: center; line-height: 1; box-shadow: 0 3px 10px rgba(0,0,0,.2); }
-  .kit-info { min-width: 0; flex: 1; line-height: 1.15; }
-  .kit-name { color: #fff; font-weight: 800; font-size: 21px; font-family: 'Noto Sans Devanagari', sans-serif; text-shadow: 0 1px 5px rgba(0,0,0,.55); }
-  .kit-line { height: 1px; background: rgba(255,255,255,.55); margin: 5px 0 7px; }
-  .kit-row { display: flex; align-items: center; gap: 7px; margin: 4px 0; font-size: 13px; font-weight: 600; color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,.5); }
-  .kit-ic { flex-shrink: 0; width: 19px; height: 19px; border-radius: 50%; background: rgba(255,255,255,.28); display: grid; place-items: center; }
-  .kit-socials { display: flex; align-items: center; gap: 7px; margin-top: 8px; }
-  .soc { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; }
-
-  .re-add { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); z-index: 4; }
-
+  /* TOP website strip */
   .brand-strip { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 11px 12px;
     background: linear-gradient(90deg,#7C3AED,#B4145A); color: #fff; }
   .bs-logo { width: 30px; height: 30px; border-radius: 8px; background: rgba(255,255,255,.22); display: grid; place-items: center;
@@ -123,8 +88,13 @@ import Layout from '../layouts/Layout.astro';
   .bs-txt b { font-size: 14px; font-weight: 800; letter-spacing: .2px; }
   .bs-txt small { font-size: 11px; opacity: .92; }
 
+  /* BOTTOM name + number strip */
+  .name-strip { background: #fff; text-align: center; padding: 13px 14px; }
+  .name-strip b { display: block; font-size: 20px; font-weight: 800; color: var(--ink); font-family: 'Noto Sans Devanagari', sans-serif; }
+  .name-strip span { display: block; font-size: 14px; font-weight: 700; color: #B4145A; margin-top: 3px; letter-spacing: .3px; }
+
   .stage-controls { margin-top: 14px; background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
-  .sc-row { display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 700; margin-bottom: 12px; }
+  .sc-row { display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 700; margin-bottom: 10px; }
   .sc-row span { width: 86px; flex-shrink: 0; }
   .sc-row input { flex: 1; }
   .sc-hint { font-size: 11.5px; color: var(--muted); margin: 0; line-height: 1.5; }
@@ -157,111 +127,78 @@ import Layout from '../layouts/Layout.astro';
     posterImg.src = imgUrl || '/img/preview-morning.webp';
 
     var stage = document.getElementById('stage');
-    var card = document.getElementById('brandCard');
+    var pc = document.getElementById('photoCircle');
     var strip = document.getElementById('brandStrip');
-    var watermark = document.getElementById('watermark');
     var capture = document.getElementById('capture');
-    var reAdd = document.getElementById('reAdd');
-    var kitClose = document.getElementById('kitClose');
+    var nsName = document.getElementById('nsName');
+    var nsPhone = document.getElementById('nsPhone');
 
-    // ===== profile / brand kit =====
+    // ===== profile =====
     var prof = {};
     try { prof = JSON.parse(localStorage.getItem('ph_profile') || '{}') || {}; } catch (e) {}
     var savedAvatar = null;
     try { savedAvatar = localStorage.getItem('ph_avatar'); } catch (e) {}
 
     var inName = document.getElementById('inName');
-    var inProf = document.getElementById('inProf');
     var inPhone = document.getElementById('inPhone');
-    var inUser = document.getElementById('inUser');
     var inPhoto = document.getElementById('inPhoto');
 
-    function setPhoto(url, letter) {
-      var el = document.getElementById('kitPhoto');
-      var lt = document.getElementById('kitPhotoLetter');
-      if (url) { el.style.backgroundImage = 'url(' + url + ')'; lt.style.display = 'none'; }
-      else { el.style.backgroundImage = ''; lt.style.display = 'block'; lt.textContent = (letter || 'D').trim().charAt(0).toUpperCase(); }
+    function setPhoto(url) {
+      if (url) { pc.style.backgroundImage = 'url(' + url + ')'; pc.classList.remove('empty'); pc.textContent = ''; }
+      else { pc.style.backgroundImage = ''; pc.classList.add('empty'); pc.textContent = 'फोटो'; }
     }
-    function renderKit() {
-      var name = inName.value.trim() || 'आपका नाम';
-      document.getElementById('kitName').textContent = name;
-      document.getElementById('kitProf').textContent = inProf.value.trim() || 'प्रोफेशन यहाँ लिखें';
-      document.getElementById('kitPhone').textContent = inPhone.value.trim() || '98765 43210';
-      var u = inUser.value.trim() || '@yourusername';
-      if (u && u.charAt(0) !== '@') u = '@' + u;
-      document.getElementById('kitUser').textContent = u;
-      if (!prof.photo) setPhoto(savedAvatar || null, name);
+    function renderInfo() {
+      nsName.textContent = inName.value.trim() || 'आपका नाम';
+      nsPhone.textContent = inPhone.value.trim() || '98765 43210';
     }
 
     inName.value = prof.name || '';
-    inProf.value = prof.profession || '';
     inPhone.value = prof.phone || '';
-    inUser.value = prof.username || '';
-    if (prof.photo) setPhoto(prof.photo, prof.name);
-    else setPhoto(savedAvatar || null, prof.name);
+    setPhoto(prof.photo || savedAvatar || null);
+    renderInfo();
 
     fetch('/api/auth/me').then(function (r) { return r.json(); }).then(function (d) {
       if (d && d.user) {
         if (!inName.value) inName.value = d.user.name || '';
-        if (!prof.photo && d.user.avatar) savedAvatar = d.user.avatar;
-        if (d.user.plan === 'pro') { strip.style.display = 'none'; watermark.style.display = 'none'; document.getElementById('proNote').style.display = 'none'; }
-        renderKit();
+        if (!prof.photo && !savedAvatar && d.user.avatar) { savedAvatar = d.user.avatar; setPhoto(savedAvatar); }
+        if (d.user.plan === 'pro') { strip.style.display = 'none'; document.getElementById('proNote').style.display = 'none'; }
+        renderInfo();
       }
     }).catch(function () {});
-    renderKit();
 
     inPhoto.addEventListener('change', function () {
       var f = this.files[0]; if (!f) return;
       var reader = new FileReader();
-      reader.onload = function (e) { prof.photo = e.target.result; setPhoto(prof.photo, inName.value); };
+      reader.onload = function (e) { prof.photo = e.target.result; setPhoto(prof.photo); };
       reader.readAsDataURL(f);
     });
-    [inName, inProf, inPhone, inUser].forEach(function (el) { el.addEventListener('input', renderKit); });
+    [inName, inPhone].forEach(function (el) { el.addEventListener('input', renderInfo); });
     document.getElementById('saveKit').addEventListener('click', function () {
-      prof.name = inName.value.trim(); prof.profession = inProf.value.trim();
-      prof.phone = inPhone.value.trim(); prof.username = inUser.value.trim();
+      prof.name = inName.value.trim(); prof.phone = inPhone.value.trim();
       try { localStorage.setItem('ph_profile', JSON.stringify(prof)); } catch (e) {}
-      renderKit();
+      renderInfo();
       var b = this; b.textContent = '✓ सेव हो गया'; setTimeout(function () { b.textContent = 'जानकारी सेव करें'; }, 1500);
     });
 
-    // remove / re-add
-    kitClose.addEventListener('click', function (e) { e.stopPropagation(); card.hidden = true; reAdd.hidden = false; });
-    reAdd.addEventListener('click', function () { card.hidden = false; reAdd.hidden = true; });
-
-    // ===== brand card drag + scale + bg opacity =====
-    var pos = { xp: 50, yp: 70 }; var scale = 1; var bgAlpha = 0.40;
-    function applyKit() {
-      card.style.left = pos.xp + '%';
-      card.style.top = pos.yp + '%';
-      card.style.transform = 'translate(-50%,-50%) scale(' + scale + ')';
-      card.style.background = 'rgba(255,255,255,' + (bgAlpha * 0.5) + ')';
-      card.style.borderColor = 'rgba(255,255,255,' + (0.25 + bgAlpha * 0.5) + ')';
-    }
-    applyKit();
-    var kdrag = false;
-    card.addEventListener('pointerdown', function (e) { if (e.target === kitClose) return; kdrag = true; card.setPointerCapture(e.pointerId); e.preventDefault(); });
-    card.addEventListener('pointermove', function (e) {
-      if (!kdrag) return;
+    // ===== drag + resize photo circle =====
+    var pos = { xp: 50, yp: 52 }; var sizePct = 45;
+    function applyPhoto() { pc.style.left = pos.xp + '%'; pc.style.top = pos.yp + '%'; pc.style.width = sizePct + '%'; }
+    applyPhoto();
+    var drag = false;
+    pc.addEventListener('pointerdown', function (e) { drag = true; pc.setPointerCapture(e.pointerId); e.preventDefault(); });
+    pc.addEventListener('pointermove', function (e) {
+      if (!drag) return;
       var r = stage.getBoundingClientRect();
       pos.xp = Math.max(0, Math.min(100, ((e.clientX - r.left) / r.width) * 100));
       pos.yp = Math.max(0, Math.min(100, ((e.clientY - r.top) / r.height) * 100));
-      applyKit();
+      applyPhoto();
     });
-    card.addEventListener('pointerup', function () { kdrag = false; });
-    card.addEventListener('pointercancel', function () { kdrag = false; });
-    document.getElementById('sizeRange').addEventListener('input', function () { scale = this.value / 100; applyKit(); });
-    document.getElementById('bgRange').addEventListener('input', function () { bgAlpha = this.value / 100; applyKit(); });
+    pc.addEventListener('pointerup', function () { drag = false; });
+    pc.addEventListener('pointercancel', function () { drag = false; });
+    document.getElementById('sizeRange').addEventListener('input', function () { sizePct = parseInt(this.value, 10); applyPhoto(); });
 
     // ===== export =====
-    function build() {
-      kitClose.style.visibility = 'hidden';
-      reAdd.style.display = 'none';
-      function restore() { kitClose.style.visibility = ''; reAdd.style.display = ''; }
-      return html2canvas(capture, { useCORS: true, backgroundColor: '#ffffff', scale: 2, logging: false })
-        .then(function (c) { restore(); return c; })
-        .catch(function (e) { restore(); throw e; });
-    }
+    function build() { return html2canvas(capture, { useCORS: true, backgroundColor: '#ffffff', scale: 2, logging: false }); }
     function busy(btn, on, txt) { btn.disabled = on; if (on) { btn.dataset.t = btn.textContent; btn.textContent = txt; } else { btn.textContent = btn.dataset.t; } }
 
     document.getElementById('btnDownload').addEventListener('click', function () {
