@@ -25,7 +25,7 @@ import Layout from '../layouts/Layout.astro';
             <!-- BOTTOM strip: name + number (outside image) -->
             <div class='name-strip' id='nameStrip'>
               <b id='nsName'>आपका नाम</b>
-              <span id='nsPhone'>98765 43210</span>
+              <span id='nsProf'>प्रोफेशन</span>
             </div>
           </div>
         </div>
@@ -46,7 +46,7 @@ import Layout from '../layouts/Layout.astro';
           <div class='ed-seltitle'>आपकी जानकारी</div>
           <label class='ed-fld'>फोटो<input id='inPhoto' type='file' accept='image/*' /></label>
           <label class='ed-fld'>नाम<input id='inName' type='text' placeholder='आपका नाम' /></label>
-          <label class='ed-fld'>मोबाइल नंबर<input id='inPhone' type='text' placeholder='98765 43210' /></label>
+          <label class='ed-fld'>प्रोफेशन (छोटा टेक्स्ट)<input id='inProf' type='text' placeholder='जैसे: फोटोग्राफर / बिज़नेस' /></label>
           <button id='saveKit' class='btn btn-gold btn-sm'>जानकारी सेव करें</button>
         </div>
 
@@ -89,9 +89,9 @@ import Layout from '../layouts/Layout.astro';
   .bs-txt small { font-size: 11px; opacity: .92; }
 
   /* BOTTOM name + number strip */
-  .name-strip { background: #fff; text-align: center; padding: 13px 14px; }
-  .name-strip b { display: block; font-size: 20px; font-weight: 800; color: var(--ink); font-family: 'Noto Sans Devanagari', sans-serif; }
-  .name-strip span { display: block; font-size: 14px; font-weight: 700; color: #B4145A; margin-top: 3px; letter-spacing: .3px; }
+  .name-strip { background: #fff; text-align: center; padding: 7px 14px; }
+  .name-strip b { display: block; font-size: 17px; font-weight: 800; color: var(--ink); font-family: 'Noto Sans Devanagari', sans-serif; line-height: 1.15; }
+  .name-strip span { display: block; font-size: 11.5px; font-weight: 600; color: var(--muted); margin-top: 1px; }
 
   .stage-controls { margin-top: 14px; background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
   .sc-row { display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 700; margin-bottom: 10px; }
@@ -131,7 +131,7 @@ import Layout from '../layouts/Layout.astro';
     var strip = document.getElementById('brandStrip');
     var capture = document.getElementById('capture');
     var nsName = document.getElementById('nsName');
-    var nsPhone = document.getElementById('nsPhone');
+    var nsProf = document.getElementById('nsProf');
 
     // ===== profile =====
     var prof = {};
@@ -140,7 +140,7 @@ import Layout from '../layouts/Layout.astro';
     try { savedAvatar = localStorage.getItem('ph_avatar'); } catch (e) {}
 
     var inName = document.getElementById('inName');
-    var inPhone = document.getElementById('inPhone');
+    var inProf = document.getElementById('inProf');
     var inPhoto = document.getElementById('inPhoto');
 
     function setPhoto(url) {
@@ -149,11 +149,11 @@ import Layout from '../layouts/Layout.astro';
     }
     function renderInfo() {
       nsName.textContent = inName.value.trim() || 'आपका नाम';
-      nsPhone.textContent = inPhone.value.trim() || '98765 43210';
+      nsProf.textContent = inProf.value.trim() || 'प्रोफेशन';
     }
 
     inName.value = prof.name || '';
-    inPhone.value = prof.phone || '';
+    inProf.value = prof.profession || '';
     setPhoto(prof.photo || savedAvatar || null);
     renderInfo();
 
@@ -172,9 +172,9 @@ import Layout from '../layouts/Layout.astro';
       reader.onload = function (e) { prof.photo = e.target.result; setPhoto(prof.photo); };
       reader.readAsDataURL(f);
     });
-    [inName, inPhone].forEach(function (el) { el.addEventListener('input', renderInfo); });
+    [inName, inProf].forEach(function (el) { el.addEventListener('input', renderInfo); });
     document.getElementById('saveKit').addEventListener('click', function () {
-      prof.name = inName.value.trim(); prof.phone = inPhone.value.trim();
+      prof.name = inName.value.trim(); prof.profession = inProf.value.trim();
       try { localStorage.setItem('ph_profile', JSON.stringify(prof)); } catch (e) {}
       renderInfo();
       var b = this; b.textContent = '✓ सेव हो गया'; setTimeout(function () { b.textContent = 'जानकारी सेव करें'; }, 1500);

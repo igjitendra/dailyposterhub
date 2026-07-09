@@ -65,9 +65,13 @@ const cats = categories.filter((c) => c.slug !== 'all');
         <label>विवरण (Description)
           <textarea name='description' rows='2' placeholder='छोटा विवरण...'></textarea>
         </label>
-        <label>पोस्टर की तारीख़ — डेली सेक्शन के लिए (optional)
-          <input name='posterDate' type='date' />
-        </label>
+        <div class='daily-box'>
+          <label class='chk' style='margin-bottom:10px'><input type='checkbox' id='isDaily' /> यह ‘विशेष दिवस’ का पोस्टर है (खास तारीख़ पर दिखेगा)</label>
+          <label id='dateFld' style='display:none'>पोस्टर की तारीख़
+            <input name='posterDate' type='date' />
+          </label>
+          <p class='daily-hint'>टिप: तारीख़ लगाने पर यह पोस्टर ‘विशेष दिवस’ पेज पर उसी दिन के गोल (circle) में अपने-आप दिखेगा।</p>
+        </div>
         <label>पोस्टर इमेज (WebP / PNG / JPG)
           <input id='imageInput' name='image' type='file' accept='image/*' required />
         </label>
@@ -115,6 +119,8 @@ const cats = categories.filter((c) => c.slug !== 'all');
     .rad, .chk { flex-direction: row !important; align-items: center; gap: 7px; font-weight: 500 !important; }
     .chk { margin-bottom: 14px; font-size: 14px; }
     .preview { width: 100%; max-width: 220px; border-radius: 12px; margin-bottom: 14px; border: 1px solid var(--line); }
+    .daily-box { border: 1px dashed var(--purple); border-radius: 12px; padding: 14px; margin-bottom: 14px; background: var(--grad-soft); }
+    .daily-hint { font-size: 12px; color: var(--muted); margin: 8px 0 0; line-height: 1.5; }
     .up-card .btn { width: 100%; }
 
     .list { display: flex; flex-direction: column; gap: 12px; }
@@ -166,6 +172,13 @@ const cats = categories.filter((c) => c.slug !== 'all');
 
     $('#logoutBtn').addEventListener('click', () => { sessionStorage.removeItem(KEY_STORE); location.reload(); });
 
+    const isDaily = $('#isDaily');
+    const dateFld = $('#dateFld');
+    isDaily.addEventListener('change', () => {
+      dateFld.style.display = isDaily.checked ? 'flex' : 'none';
+      if (!isDaily.checked) dateFld.querySelector('input').value = '';
+    });
+
     const fileInput = $('#imageInput');
     const preview = $('#preview');
     fileInput.addEventListener('change', () => {
@@ -216,7 +229,8 @@ const cats = categories.filter((c) => c.slug !== 'all');
           const row = document.createElement('div');
           row.className = 'row';
           const badge = t.type === 'pro' ? 'Pro' : 'फ्री';
-          row.innerHTML = `<img src='${esc(t.img)}' alt='' loading='lazy'><div class='row-info'><strong>${esc(t.title)}</strong><span>${esc(t.category)} • ${badge}</span></div><button class='del' data-id='${esc(t.id)}'>हटाएं</button>`;
+          const dateTag = t.posterDate ? ` • 📅 ${esc(t.posterDate)}` : '';
+          row.innerHTML = `<img src='${esc(t.img)}' alt='' loading='lazy'><div class='row-info'><strong>${esc(t.title)}</strong><span>${esc(t.category)} • ${badge}${dateTag}</span></div><button class='del' data-id='${esc(t.id)}'>हटाएं</button>`;
           listEl.appendChild(row);
         });
         listEl.querySelectorAll('.del').forEach((b) => {
