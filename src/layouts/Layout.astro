@@ -9,9 +9,11 @@ const {
   title = site.name + ' — ' + site.tagline,
   description = 'मुफ्त हिंदी पोस्टर टेम्पलेट्स — अपना नाम, फोटो और संदेश जोड़कर सुंदर पोस्टर बनाएं और तुरंत डाउनलोड करें।',
   image = '/img/og-image.webp',
+  canonicalUrl,
+  type = 'website',
 } = Astro.props;
 
-const canonical = new URL(Astro.url.pathname, Astro.site);
+const canonical = canonicalUrl || new URL(Astro.url.pathname, Astro.site).toString();
 ---
 <!doctype html>
 <html lang='hi'>
@@ -26,7 +28,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta name='description' content={description} />
 
     <!-- Open Graph -->
-    <meta property='og:type' content='website' />
+    <meta property='og:type' content={type} />
     <meta property='og:title' content={title} />
     <meta property='og:description' content={description} />
     <meta property='og:image' content={image} />
