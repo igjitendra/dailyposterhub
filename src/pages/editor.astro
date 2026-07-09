@@ -9,14 +9,20 @@ import Layout from '../layouts/Layout.astro';
       <div class='ed-stage-col'>
         <div class='stage-frame'>
           <div class='capture' id='capture'>
+            <!-- Free plan branding strip (ABOVE image, outside poster) -->
+            <div class='brand-strip' id='brandStrip'>
+              <span class='bs-logo'>D</span>
+              <span class='bs-txt'><b>DailyPosterHub</b><small>फ्री पोस्टर रोज़ — posterhub.pages.dev</small></span>
+            </div>
             <div class='stage' id='stage'>
               <img id='posterImg' class='poster-img' alt='poster' crossorigin='anonymous' />
 
               <!-- Free watermark (inside image) -->
               <div class='watermark' id='watermark'>▶ @jitendrauno</div>
 
-              <!-- Personal brand kit -->
-              <div id='brandCard' class='kit' hidden>
+              <!-- Personal brand kit (liquid glass) -->
+              <div id='brandCard' class='kit'>
+                <button class='kit-close' id='kitClose' title='हटाएं' aria-label='हटाएं'>×</button>
                 <div class='kit-photo' id='kitPhoto'><span id='kitPhotoLetter'>D</span></div>
                 <div class='kit-info'>
                   <div class='kit-name' id='kitName'>आपका नाम</div>
@@ -32,48 +38,41 @@ import Layout from '../layouts/Layout.astro';
                   </div>
                 </div>
               </div>
-            </div>
-            <!-- Free plan branding strip -->
-            <div class='brand-strip' id='brandStrip'>
-              <span class='bs-logo'>D</span>
-              <span class='bs-txt'><b>DailyPosterHub</b><small>फ्री पोस्टर रोज़ — posterhub.pages.dev</small></span>
+
+              <!-- shown only when kit removed -->
+              <button class='re-add btn btn-primary btn-sm' id='reAdd' hidden>＋ ब्रांड किट जोड़ें</button>
             </div>
           </div>
         </div>
+
+        <!-- controls OUTSIDE the image -->
+        <div class='stage-controls'>
+          <div class='sc-row'><span>साइज़</span><input id='sizeRange' type='range' min='55' max='160' value='100' /></div>
+          <div class='sc-row'><span>बैकग्राउंड</span><input id='bgRange' type='range' min='0' max='100' value='40' /></div>
+          <p class='sc-hint'>बैकग्राउंड कम करें → पीछे का पोस्टर झलकेगा (glass इफेक्ट)।</p>
+        </div>
       </div>
 
-      <!-- CONTROLS -->
+      <!-- INFO PANEL -->
       <div class='ed-panel'>
         <h1>पोस्टर एडिट करें</h1>
-        <p class='ed-sub'>अपनी ब्रांड किट जोड़ें, खाली जगह पर खींचकर रखें, छोटा-बड़ा और पारदर्शी करें—फिर डाउनलोड/शेयर।</p>
+        <p class='ed-sub'>अपनी जानकारी भरें—ब्रांड किट पोस्टर पर आ जाएगी। उसे खींचकर खाली जगह पर रखें, ‘साइज़’ से छोटा-बड़ा करें।</p>
 
-        <div class='ed-actions'>
-          <button id='addBrand' class='btn btn-primary'>＋ ब्रांड किट जोड़ें</button>
-          <button id='removeBrand' class='btn btn-outline' hidden>ब्रांड हटाएं</button>
-        </div>
-
-        <div class='ed-kitbox' id='kitBox' hidden>
+        <div class='ed-kitbox'>
           <div class='ed-seltitle'>आपकी जानकारी</div>
           <label class='ed-fld'>नाम<input id='inName' type='text' placeholder='आपका नाम' /></label>
           <label class='ed-fld'>प्रोफेशन<input id='inProf' type='text' placeholder='जैसे: फोटोग्राफर' /></label>
           <label class='ed-fld'>मोबाइल<input id='inPhone' type='text' placeholder='98765 43210' /></label>
           <label class='ed-fld'>यूज़रनेम<input id='inUser' type='text' placeholder='@yourusername' /></label>
           <label class='ed-fld'>फोटो<input id='inPhoto' type='file' accept='image/*' /></label>
-
-          <div class='ed-seltitle' style='margin-top:6px'>एडजस्ट</div>
-          <div class='ed-size'><span>साइज़</span><input id='sizeRange' type='range' min='55' max='150' value='100' /></div>
-          <div class='ed-size'><span>बैकग्राउंड</span><input id='bgRange' type='range' min='0' max='100' value='95' /></div>
-          <p class='ed-hint2'>बैकग्राउंड कम करें → पीछे का पोस्टर झलकेगा।</p>
           <button id='saveKit' class='btn btn-gold btn-sm'>जानकारी सेव करें</button>
         </div>
-
-        <p class='ed-hint'>टिप: पोस्टर पर कार्ड को उंगली/माउस से खींचकर खाली जगह पर रखें।</p>
 
         <div class='ed-download'>
           <button id='btnDownload' class='btn btn-primary btn-lg'>⬇ डाउनलोड करें</button>
           <button id='btnShare' class='btn btn-gold btn-lg'>WhatsApp पर शेयर</button>
         </div>
-        <p class='ed-note' id='proNote'>फ्री प्लान में नीचे ब्रांडिंग पट्टी और हल्का वॉटरमार्क रहेगा। <a href='/payment'>Pro लें</a> — बिना ब्रांडिंग और HD डाउनलोड।</p>
+        <p class='ed-note' id='proNote'>फ्री प्लान में ऊपर ब्रांडिंग पट्टी और हल्का वॉटरमार्क रहेगा। <a href='/payment'>Pro लें</a> — बिना ब्रांडिंग और HD डाउनलोड।</p>
       </div>
     </div>
   </section>
@@ -85,7 +84,7 @@ import Layout from '../layouts/Layout.astro';
   .ed-wrap { padding: 24px 16px 60px; background: var(--grad-soft); min-height: 80vh; }
   .ed-grid { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 420px 1fr; gap: 32px; align-items: start; }
 
-  .stage-frame { background: #fff; border-radius: 18px; padding: 14px; box-shadow: 0 10px 30px rgba(124,58,237,.10); }
+  .stage-frame { background: #fff; border-radius: 18px; padding: 12px; box-shadow: 0 10px 30px rgba(124,58,237,.10); }
   .capture { border-radius: 12px; overflow: hidden; }
   .stage { position: relative; width: 100%; line-height: 0; background: #f0eef7; overflow: hidden; }
   .poster-img { width: 100%; height: auto; display: block; }
@@ -93,21 +92,28 @@ import Layout from '../layouts/Layout.astro';
   .watermark { position: absolute; right: 9px; bottom: 9px; color: rgba(255,255,255,.85); font-size: 13px; font-weight: 800;
     text-shadow: 0 1px 4px rgba(0,0,0,.65); pointer-events: none; line-height: 1; letter-spacing: .3px; }
 
-  .kit { position: absolute; left: 50%; top: 72%; transform: translate(-50%,-50%) scale(1); width: 78%; max-width: 340px;
-    display: flex; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 12px;
-    background: rgba(252,233,239,.95); border: 1px solid rgba(180,20,90,.25); box-shadow: 0 4px 14px rgba(0,0,0,.12);
+  /* liquid glass brand kit */
+  .kit { position: absolute; left: 50%; top: 70%; transform: translate(-50%,-50%) scale(1); width: 82%; max-width: 360px;
+    display: flex; gap: 14px; align-items: center; padding: 14px 16px; border-radius: 20px;
+    background: rgba(255,255,255,.20); backdrop-filter: blur(14px) saturate(150%); -webkit-backdrop-filter: blur(14px) saturate(150%);
+    border: 1px solid rgba(255,255,255,.5); box-shadow: 0 8px 32px rgba(0,0,0,.28);
     cursor: grab; touch-action: none; user-select: none; }
   .kit:active { cursor: grabbing; }
-  .kit-photo { flex-shrink: 0; width: 66px; height: 66px; border-radius: 50%; overflow: hidden; background: #ddd;
-    border: 2px solid #B4145A; display: grid; place-items: center; color: #B4145A; font-weight: 800; font-size: 26px;
-    background-size: cover; background-position: center; line-height: 1; }
+  .kit-close { position: absolute; top: -11px; right: -11px; width: 27px; height: 27px; border-radius: 50%; background: #fff;
+    color: #B4145A; border: none; font-size: 17px; font-weight: 800; cursor: pointer; box-shadow: 0 2px 7px rgba(0,0,0,.35);
+    display: grid; place-items: center; line-height: 1; z-index: 3; }
+  .kit-photo { flex-shrink: 0; width: 92px; height: 92px; border-radius: 16px; overflow: hidden; background: rgba(255,255,255,.4);
+    border: 3px solid rgba(255,255,255,.85); display: grid; place-items: center; color: #B4145A; font-weight: 800; font-size: 34px;
+    background-size: cover; background-position: center; line-height: 1; box-shadow: 0 3px 10px rgba(0,0,0,.2); }
   .kit-info { min-width: 0; flex: 1; line-height: 1.15; }
-  .kit-name { color: #B4145A; font-weight: 800; font-size: 19px; font-family: 'Noto Sans Devanagari', sans-serif; }
-  .kit-line { height: 1px; background: rgba(180,20,90,.3); margin: 4px 0 6px; }
-  .kit-row { display: flex; align-items: center; gap: 6px; margin: 3px 0; font-size: 12.5px; font-weight: 600; color: #222; }
-  .kit-ic { flex-shrink: 0; width: 18px; height: 18px; border-radius: 50%; background: #B4145A; display: grid; place-items: center; }
-  .kit-socials { display: flex; align-items: center; gap: 6px; margin-top: 7px; }
-  .soc { width: 19px; height: 19px; border-radius: 50%; display: grid; place-items: center; }
+  .kit-name { color: #fff; font-weight: 800; font-size: 21px; font-family: 'Noto Sans Devanagari', sans-serif; text-shadow: 0 1px 5px rgba(0,0,0,.55); }
+  .kit-line { height: 1px; background: rgba(255,255,255,.55); margin: 5px 0 7px; }
+  .kit-row { display: flex; align-items: center; gap: 7px; margin: 4px 0; font-size: 13px; font-weight: 600; color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,.5); }
+  .kit-ic { flex-shrink: 0; width: 19px; height: 19px; border-radius: 50%; background: rgba(255,255,255,.28); display: grid; place-items: center; }
+  .kit-socials { display: flex; align-items: center; gap: 7px; margin-top: 8px; }
+  .soc { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; }
+
+  .re-add { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); z-index: 4; }
 
   .brand-strip { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 11px 12px;
     background: linear-gradient(90deg,#7C3AED,#B4145A); color: #fff; }
@@ -117,19 +123,19 @@ import Layout from '../layouts/Layout.astro';
   .bs-txt b { font-size: 14px; font-weight: 800; letter-spacing: .2px; }
   .bs-txt small { font-size: 11px; opacity: .92; }
 
+  .stage-controls { margin-top: 14px; background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+  .sc-row { display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 700; margin-bottom: 12px; }
+  .sc-row span { width: 86px; flex-shrink: 0; }
+  .sc-row input { flex: 1; }
+  .sc-hint { font-size: 11.5px; color: var(--muted); margin: 0; line-height: 1.5; }
+
   .ed-panel h1 { font-size: 22px; font-weight: 800; }
   .ed-sub { color: var(--muted); font-size: 13.5px; margin: 6px 0 16px; line-height: 1.6; }
-  .ed-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
-  .ed-kitbox { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-bottom: 14px; }
-  .ed-seltitle { font-size: 13px; font-weight: 800; color: var(--purple); margin-bottom: 10px; }
+  .ed-kitbox { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+  .ed-seltitle { font-size: 13px; font-weight: 800; color: var(--purple); margin-bottom: 12px; }
   .ed-fld { display: block; font-size: 13px; font-weight: 700; margin-bottom: 10px; }
   .ed-fld input { width: 100%; margin-top: 5px; border: 1px solid var(--line); border-radius: 9px; padding: 9px 11px; font-family: inherit; font-size: 14px; outline: none; }
   .ed-fld input:focus { border-color: var(--purple); }
-  .ed-size { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; margin: 6px 0 10px; }
-  .ed-size span { width: 78px; flex-shrink: 0; }
-  .ed-size input { flex: 1; }
-  .ed-hint2 { font-size: 11.5px; color: var(--muted); margin: 0 0 14px; line-height: 1.5; }
-  .ed-hint { font-size: 12px; color: var(--muted); margin: 0 0 16px; line-height: 1.6; }
   .ed-download { display: flex; flex-direction: column; gap: 10px; }
   .ed-download .btn { width: 100%; }
   .ed-note { font-size: 12.5px; color: var(--muted); margin-top: 12px; line-height: 1.6; }
@@ -137,7 +143,7 @@ import Layout from '../layouts/Layout.astro';
 
   @media (max-width: 820px) {
     .ed-grid { grid-template-columns: 1fr; gap: 20px; }
-    .ed-stage-col { max-width: 380px; margin: 0 auto; width: 100%; }
+    .ed-stage-col { max-width: 400px; margin: 0 auto; width: 100%; }
     .ed-panel { max-width: 500px; margin: 0 auto; width: 100%; }
   }
 </style>
@@ -155,6 +161,8 @@ import Layout from '../layouts/Layout.astro';
     var strip = document.getElementById('brandStrip');
     var watermark = document.getElementById('watermark');
     var capture = document.getElementById('capture');
+    var reAdd = document.getElementById('reAdd');
+    var kitClose = document.getElementById('kitClose');
 
     // ===== profile / brand kit =====
     var prof = {};
@@ -217,29 +225,22 @@ import Layout from '../layouts/Layout.astro';
       var b = this; b.textContent = '✓ सेव हो गया'; setTimeout(function () { b.textContent = 'जानकारी सेव करें'; }, 1500);
     });
 
-    document.getElementById('addBrand').addEventListener('click', function () {
-      card.hidden = false; this.hidden = true;
-      document.getElementById('removeBrand').hidden = false;
-      document.getElementById('kitBox').hidden = false;
-    });
-    document.getElementById('removeBrand').addEventListener('click', function () {
-      card.hidden = true; this.hidden = true;
-      document.getElementById('addBrand').hidden = false;
-      document.getElementById('kitBox').hidden = true;
-    });
+    // remove / re-add
+    kitClose.addEventListener('click', function (e) { e.stopPropagation(); card.hidden = true; reAdd.hidden = false; });
+    reAdd.addEventListener('click', function () { card.hidden = false; reAdd.hidden = true; });
 
     // ===== brand card drag + scale + bg opacity =====
-    var pos = { xp: 50, yp: 72 }; var scale = 1; var bgAlpha = 0.95;
+    var pos = { xp: 50, yp: 70 }; var scale = 1; var bgAlpha = 0.40;
     function applyKit() {
       card.style.left = pos.xp + '%';
       card.style.top = pos.yp + '%';
       card.style.transform = 'translate(-50%,-50%) scale(' + scale + ')';
-      card.style.background = 'rgba(252,233,239,' + bgAlpha + ')';
-      card.style.borderColor = 'rgba(180,20,90,' + (bgAlpha * 0.28) + ')';
+      card.style.background = 'rgba(255,255,255,' + (bgAlpha * 0.5) + ')';
+      card.style.borderColor = 'rgba(255,255,255,' + (0.25 + bgAlpha * 0.5) + ')';
     }
     applyKit();
     var kdrag = false;
-    card.addEventListener('pointerdown', function (e) { kdrag = true; card.setPointerCapture(e.pointerId); e.preventDefault(); });
+    card.addEventListener('pointerdown', function (e) { if (e.target === kitClose) return; kdrag = true; card.setPointerCapture(e.pointerId); e.preventDefault(); });
     card.addEventListener('pointermove', function (e) {
       if (!kdrag) return;
       var r = stage.getBoundingClientRect();
@@ -254,7 +255,12 @@ import Layout from '../layouts/Layout.astro';
 
     // ===== export =====
     function build() {
-      return html2canvas(capture, { useCORS: true, backgroundColor: '#ffffff', scale: 2, logging: false });
+      kitClose.style.visibility = 'hidden';
+      reAdd.style.display = 'none';
+      function restore() { kitClose.style.visibility = ''; reAdd.style.display = ''; }
+      return html2canvas(capture, { useCORS: true, backgroundColor: '#ffffff', scale: 2, logging: false })
+        .then(function (c) { restore(); return c; })
+        .catch(function (e) { restore(); throw e; });
     }
     function busy(btn, on, txt) { btn.disabled = on; if (on) { btn.dataset.t = btn.textContent; btn.textContent = txt; } else { btn.textContent = btn.dataset.t; } }
 
