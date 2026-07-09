@@ -147,7 +147,7 @@ const fallback = templates;
         var badge = t.type === 'pro' ? '<span class="badge badge-pro">Pro</span>' : '<span class="badge badge-free">फ़्री</span>';
         card.innerHTML = "<div class='tpl-thumb'><img src='" + esc(t.img) + "' alt='" + esc(t.title) + "' loading='lazy'>" + badge + "</div>" +
           "<div class='tpl-body'><h4>" + esc(t.title) + "</h4><span class='tpl-cat'>" + esc(t.category || '') + "</span>" +
-          "<a href='/posters' class='btn btn-primary btn-sm tpl-btn'>एडिट करें</a></div>";
+          "<a href='/editor?img=" + encodeURIComponent(t.img || '') + "&title=" + encodeURIComponent(t.title || '') + "&type=" + encodeURIComponent(t.type || 'free') + "' class='btn btn-primary btn-sm tpl-btn'>एडिट करें</a></div>";
         grid.appendChild(card);
       });
     }
