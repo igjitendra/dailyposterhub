@@ -32,6 +32,16 @@ import Icon from '../components/Icon.astro';
         <p class='cta-note ok'><Icon name='check-circle' size={16} /> आपका Pro एक्टिव है — धन्यवाद!</p>
       </div>
 
+      <div class='acc-profile'>
+        <h2><Icon name='edit' size={15} /> ब्रांड प्रोफाइल</h2>
+        <p class='prof-note'>यह जानकारी पोस्टर एडिटर की ब्रांड किट में अपने-आप भर जाएगी।</p>
+        <label class='prof-fld'>नाम<input id='pfName' type='text' placeholder='आपका नाम' /></label>
+        <label class='prof-fld'>प्रोफेशन<input id='pfProf' type='text' placeholder='जैसे: फोटोग्राफर / दुकानदार' /></label>
+        <label class='prof-fld'>मोबाइल<input id='pfPhone' type='text' placeholder='98765 43210' /></label>
+        <label class='prof-fld'>यूज़रनेम<input id='pfUser' type='text' placeholder='@yourusername' /></label>
+        <button id='pfSave' class='btn btn-gold btn-sm'>प्रोफाइल सेव करें</button>
+      </div>
+
       <div class='acc-links'>
         <a href='/posters/' class='btn btn-primary btn-sm'><Icon name='image' size={15} /> पोस्टर बनाएं</a>
         <button id='logoutBtn' class='btn btn-outline btn-sm'>लॉगआउट</button>
@@ -71,6 +81,15 @@ import Icon from '../components/Icon.astro';
   .cta-note.ok :global(.icon) { color: #16A34A; }
   .pro-active { background: #DCFCE7; border-radius: 12px; padding: 16px; }
   .pro-active .cta-note { margin-bottom: 0; }
+
+  .acc-profile { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--line); }
+  .acc-profile h2 { font-size: 15px; font-weight: 800; display: flex; align-items: center; gap: 7px; }
+  .acc-profile h2 :global(.icon) { color: var(--purple); }
+  .prof-note { font-size: 12.5px; color: var(--muted); margin: 6px 0 14px; line-height: 1.5; }
+  .prof-fld { display: block; font-size: 13px; font-weight: 700; margin-bottom: 10px; }
+  .prof-fld input { width: 100%; margin-top: 5px; border: 1px solid var(--line); border-radius: 9px; padding: 9px 11px; font-family: inherit; font-size: 14px; outline: none; }
+  .prof-fld input:focus { border-color: var(--purple); }
+  #pfSave { width: 100%; margin-top: 4px; }
 
   .acc-links { display: flex; gap: 10px; margin-top: 22px; }
   .acc-links .btn { flex: 1; }
@@ -118,7 +137,26 @@ import Icon from '../components/Icon.astro';
 
       loading.hidden = true;
       card.hidden = false;
+
+      // ---- brand profile prefill ----
+      var prof = {};
+      try { prof = JSON.parse(localStorage.getItem('ph_profile') || '{}') || {}; } catch (e) {}
+      document.getElementById('pfName').value = prof.name || u.name || '';
+      document.getElementById('pfProf').value = prof.profession || '';
+      document.getElementById('pfPhone').value = prof.phone || u.phone || '';
+      document.getElementById('pfUser').value = prof.username || '';
     }).catch(function () { window.location.href = '/login'; });
+
+    document.getElementById('pfSave').addEventListener('click', function () {
+      var prof = {};
+      try { prof = JSON.parse(localStorage.getItem('ph_profile') || '{}') || {}; } catch (e) {}
+      prof.name = document.getElementById('pfName').value.trim();
+      prof.profession = document.getElementById('pfProf').value.trim();
+      prof.phone = document.getElementById('pfPhone').value.trim();
+      prof.username = document.getElementById('pfUser').value.trim();
+      try { localStorage.setItem('ph_profile', JSON.stringify(prof)); } catch (e) {}
+      var b = this; b.textContent = '✓ सेव हो गया'; setTimeout(function () { b.textContent = 'प्रोफाइल सेव करें'; }, 1500);
+    });
 
     document.getElementById('avatarInput').addEventListener('change', function () {
       var f = this.files[0];
