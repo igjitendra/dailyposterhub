@@ -71,11 +71,8 @@ const fallback = templates;
   .tpl-thumb { position: relative; }
   .tpl-thumb img { aspect-ratio: 3/4; object-fit: cover; width: 100%; border-radius: var(--radius) var(--radius) 0 0; background: linear-gradient(135deg,#EDE9FE,#E0E7FF); display: block; }
   .tpl-thumb .badge { position: absolute; top: 12px; left: 12px; }
-  .tpl-body { padding: 12px 14px 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; text-align: left; }
-  .tpl-meta { flex: 1; min-width: 0; }
-  .tpl-body h4 { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .tpl-cat { display: block; font-size: 12.5px; color: var(--muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .tpl-btn { flex-shrink: 0; gap: 6px; white-space: nowrap; }
+  .tpl-body { padding: 10px; }
+  .tpl-btn { width: 100%; justify-content: center; gap: 6px; font-size: 15px; padding: 12px; }
 
   .empty { text-align: center; padding: 60px 20px; color: var(--muted); }
   .empty :global(.icon) { color: var(--line); margin-bottom: 10px; }
@@ -87,8 +84,6 @@ const fallback = templates;
     .tpl-grid { grid-template-columns: 1fr; gap: 16px; }
     .tpl-thumb img { aspect-ratio: 4/5; }
     .page-hero h1 { font-size: 28px; }
-    .tpl-body { flex-direction: column; align-items: stretch; gap: 10px; }
-    .tpl-body h4, .tpl-cat { white-space: normal; }
     .tpl-btn { width: 100%; justify-content: center; }
   }
 </style>
@@ -180,8 +175,8 @@ const fallback = templates;
         card.className = 'tpl-card card';
         var badge = t.type === 'pro' ? '<span class="badge badge-pro">Pro</span>' : '<span class="badge badge-free">फ़्री</span>';
         card.innerHTML = "<div class='tpl-thumb'><img src='" + esc(t.img) + "' alt='" + esc(t.title) + "' loading='lazy'>" + badge + "</div>" +
-          "<div class='tpl-body'><div class='tpl-meta'><h4>" + esc(t.title) + "</h4><span class='tpl-cat'>" + esc(t.description || t.category || '') + "</span></div>" +
-          "<a href='/editor?img=" + encodeURIComponent(t.img || '') + "&title=" + encodeURIComponent(t.title || '') + "&type=" + encodeURIComponent(t.type || 'free') + "' class='btn btn-primary btn-sm tpl-btn'>एडिट करें</a></div>";
+          "<div class='tpl-body'>" +
+          "<a href='/editor?img=" + encodeURIComponent(t.img || '') + "&title=" + encodeURIComponent(t.title || '') + "&type=" + encodeURIComponent(t.type || 'free') + "' class='btn btn-primary tpl-btn'>एडिट करें</a></div>";
         grid.appendChild(card);
       });
     }
