@@ -8,15 +8,15 @@ const fallback = templates;
 <Layout title='डेली पोस्टर — Daily PosterHub'>
   <section class='page-hero'>
     <div class='container'>
-      <h1>डेली <span class='grad-text'>पोस्टर</span></h1>
-      <p>हर दिन के लिए नए पोस्टर — तारीख़ चुनें, एडिट करें और डाउनलोड करें</p>
+      <h1>विशेष <span class='grad-text'>दिवस</span></h1>
+      <p>खास दिनों के पोस्टर — जयंती, पुण्यतिथि, त्योहार व अन्य खास मौके। तारीख़ चुनें, एडिट करें और डाउनलोड करें।</p>
     </div>
   </section>
 
   <section class='section' style='padding-top:24px'>
     <div class='container'>
       <div class='filters' id='catFilters'>
-        <button class='chip active' data-cat='__daily__'><Icon name='sun' size={15} /> डेली</button>
+        <button class='chip active' data-cat='__daily__'><Icon name='sparkles' size={15} /> विशेष दिवस</button>
         <button class='chip' data-cat='__all__'><Icon name='grid' size={15} /> सभी</button>
         {cats.map((c) => (
           <button class='chip' data-cat={c.name}><Icon name={c.icon} size={15} /> {c.name}</button>
@@ -24,6 +24,8 @@ const fallback = templates;
       </div>
 
       <div class='date-strip' id='dateStrip'></div>
+
+      <p class='daily-note' id='dailyNote'>आज के विशेष दिवस — जयंती, पुण्यतिथि, त्योहार व अन्य खास मौकों के पोस्टर। नई तारीख़ अपने-आप जुड़ती रहती है।</p>
 
       <div class='grid-info' id='gridInfo'></div>
 
@@ -53,6 +55,7 @@ const fallback = templates;
   .datechip.active { background: var(--grad); color: #fff; border-color: transparent; }
 
   .grid-info { font-size: 13.5px; color: var(--muted); margin: 4px 0 16px; font-weight: 600; }
+  .daily-note { font-size: 13px; color: var(--muted); margin: 0 0 14px; line-height: 1.5; }
 
   .tpl-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
   .tpl-card { overflow: hidden; }
@@ -119,11 +122,14 @@ const fallback = templates;
       var strip = document.getElementById('dateStrip');
       var list = [];
 
+      var note = document.getElementById('dailyNote');
       if (mode === 'daily') {
         strip.style.display = 'flex';
+        if (note) note.style.display = 'block';
         list = POSTERS.filter(function (p) { return toMD(p.posterDate) === selectedMD; }).sort(byLatest);
       } else {
         strip.style.display = 'none';
+        if (note) note.style.display = 'none';
         var src = POSTERS.length ? POSTERS : fallback;
         if (mode === '__all__') list = src.slice().sort(byLatest);
         else list = src.filter(function (p) { return p.category === mode; }).sort(byLatest);
@@ -135,7 +141,7 @@ const fallback = templates;
       if (!list.length) {
         empty.hidden = false;
         document.getElementById('emptyText').textContent = mode === 'daily'
-          ? 'इस तारीख़ के लिए अभी कोई पोस्टर नहीं — जल्द ही जोड़े जाएंगे!'
+          ? 'इस दिन के लिए अभी कोई विशेष पोस्टर नहीं — जल्द ही जोड़े जाएंगे!'
           : 'इस श्रेणी में अभी कोई पोस्टर नहीं है।';
         return;
       }
