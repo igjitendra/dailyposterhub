@@ -17,7 +17,7 @@ bucket_name = "posterhub-templates"
 # Fir uski ID niche daalo. (Preview build ke liye preview_id bhi daal sakte ho.)
 [[kv_namespaces]]
 binding = "USERS"
-id = "YAHAN_KV_NAMESPACE_ID_DAALO"
+id = "9a0838969c46489397b7025d06af7dcc"
 # preview_id = "YAHAN_PREVIEW_KV_ID"
 
 # SESSION_SECRET ek SECRET hai -> Pages > Settings > Environment variables me daalo
