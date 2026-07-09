@@ -59,7 +59,7 @@ const proFeatures = [
               <li class='yes'><Icon name='check' size={16} /> {f}</li>
             ))}
           </ul>
-          <a href='#pay' class='btn btn-gold btn-lg'><Icon name='crown' size={16} /> Pro खरीदें</a>
+          <a href='/payment' class='btn btn-gold btn-lg'><Icon name='crown' size={16} /> Pro खरीदें</a>
         </div>
       </div>
 
@@ -92,6 +92,7 @@ const proFeatures = [
           <Icon name='shield-check' size={16} />
           भुगतान के बाद screenshot हमें भेजें — आपका Pro एक्टिवेट कर दिया जाएगा।
         </p>
+        <a href='/payment' class='btn btn-primary btn-lg pay-cta'><Icon name='credit-card' size={16} /> QR + स्क्रीनशॉट से Pro चालू करें</a>
       </div>
 
       <p class='guarantee'><Icon name='shield' size={15} /> सुरक्षित भुगतान • कभी भी कैंसिल करें • कोई छिपा शुल्क नहीं</p>
@@ -135,6 +136,7 @@ const proFeatures = [
   .copy-btn { flex-shrink: 0; }
   .pay-note { display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--muted); margin-top: 18px; }
   .pay-note :global(.icon) { color: #16A34A; flex-shrink: 0; }
+  .pay-cta { width: 100%; margin-top: 18px; }
 
   .guarantee { display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--muted); font-size: 14px; margin-top: 26px; }
 

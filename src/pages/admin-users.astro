@@ -1,0 +1,73 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title='Admin — Users'>
+  <section class='au-wrap'>
+    <div class='au-card card'>
+      <h1>यूज़र Pro एक्टिवेशन</h1>
+      <p class='au-sub'>WhatsApp पर payment verify करने के बाद नीचे यूज़र का ईमेल डालकर Pro चालू करें।</p>
+
+      <label class='au-label'>Admin Key
+        <input id='adminKey' type='password' placeholder='आपकी ADMIN_KEY' />
+      </label>
+      <label class='au-label'>यूज़र का ईमेल
+        <input id='userEmail' type='email' placeholder='user@example.com' />
+      </label>
+
+      <div class='au-btns'>
+        <button id='proBtn' class='btn btn-gold btn-lg'>Pro चालू करें</button>
+        <button id='freeBtn' class='btn btn-outline btn-lg'>Free करें</button>
+      </div>
+
+      <p id='auMsg' class='au-msg' hidden></p>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .au-wrap { min-height: 66vh; display: grid; place-items: center; padding: 50px 20px; background: var(--grad-soft); }
+  .au-card { width: 100%; max-width: 440px; padding: 32px 30px; background: #fff; }
+  .au-card h1 { font-size: 21px; font-weight: 800; }
+  .au-sub { color: var(--muted); font-size: 13.5px; margin: 8px 0 22px; line-height: 1.6; }
+  .au-label { display: flex; flex-direction: column; gap: 6px; font-size: 13.5px; font-weight: 600; margin-bottom: 16px; }
+  .au-label input { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; font-family: inherit; font-size: 15px; outline: none; }
+  .au-label input:focus { border-color: var(--purple); }
+  .au-btns { display: flex; gap: 10px; margin-top: 6px; }
+  .au-btns .btn { flex: 1; }
+  .au-msg { margin-top: 18px; font-size: 13.5px; font-weight: 600; padding: 11px 14px; border-radius: 10px; line-height: 1.5; }
+  .au-msg.err { background: #FEE2E2; color: #B91C1C; }
+  .au-msg.ok { background: #DCFCE7; color: #166534; }
+</style>
+
+<script>
+  const KEY = 'ph_admin_key';
+  const keyInput = document.getElementById('adminKey');
+  const emailInput = document.getElementById('userEmail');
+  const msg = document.getElementById('auMsg');
+  const saved = sessionStorage.getItem(KEY);
+  if (saved) keyInput.value = saved;
+
+  function show(text, kind) { msg.textContent = text; msg.className = 'au-msg ' + kind; msg.hidden = false; }
+
+  async function setPlan(plan) {
+    const key = keyInput.value.trim();
+    const email = emailInput.value.trim();
+    if (!key) return show('Admin Key डालें।', 'err');
+    if (!email) return show('यूज़र का ईमेल डालें।', 'err');
+    sessionStorage.setItem(KEY, key);
+    show('रुकिए...', 'ok');
+    try {
+      const r = await fetch('/api/admin/set-plan', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', 'x-admin-key': key },
+        body: JSON.stringify({ email, plan }),
+      });
+      const j = await r.json().catch(() => ({}));
+      if (r.ok) show((j.name || email) + ' का प्लान अब: ' + (j.plan === 'pro' ? 'PRO ✅' : 'FREE') , 'ok');
+      else show(j.message || 'एरर — फिर कोशिश करें।', 'err');
+    } catch (e) { show('नेटवर्क समस्या।', 'err'); }
+  }
+
+  document.getElementById('proBtn').addEventListener('click', () => setPlan('pro'));
+  document.getElementById('freeBtn').addEventListener('click', () => setPlan('free'));
+</script>

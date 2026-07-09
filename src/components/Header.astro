@@ -53,7 +53,7 @@ import { site, nav, pricing, categories } from '../data/site.js';
     <!-- Right actions -->
     <div class='header-actions'>
       <button class='icon-btn' aria-label='खोजें' id='searchBtn'><Icon name='search' size={20} /></button>
-      <a href='/login' class='btn btn-outline btn-sm hide-sm'>लॉगिन</a>
+      <a href='/login' class='btn btn-outline btn-sm hide-sm js-auth-link'>लॉगिन</a>
       <a href='/pricing' class='btn btn-primary btn-sm pro-btn hide-sm'>
         <Icon name='crown' size={16} /> Pro प्लान लें
       </a>
@@ -77,7 +77,7 @@ import { site, nav, pricing, categories } from '../data/site.js';
     ))}
   </nav>
   <div class='drawer-cta'>
-    <a href='/login' class='btn btn-outline btn-lg'>लॉगिन</a>
+    <a href='/login' class='btn btn-outline btn-lg js-auth-link'>लॉगिन</a>
     <a href='/pricing' class='btn btn-primary btn-lg'><Icon name='crown' size={16} /> Pro प्लान लें</a>
   </div>
 </aside>
@@ -165,4 +165,16 @@ import { site, nav, pricing, categories } from '../data/site.js';
   backdrop?.addEventListener('click', close);
   drawer?.querySelectorAll('a').forEach((a) => a.addEventListener('click', close));
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+</script>
+
+<script>
+  // Login state: agar logged-in hai to "लॉगिन" ko "मेरा खाता" bana do.
+  fetch('/api/auth/me').then((r) => r.json()).then((d) => {
+    if (d && d.user) {
+      document.querySelectorAll('.js-auth-link').forEach((a) => {
+        a.textContent = 'मेरा खाता';
+        a.setAttribute('href', '/account');
+      });
+    }
+  }).catch(() => {});
 </script>

@@ -12,38 +12,36 @@ import Icon from '../components/Icon.astro';
       </div>
 
       <div class='tabs'>
-        <button class='tab active' data-tab='login'>लॉगिन</button>
-        <button class='tab' data-tab='signup'>नया खाता</button>
+        <button class='tab active' data-tab='login' type='button'>लॉगिन</button>
+        <button class='tab' data-tab='signup' type='button'>नया खाता</button>
       </div>
 
+      <p id='authMsg' class='auth-msg' hidden></p>
+
       <!-- LOGIN -->
-      <form class='auth-form' data-form='login' onsubmit='return false'>
+      <form class='auth-form' id='loginForm' data-form='login'>
         <label>ईमेल
-          <input type='email' placeholder='you@example.com' required />
+          <input id='liEmail' type='email' autocomplete='email' placeholder='you@example.com' required />
         </label>
         <label>पासवर्ड
-          <input type='password' placeholder='********' required />
+          <input id='liPass' type='password' autocomplete='current-password' placeholder='********' required />
         </label>
-        <div class='form-row'>
-          <label class='remember'><input type='checkbox' /> मुझे याद रखें</label>
-          <a href='/login' class='forgot'>पासवर्ड भूल गए?</a>
-        </div>
         <button class='btn btn-primary btn-lg' type='submit'>लॉगिन करें</button>
       </form>
 
       <!-- SIGNUP -->
-      <form class='auth-form hidden' data-form='signup' onsubmit='return false'>
+      <form class='auth-form hidden' id='signupForm' data-form='signup'>
         <label>पूरा नाम
-          <input type='text' placeholder='आपका नाम' required />
+          <input id='suName' type='text' autocomplete='name' placeholder='आपका नाम' required />
         </label>
         <label>ईमेल
-          <input type='email' placeholder='you@example.com' required />
+          <input id='suEmail' type='email' autocomplete='email' placeholder='you@example.com' required />
         </label>
-        <label>मोबाइल
-          <input type='tel' placeholder='मोबाइल नंबर' />
+        <label>मोबाइल (वैकल्पिक)
+          <input id='suPhone' type='tel' autocomplete='tel' placeholder='मोबाइल नंबर' />
         </label>
         <label>पासवर्ड
-          <input type='password' placeholder='मज़बूत पासवर्ड बनाएं' required />
+          <input id='suPass' type='password' autocomplete='new-password' placeholder='कम से कम 6 अक्षर' required minlength='6' />
         </label>
         <button class='btn btn-primary btn-lg' type='submit'>खाता बनाएं</button>
       </form>
@@ -65,9 +63,13 @@ import Icon from '../components/Icon.astro';
   .auth-head h1 { font-size: 24px; font-weight: 800; }
   .auth-head p { color: var(--muted); font-size: 14px; margin-top: 6px; }
 
-  .tabs { display: flex; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 4px; margin-bottom: 22px; }
+  .tabs { display: flex; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 4px; margin-bottom: 18px; }
   .tab { flex: 1; padding: 10px; border-radius: 9px; font-family: inherit; font-size: 14.5px; font-weight: 700; color: var(--muted); cursor: pointer; background: transparent; border: none; transition: all .2s; }
   .tab.active { background: #fff; color: var(--purple); box-shadow: var(--shadow-sm); }
+
+  .auth-msg { font-size: 13.5px; font-weight: 600; padding: 11px 14px; border-radius: 10px; margin-bottom: 16px; line-height: 1.5; }
+  .auth-msg.err { background: #FEE2E2; color: #B91C1C; }
+  .auth-msg.ok { background: #DCFCE7; color: #166534; }
 
   .auth-form { display: flex; flex-direction: column; gap: 16px; }
   .auth-form.hidden { display: none; }
@@ -75,11 +77,7 @@ import Icon from '../components/Icon.astro';
   .auth-form input { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; font-family: inherit; font-size: 15px; outline: none; }
   .auth-form input:focus { border-color: var(--purple); }
   .auth-form .btn { margin-top: 4px; }
-
-  .form-row { display: flex; align-items: center; justify-content: space-between; margin-top: -4px; }
-  .remember { flex-direction: row; align-items: center; gap: 7px; font-size: 13px; font-weight: 500; color: var(--muted); }
-  .remember input { width: auto; }
-  .forgot { font-size: 13px; color: var(--purple); font-weight: 600; }
+  .auth-form .btn[disabled] { opacity: .6; cursor: default; transform: none; }
 
   .auth-note { display: flex; align-items: flex-start; gap: 8px; text-align: left; font-size: 12.5px; color: var(--muted); margin-top: 22px; line-height: 1.6; background: var(--bg); padding: 12px 14px; border-radius: 10px; }
   .auth-note :global(.icon) { color: #16A34A; flex-shrink: 0; margin-top: 1px; }
@@ -89,11 +87,68 @@ import Icon from '../components/Icon.astro';
 <script>
   const tabs = document.querySelectorAll('.tab');
   const forms = document.querySelectorAll('.auth-form');
+  const msg = document.getElementById('authMsg');
+
+  function showMsg(text, kind) {
+    msg.textContent = text;
+    msg.className = 'auth-msg ' + (kind || 'err');
+    msg.hidden = false;
+  }
+  function hideMsg() { msg.hidden = true; }
+
   tabs.forEach((t) => {
     t.addEventListener('click', () => {
       const name = t.getAttribute('data-tab');
       tabs.forEach((x) => x.classList.toggle('active', x === t));
       forms.forEach((f) => f.classList.toggle('hidden', f.getAttribute('data-form') !== name));
+      hideMsg();
     });
   });
+
+  async function submitAuth(url, data, btn) {
+    const orig = btn.textContent;
+    btn.disabled = true; btn.textContent = 'रुकिए...';
+    hideMsg();
+    try {
+      const r = await fetch(url, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      const j = await r.json().catch(() => ({}));
+      if (r.ok) {
+        showMsg('हो गया! रीडायरेक्ट हो रहा है...', 'ok');
+        window.location.href = '/account';
+        return;
+      }
+      showMsg(j.message || 'कुछ गलत हो गया, फिर कोशिश करें।', 'err');
+    } catch (e) {
+      showMsg('नेटवर्क समस्या — फिर कोशिश करें।', 'err');
+    } finally {
+      btn.disabled = false; btn.textContent = orig;
+    }
+  }
+
+  document.getElementById('loginForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    submitAuth('/api/auth/login', {
+      email: document.getElementById('liEmail').value,
+      password: document.getElementById('liPass').value,
+    }, e.submitter || e.target.querySelector('button[type=submit]'));
+  });
+
+  document.getElementById('signupForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    submitAuth('/api/auth/signup', {
+      name: document.getElementById('suName').value,
+      email: document.getElementById('suEmail').value,
+      phone: document.getElementById('suPhone').value,
+      password: document.getElementById('suPass').value,
+    }, e.submitter || e.target.querySelector('button[type=submit]'));
+  });
+
+  // Agar pehle se logged-in hai to account bhej do
+  fetch('/api/auth/me').then((r) => r.json()).then((d) => {
+    if (d && d.user) window.location.href = '/account';
+  }).catch(() => {});
 </script>
