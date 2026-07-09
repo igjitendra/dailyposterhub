@@ -23,3 +23,4 @@ id = "9a0838969c46489397b7025d06af7dcc"
 # SESSION_SECRET ek SECRET hai -> Pages > Settings > Environment variables me daalo
 # (koi bhi lamba random string, jaise 40+ characters). Login sessions isse sign hote hain.
 # ADMIN_KEY wahi use hota hai /admin-users panel ke liye (Pro manual activate).
+## Done
