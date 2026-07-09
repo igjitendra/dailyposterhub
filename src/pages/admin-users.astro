@@ -1,73 +1,191 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
 ---
-<Layout title='Admin — Users'>
+<Layout title='Admin — यूज़र डैशबोर्ड'>
   <section class='au-wrap'>
-    <div class='au-card card'>
-      <h1>यूज़र Pro एक्टिवेशन</h1>
-      <p class='au-sub'>WhatsApp पर payment verify करने के बाद नीचे यूज़र का ईमेल डालकर Pro चालू करें।</p>
+    <div class='au-inner'>
+      <div class='au-card card'>
+        <h1><Icon name='users' size={20} /> यूज़र डैशबोर्ड</h1>
+        <p class='au-sub'>WhatsApp पर payment verify करने के बाद यहां से Pro चालू/बंद करें।</p>
 
-      <label class='au-label'>Admin Key
-        <input id='adminKey' type='password' placeholder='आपकी ADMIN_KEY' />
-      </label>
-      <label class='au-label'>यूज़र का ईमेल
-        <input id='userEmail' type='email' placeholder='user@example.com' />
-      </label>
+        <label class='au-label'>Admin Key
+          <div class='key-row'>
+            <input id='adminKey' type='password' placeholder='आपकी ADMIN_KEY' />
+            <button id='loadBtn' class='btn btn-primary'>लोड करें</button>
+          </div>
+        </label>
 
-      <div class='au-btns'>
-        <button id='proBtn' class='btn btn-gold btn-lg'>Pro चालू करें</button>
-        <button id='freeBtn' class='btn btn-outline btn-lg'>Free करें</button>
+        <div class='stats' id='stats' hidden>
+          <div class='stat'><span class='num' id='stTotal'>0</span><span class='lbl'>कुल यूज़र</span></div>
+          <div class='stat'><span class='num' id='stPro'>0</span><span class='lbl'>Pro</span></div>
+          <div class='stat'><span class='num' id='stFree'>0</span><span class='lbl'>Free</span></div>
+        </div>
+
+        <p id='auMsg' class='au-msg' hidden></p>
       </div>
 
-      <p id='auMsg' class='au-msg' hidden></p>
+      <div class='au-card card manual'>
+        <h2>ईमेल से Pro चालू करें</h2>
+        <div class='fld'><input id='userEmail' type='email' placeholder='user@example.com' /></div>
+        <div class='au-btns'>
+          <button id='proBtn' class='btn btn-gold'>Pro चालू करें</button>
+          <button id='freeBtn' class='btn btn-outline'>Free करें</button>
+        </div>
+      </div>
+
+      <div class='au-card card' id='listCard' hidden>
+        <div class='list-head'>
+          <h2>सभी यूज़र</h2>
+          <input id='search' class='search' type='text' placeholder='नाम / ईमेल खोजें...' />
+        </div>
+        <div class='table-wrap'>
+          <table class='utable'>
+            <thead><tr><th>यूज़र</th><th>प्लान</th><th>जॉइन</th><th></th></tr></thead>
+            <tbody id='uBody'></tbody>
+          </table>
+        </div>
+        <p id='listEmpty' class='muted' hidden>अभी कोई यूज़र नहीं।</p>
+      </div>
     </div>
   </section>
 </Layout>
 
 <style>
-  .au-wrap { min-height: 66vh; display: grid; place-items: center; padding: 50px 20px; background: var(--grad-soft); }
-  .au-card { width: 100%; max-width: 440px; padding: 32px 30px; background: #fff; }
-  .au-card h1 { font-size: 21px; font-weight: 800; }
-  .au-sub { color: var(--muted); font-size: 13.5px; margin: 8px 0 22px; line-height: 1.6; }
-  .au-label { display: flex; flex-direction: column; gap: 6px; font-size: 13.5px; font-weight: 600; margin-bottom: 16px; }
-  .au-label input { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; font-family: inherit; font-size: 15px; outline: none; }
-  .au-label input:focus { border-color: var(--purple); }
-  .au-btns { display: flex; gap: 10px; margin-top: 6px; }
+  .au-wrap { min-height: 66vh; padding: 40px 20px; background: var(--grad-soft); }
+  .au-inner { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; }
+  .au-card { padding: 26px 24px; background: #fff; }
+  .au-card h1 { font-size: 21px; font-weight: 800; display: flex; align-items: center; gap: 9px; }
+  .au-card h2 { font-size: 17px; font-weight: 800; margin-bottom: 14px; }
+  .au-sub { color: var(--muted); font-size: 13.5px; margin: 8px 0 20px; line-height: 1.6; }
+  .au-label { display: block; font-size: 13.5px; font-weight: 700; }
+  .key-row { display: flex; gap: 10px; margin-top: 8px; }
+  .key-row input { flex: 1; border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; font-family: inherit; font-size: 15px; outline: none; }
+  .key-row input:focus { border-color: var(--purple); }
+  .fld input { width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; font-family: inherit; font-size: 15px; outline: none; margin-bottom: 12px; }
+
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 18px; }
+  .stat { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 14px; text-align: center; }
+  .stat .num { display: block; font-size: 24px; font-weight: 800; color: var(--purple); }
+  .stat .lbl { font-size: 12.5px; color: var(--muted); }
+
+  .au-btns { display: flex; gap: 10px; }
   .au-btns .btn { flex: 1; }
-  .au-msg { margin-top: 18px; font-size: 13.5px; font-weight: 600; padding: 11px 14px; border-radius: 10px; line-height: 1.5; }
+
+  .list-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
+  .search { border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px; font-family: inherit; font-size: 14px; outline: none; }
+  .table-wrap { overflow-x: auto; }
+  .utable { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .utable th { text-align: left; font-size: 12px; color: var(--muted); text-transform: uppercase; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+  .utable td { padding: 10px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  .u-cell { display: flex; align-items: center; gap: 10px; }
+  .u-av { width: 36px; height: 36px; border-radius: 9px; background: var(--grad); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 15px; flex-shrink: 0; background-size: cover; background-position: center; overflow: hidden; }
+  .u-name { font-weight: 700; }
+  .u-email { font-size: 12px; color: var(--muted); word-break: break-all; }
+  .u-since { font-size: 12.5px; color: var(--muted); white-space: nowrap; }
+  .btn-mini { font-family: inherit; font-weight: 700; font-size: 12.5px; padding: 7px 12px; border-radius: 8px; border: none; cursor: pointer; white-space: nowrap; }
+  .to-pro { background: var(--gold); color: #3a2a00; }
+  .to-free { background: #FEE2E2; color: #B91C1C; }
+
+  .au-msg { margin-top: 16px; font-size: 13.5px; font-weight: 600; padding: 11px 14px; border-radius: 10px; line-height: 1.5; }
   .au-msg.err { background: #FEE2E2; color: #B91C1C; }
   .au-msg.ok { background: #DCFCE7; color: #166534; }
+  .muted { color: var(--muted); font-size: 14px; padding: 8px 0; }
 </style>
 
-<script>
-  const KEY = 'ph_admin_key';
-  const keyInput = document.getElementById('adminKey');
-  const emailInput = document.getElementById('userEmail');
-  const msg = document.getElementById('auMsg');
-  const saved = sessionStorage.getItem(KEY);
-  if (saved) keyInput.value = saved;
+<script is:inline>
+  (function () {
+    var KEY = 'ph_admin_key';
+    var keyInput = document.getElementById('adminKey');
+    var emailInput = document.getElementById('userEmail');
+    var msg = document.getElementById('auMsg');
+    var USERS = [];
 
-  function show(text, kind) { msg.textContent = text; msg.className = 'au-msg ' + kind; msg.hidden = false; }
+    var saved = sessionStorage.getItem(KEY);
+    if (saved) keyInput.value = saved;
 
-  async function setPlan(plan) {
-    const key = keyInput.value.trim();
-    const email = emailInput.value.trim();
-    if (!key) return show('Admin Key डालें।', 'err');
-    if (!email) return show('यूज़र का ईमेल डालें।', 'err');
-    sessionStorage.setItem(KEY, key);
-    show('रुकिए...', 'ok');
-    try {
-      const r = await fetch('/api/admin/set-plan', {
+    function show(text, kind) { msg.textContent = text; msg.className = 'au-msg ' + kind; msg.hidden = false; }
+    function esc(s) { var d = document.createElement('div'); d.textContent = (s == null ? '' : s); return d.innerHTML; }
+    function fmtDate(s) { if (!s) return '—'; try { return new Date(s).toLocaleDateString('hi-IN', { day: 'numeric', month: 'short', year: 'numeric' }); } catch (e) { return '—'; } }
+
+    function renderStats(d) {
+      document.getElementById('stats').hidden = false;
+      document.getElementById('stTotal').textContent = d.total || 0;
+      document.getElementById('stPro').textContent = d.pro || 0;
+      document.getElementById('stFree').textContent = d.free || 0;
+    }
+
+    function renderList(filter) {
+      var body = document.getElementById('uBody');
+      var empty = document.getElementById('listEmpty');
+      document.getElementById('listCard').hidden = false;
+      var f = (filter || '').toLowerCase();
+      var rows = USERS.filter(function (u) {
+        return !f || (u.name || '').toLowerCase().indexOf(f) >= 0 || (u.email || '').toLowerCase().indexOf(f) >= 0;
+      });
+      body.innerHTML = '';
+      empty.hidden = rows.length > 0;
+      rows.forEach(function (u) {
+        var tr = document.createElement('tr');
+        var initial = (u.name || 'U').trim().charAt(0).toUpperCase();
+        var avStyle = u.avatar ? (" style=\"background-image:url('" + esc(u.avatar) + "')\"") : '';
+        var avText = u.avatar ? '' : initial;
+        var isPro = u.plan === 'pro';
+        var badge = isPro ? '<span class="badge badge-pro">PRO</span>' : '<span class="badge badge-free">FREE</span>';
+        var btn = isPro
+          ? '<button class="btn-mini to-free" data-email="' + esc(u.email) + '" data-plan="free">Free करें</button>'
+          : '<button class="btn-mini to-pro" data-email="' + esc(u.email) + '" data-plan="pro">Pro चालू</button>';
+        tr.innerHTML = '<td><div class="u-cell"><span class="u-av"' + avStyle + '>' + avText + '</span>' +
+          '<div><div class="u-name">' + esc(u.name || '—') + '</div><div class="u-email">' + esc(u.email) + '</div></div></div></td>' +
+          '<td>' + badge + '</td><td class="u-since">' + fmtDate(u.createdAt) + '</td><td>' + btn + '</td>';
+        body.appendChild(tr);
+      });
+      body.querySelectorAll('.btn-mini').forEach(function (b) {
+        b.addEventListener('click', function () { setPlan(b.getAttribute('data-email'), b.getAttribute('data-plan')); });
+      });
+    }
+
+    function loadUsers() {
+      var key = keyInput.value.trim();
+      if (!key) { show('Admin Key डालें।', 'err'); return; }
+      sessionStorage.setItem(KEY, key);
+      show('लोड हो रहा है...', 'ok');
+      fetch('/api/admin/users', { headers: { 'x-admin-key': key } })
+        .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+        .then(function (res) {
+          if (!res.ok) { show((res.j && res.j.message) || 'लोड नहीं हुआ।', 'err'); return; }
+          USERS = res.j.users || [];
+          renderStats(res.j);
+          renderList('');
+          msg.hidden = true;
+        }).catch(function () { show('नेटवर्क समस्या।', 'err'); });
+    }
+
+    function setPlan(email, plan) {
+      var key = keyInput.value.trim();
+      if (!key) { show('Admin Key डालें।', 'err'); return; }
+      if (!email) { show('ईमेल डालें।', 'err'); return; }
+      sessionStorage.setItem(KEY, key);
+      show('रुकिए...', 'ok');
+      fetch('/api/admin/set-plan', {
         method: 'POST',
         headers: { 'content-type': 'application/json', 'x-admin-key': key },
-        body: JSON.stringify({ email, plan }),
-      });
-      const j = await r.json().catch(() => ({}));
-      if (r.ok) show((j.name || email) + ' का प्लान अब: ' + (j.plan === 'pro' ? 'PRO ✅' : 'FREE') , 'ok');
-      else show(j.message || 'एरर — फिर कोशिश करें।', 'err');
-    } catch (e) { show('नेटवर्क समस्या।', 'err'); }
-  }
+        body: JSON.stringify({ email: email, plan: plan }),
+      }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+        .then(function (res) {
+          if (res.ok) {
+            show((res.j.name || email) + ' का प्लान अब: ' + (res.j.plan === 'pro' ? 'PRO ✅' : 'FREE'), 'ok');
+            loadUsers();
+          } else { show((res.j && res.j.message) || 'एरर।', 'err'); }
+        }).catch(function () { show('नेटवर्क समस्या।', 'err'); });
+    }
 
-  document.getElementById('proBtn').addEventListener('click', () => setPlan('pro'));
-  document.getElementById('freeBtn').addEventListener('click', () => setPlan('free'));
+    document.getElementById('loadBtn').addEventListener('click', loadUsers);
+    keyInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') loadUsers(); });
+    document.getElementById('proBtn').addEventListener('click', function () { setPlan(emailInput.value.trim(), 'pro'); });
+    document.getElementById('freeBtn').addEventListener('click', function () { setPlan(emailInput.value.trim(), 'free'); });
+    document.getElementById('search').addEventListener('input', function () { renderList(this.value); });
+
+    if (saved) loadUsers();
+  })();
 </script>

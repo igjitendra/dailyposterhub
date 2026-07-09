@@ -6,33 +6,36 @@ import Icon from '../components/Icon.astro';
   <section class='acc-wrap'>
     <div class='acc-card card' id='accCard' hidden>
       <div class='acc-head'>
-        <span class='avatar' id='avatar'>D</span>
-        <div>
+        <label class='avatar-wrap' title='प्रोफाइल फोटो बदलें'>
+          <span class='avatar' id='avatar'>D</span>
+          <span class='avatar-cam'><Icon name='image' size={13} /></span>
+          <input id='avatarInput' type='file' accept='image/*' hidden />
+        </label>
+        <div class='acc-id'>
           <h1 id='accName'>—</h1>
           <p id='accEmail'>—</p>
         </div>
         <span class='badge' id='planBadge'>—</span>
       </div>
 
-      <div class='acc-row'>
-        <span class='k'>प्लान</span>
-        <span class='v' id='planText'>—</span>
-      </div>
-      <div class='acc-row' id='sinceRow' hidden>
-        <span class='k'>जौइन किया</span>
-        <span class='v' id='sinceText'>—</span>
-      </div>
+      <p id='avatarMsg' class='avatar-msg' hidden></p>
+
+      <div class='acc-row'><span class='k'>प्लान</span><span class='v' id='planText'>—</span></div>
+      <div class='acc-row' id='phoneRow' hidden><span class='k'>मोबाइल</span><span class='v' id='phoneText'>—</span></div>
+      <div class='acc-row' id='sinceRow' hidden><span class='k'>जॉइन किया</span><span class='v' id='sinceText'>—</span></div>
 
       <div class='acc-cta' id='freeCta'>
         <p class='cta-note'><Icon name='crown' size={15} /> Pro बनें — बिना वॉटरमार्क, HD डाउनलोड और प्रीमियम टेम्पलेट्स।</p>
         <a href='/payment' class='btn btn-gold btn-lg'><Icon name='crown' size={16} /> Pro लें</a>
       </div>
-
       <div class='acc-cta pro-active' id='proCta' hidden>
         <p class='cta-note ok'><Icon name='check-circle' size={16} /> आपका Pro एक्टिव है — धन्यवाद!</p>
       </div>
 
-      <button id='logoutBtn' class='btn btn-outline btn-sm logout'>लॉगआउट</button>
+      <div class='acc-links'>
+        <a href='/posters/' class='btn btn-primary btn-sm'><Icon name='image' size={15} /> पोस्टर बनाएं</a>
+        <button id='logoutBtn' class='btn btn-outline btn-sm'>लॉगआउट</button>
+      </div>
     </div>
 
     <div class='acc-loading' id='accLoading'>लोड हो रहा है...</div>
@@ -43,10 +46,18 @@ import Icon from '../components/Icon.astro';
   .acc-wrap { min-height: 66vh; display: grid; place-items: center; padding: 50px 20px; background: var(--grad-soft); }
   .acc-card { width: 100%; max-width: 480px; padding: 30px 30px 26px; background: #fff; }
   .acc-head { display: flex; align-items: center; gap: 14px; padding-bottom: 20px; border-bottom: 1px solid var(--line); margin-bottom: 18px; }
-  .avatar { display: grid; place-items: center; width: 54px; height: 54px; background: var(--grad); border-radius: 14px; color: #fff; font-weight: 800; font-size: 26px; font-family: 'Poppins', sans-serif; flex-shrink: 0; }
+  .avatar-wrap { position: relative; cursor: pointer; flex-shrink: 0; width: 54px; height: 54px; }
+  .avatar { display: grid; place-items: center; width: 54px; height: 54px; background: var(--grad); border-radius: 14px; color: #fff; font-weight: 800; font-size: 26px; font-family: 'Poppins', sans-serif; overflow: hidden; background-size: cover; background-position: center; }
+  .avatar-cam { position: absolute; right: -4px; bottom: -4px; width: 22px; height: 22px; display: grid; place-items: center; background: var(--purple); color: #fff; border: 2px solid #fff; border-radius: 50%; }
+  .avatar-cam :global(.icon) { width: 13px; height: 13px; }
+  .acc-id { min-width: 0; }
   .acc-head h1 { font-size: 20px; font-weight: 800; }
   .acc-head p { color: var(--muted); font-size: 13.5px; word-break: break-all; }
   .acc-head .badge { margin-left: auto; align-self: flex-start; }
+
+  .avatar-msg { font-size: 13px; font-weight: 600; padding: 9px 12px; border-radius: 9px; margin-bottom: 14px; }
+  .avatar-msg.ok { background: #DCFCE7; color: #166534; }
+  .avatar-msg.err { background: #FEE2E2; color: #B91C1C; }
 
   .acc-row { display: flex; align-items: center; justify-content: space-between; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 14.5px; }
   .acc-row .k { color: var(--muted); }
@@ -61,43 +72,75 @@ import Icon from '../components/Icon.astro';
   .pro-active { background: #DCFCE7; border-radius: 12px; padding: 16px; }
   .pro-active .cta-note { margin-bottom: 0; }
 
-  .logout { margin-top: 22px; width: 100%; }
+  .acc-links { display: flex; gap: 10px; margin-top: 22px; }
+  .acc-links .btn { flex: 1; }
   .acc-loading { color: var(--muted); font-size: 15px; }
 </style>
 
-<script>
-  const card = document.getElementById('accCard');
-  const loading = document.getElementById('accLoading');
+<script is:inline>
+  (function () {
+    var card = document.getElementById('accCard');
+    var loading = document.getElementById('accLoading');
 
-  fetch('/api/auth/me').then((r) => r.json()).then((d) => {
-    if (!d || !d.user) { window.location.href = '/login'; return; }
-    const u = d.user;
-    document.getElementById('accName').textContent = u.name || 'यूज़र';
-    document.getElementById('accEmail').textContent = u.email || '';
-    document.getElementById('avatar').textContent = (u.name || 'D').trim().charAt(0).toUpperCase();
-
-    const isPro = u.plan === 'pro';
-    const badge = document.getElementById('planBadge');
-    badge.textContent = isPro ? 'PRO' : 'FREE';
-    badge.className = 'badge ' + (isPro ? 'badge-pro' : 'badge-free');
-    document.getElementById('planText').textContent = isPro ? 'Pro (एक्टिव)' : 'Free';
-
-    document.getElementById('freeCta').hidden = isPro;
-    document.getElementById('proCta').hidden = !isPro;
-
-    if (u.createdAt) {
-      try {
-        const dt = new Date(u.createdAt);
-        document.getElementById('sinceText').textContent = dt.toLocaleDateString('hi-IN', { year: 'numeric', month: 'long', day: 'numeric' });
-        document.getElementById('sinceRow').hidden = false;
-      } catch (e) {}
+    function setAvatar(url, name) {
+      var av = document.getElementById('avatar');
+      if (url) { av.style.backgroundImage = 'url(' + url + ')'; av.textContent = ''; }
+      else { av.style.backgroundImage = ''; av.textContent = (name || 'D').trim().charAt(0).toUpperCase(); }
     }
 
-    loading.hidden = true;
-    card.hidden = false;
-  }).catch(() => { window.location.href = '/login'; });
+    fetch('/api/auth/me').then(function (r) { return r.json(); }).then(function (d) {
+      if (!d || !d.user) { window.location.href = '/login'; return; }
+      var u = d.user;
+      document.getElementById('accName').textContent = u.name || 'यूज़र';
+      document.getElementById('accEmail').textContent = u.email || '';
+      setAvatar(u.avatar, u.name);
 
-  document.getElementById('logoutBtn').addEventListener('click', () => {
-    fetch('/api/auth/logout', { method: 'POST' }).finally(() => { window.location.href = '/'; });
-  });
+      var isPro = u.plan === 'pro';
+      var badge = document.getElementById('planBadge');
+      badge.textContent = isPro ? 'PRO' : 'FREE';
+      badge.className = 'badge ' + (isPro ? 'badge-pro' : 'badge-free');
+      document.getElementById('planText').textContent = isPro ? 'Pro (एक्टिव)' : 'Free';
+
+      document.getElementById('freeCta').hidden = isPro;
+      document.getElementById('proCta').hidden = !isPro;
+
+      if (u.phone) {
+        document.getElementById('phoneText').textContent = u.phone;
+        document.getElementById('phoneRow').hidden = false;
+      }
+      if (u.createdAt) {
+        try {
+          var dt = new Date(u.createdAt);
+          document.getElementById('sinceText').textContent = dt.toLocaleDateString('hi-IN', { year: 'numeric', month: 'long', day: 'numeric' });
+          document.getElementById('sinceRow').hidden = false;
+        } catch (e) {}
+      }
+
+      loading.hidden = true;
+      card.hidden = false;
+    }).catch(function () { window.location.href = '/login'; });
+
+    document.getElementById('avatarInput').addEventListener('change', function () {
+      var f = this.files[0];
+      if (!f) return;
+      var msg = document.getElementById('avatarMsg');
+      msg.hidden = false; msg.className = 'avatar-msg'; msg.textContent = 'अपलोड हो रहा है...';
+      var fd = new FormData(); fd.append('avatar', f);
+      fetch('/api/auth/avatar', { method: 'POST', body: fd })
+        .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+        .then(function (res) {
+          if (res.ok && res.j.avatar) {
+            setAvatar(res.j.avatar + '?t=' + Date.now(), null);
+            msg.className = 'avatar-msg ok'; msg.textContent = 'फोटो अपडेट हो गई ✓';
+            try { localStorage.setItem('ph_avatar', res.j.avatar); } catch (e) {}
+          } else {
+            msg.className = 'avatar-msg err'; msg.textContent = (res.j && res.j.message) || 'अपलोड नहीं हुआ।';
+          }
+        }).catch(function () { msg.className = 'avatar-msg err'; msg.textContent = 'नेटवर्क समस्या।'; });
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', function () {
+      fetch('/api/auth/logout', { method: 'POST' }).finally(function () { window.location.href = '/login'; });
+    });
+  })();
 </script>

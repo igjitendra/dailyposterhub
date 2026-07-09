@@ -65,6 +65,9 @@ const cats = categories.filter((c) => c.slug !== 'all');
         <label>विवरण (Description)
           <textarea name='description' rows='2' placeholder='छोटा विवरण...'></textarea>
         </label>
+        <label>पोस्टर की तारीख़ — डेली सेक्शन के लिए (optional)
+          <input name='posterDate' type='date' />
+        </label>
         <label>पोस्टर इमेज (WebP / PNG / JPG)
           <input id='imageInput' name='image' type='file' accept='image/*' required />
         </label>

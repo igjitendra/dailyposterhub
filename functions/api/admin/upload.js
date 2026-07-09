@@ -19,6 +19,7 @@ export async function onRequestPost({ request, env }) {
   const fields = String(form.get('fields') || '').split(',').map((s) => s.trim()).filter(Boolean);
   const hasPhotoSlot = form.get('hasPhotoSlot') === 'on' || form.get('hasPhotoSlot') === 'true';
   const description = String(form.get('description') || '').trim();
+  const posterDate = String(form.get('posterDate') || '').trim();
 
   if (!file || typeof file === 'string') return json({ error: 'इमेज ज़रूरी है' }, 400);
   if (!title || !category) return json({ error: 'शीर्षक और श्रेणी ज़रूरी हैं' }, 400);
@@ -41,6 +42,7 @@ export async function onRequestPost({ request, env }) {
     fields,
     hasPhotoSlot,
     description,
+    posterDate,
     img: '/cdn/' + imgKey,
     createdAt: new Date().toISOString(),
   };

@@ -7,6 +7,10 @@ import {
 } from '../data/site.js';
 ---
 <Layout>
+  <script is:inline>
+    // Logged-in users ko home par na aane do -> posters par bhej do.
+    fetch('/api/auth/me').then(function (r) { return r.json(); }).then(function (d) { if (d && d.user) { window.location.replace('/posters/'); } }).catch(function () {});
+  </script>
   <!-- ===================== HERO ===================== -->
   <section class='hero'>
     <div class='container hero-grid'>

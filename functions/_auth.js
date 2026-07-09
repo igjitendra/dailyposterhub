@@ -123,5 +123,5 @@ export async function currentUser(request, env) {
   if (!sess) return null;
   const user = await getUser(env, sess.email);
   if (!user) return null;
-  return { name: user.name, email: user.email, plan: user.plan || 'free', phone: user.phone || '', createdAt: user.createdAt || null };
+  return { name: user.name, email: user.email, plan: user.plan || 'free', phone: user.phone || '', createdAt: user.createdAt || null, avatar: user.avatar || null };
 }

@@ -118,7 +118,7 @@ import Icon from '../components/Icon.astro';
       const j = await r.json().catch(() => ({}));
       if (r.ok) {
         showMsg('हो गया! रीडायरेक्ट हो रहा है...', 'ok');
-        window.location.href = '/account';
+        window.location.href = '/posters/';
         return;
       }
       showMsg(j.message || 'कुछ गलत हो गया, फिर कोशिश करें।', 'err');
@@ -149,6 +149,6 @@ import Icon from '../components/Icon.astro';
 
   // Agar pehle se logged-in hai to account bhej do
   fetch('/api/auth/me').then((r) => r.json()).then((d) => {
-    if (d && d.user) window.location.href = '/account';
+    if (d && d.user) window.location.href = '/posters/';
   }).catch(() => {});
 </script>
