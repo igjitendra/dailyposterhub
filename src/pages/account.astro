@@ -42,6 +42,14 @@ import Icon from '../components/Icon.astro';
         <button id='pfSave' class='btn btn-gold btn-sm'>प्रोफाइल सेव करें</button>
       </div>
 
+      <div class='acc-profile' id='brandingBox' hidden>
+        <h2><Icon name='image' size={15} /> बिज़नेस ब्रांडिंग</h2>
+        <p class='prof-note'>अपनी तैयार ब्रांडिंग इमेज (PNG/JPG) अपलोड करें — यह हर पोस्टर पर आएगी, जिसे आप खींचकर और छोटा-बड़ा कर सकते हैं।</p>
+        <img id='brandingPreview' class='branding-preview' hidden alt='branding' />
+        <label class='prof-fld'>ब्रांडिंग इमेज<input id='brandingInput' type='file' accept='image/*' /></label>
+        <button id='brandingClear' class='btn btn-outline btn-sm' hidden>ब्रांडिंग हटाएं</button>
+      </div>
+
       <div class='acc-links'>
         <a href='/posters/' class='btn btn-primary btn-sm'><Icon name='image' size={15} /> पोस्टर बनाएं</a>
         <button id='logoutBtn' class='btn btn-outline btn-sm'>लॉगआउट</button>
@@ -90,6 +98,8 @@ import Icon from '../components/Icon.astro';
   .prof-fld input { width: 100%; margin-top: 5px; border: 1px solid var(--line); border-radius: 9px; padding: 9px 11px; font-family: inherit; font-size: 14px; outline: none; }
   .prof-fld input:focus { border-color: var(--purple); }
   #pfSave { width: 100%; margin-top: 4px; }
+  .branding-preview { max-width: 200px; width: 100%; border: 1px solid var(--line); border-radius: 10px; margin-bottom: 12px; display: block; }
+  #brandingClear { width: 100%; margin-top: 6px; }
 
   .acc-links { display: flex; gap: 10px; margin-top: 22px; }
   .acc-links .btn { flex: 1; }
@@ -114,14 +124,16 @@ import Icon from '../components/Icon.astro';
       document.getElementById('accEmail').textContent = u.email || '';
       setAvatar(u.avatar, u.name);
 
-      var isPro = u.plan === 'pro';
+      var isBiz = u.plan === 'business';
+      var isPro = u.plan === 'pro' || isBiz;
       var badge = document.getElementById('planBadge');
-      badge.textContent = isPro ? 'PRO' : 'FREE';
+      badge.textContent = isBiz ? 'BUSINESS' : (isPro ? 'PRO' : 'FREE');
       badge.className = 'badge ' + (isPro ? 'badge-pro' : 'badge-free');
-      document.getElementById('planText').textContent = isPro ? 'Pro (एक्टिव)' : 'Free';
+      document.getElementById('planText').textContent = isBiz ? 'Business (एक्टिव)' : (isPro ? 'Pro (एक्टिव)' : 'Free');
 
       document.getElementById('freeCta').hidden = isPro;
       document.getElementById('proCta').hidden = !isPro;
+      document.getElementById('brandingBox').hidden = !isBiz;
 
       if (u.phone) {
         document.getElementById('phoneText').textContent = u.phone;
@@ -157,6 +169,30 @@ import Icon from '../components/Icon.astro';
       try { localStorage.setItem('ph_profile', JSON.stringify(prof)); } catch (e) {}
       var b = this; b.textContent = '✓ सेव हो गया'; setTimeout(function () { b.textContent = 'प्रोफाइल सेव करें'; }, 1500);
     });
+
+    // ---- business branding ----
+    (function () {
+      var input = document.getElementById('brandingInput');
+      var prev = document.getElementById('brandingPreview');
+      var clr = document.getElementById('brandingClear');
+      if (!input) return;
+      var saved = null;
+      try { saved = localStorage.getItem('ph_branding'); } catch (e) {}
+      if (saved) { prev.src = saved; prev.hidden = false; clr.hidden = false; }
+      input.addEventListener('change', function () {
+        var f = this.files[0]; if (!f) return;
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          try { localStorage.setItem('ph_branding', e.target.result); } catch (err) {}
+          prev.src = e.target.result; prev.hidden = false; clr.hidden = false;
+        };
+        reader.readAsDataURL(f);
+      });
+      clr.addEventListener('click', function () {
+        try { localStorage.removeItem('ph_branding'); } catch (e) {}
+        prev.hidden = true; clr.hidden = true; input.value = '';
+      });
+    })();
 
     document.getElementById('avatarInput').addEventListener('change', function () {
       var f = this.files[0];

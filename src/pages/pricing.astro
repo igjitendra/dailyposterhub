@@ -19,6 +19,14 @@ const proFeatures = [
   'प्रोफाइल एक बार — हर पोस्टर में ऑटो',
   'प्रायॉरिटी सपोर्ट',
 ];
+const businessFeatures = [
+  'सभी Pro फीचर्स शामिल',
+  'अपनी कस्टम ब्रांडिंग (फोटो + डिटेल)',
+  'हर पोस्टर पर ब्रांडिंग — जितनी बड़ी, जहाँ चाहें',
+  'प्रोफाइल में एक बार सेट करें',
+  'बिज़नेस/दुकान के लिए बेस्ट',
+  'प्रायॉरिटी सपोर्ट',
+];
 ---
 <Layout title='प्राइसिंग — Daily PosterHub'>
   <section class='page-hero'>
@@ -60,6 +68,20 @@ const proFeatures = [
             ))}
           </ul>
           <a href='/payment' class='btn btn-gold btn-lg'><Icon name='crown' size={16} /> Pro खरीदें</a>
+        </div>
+
+        <!-- BUSINESS -->
+        <div class='plan plan-biz card'>
+          <span class='ribbon biz'><Icon name='briefcase' size={14} /> बिज़नेस</span>
+          <h3>Business</h3>
+          <div class='price'><span class='amt'>{pricing.currency}{pricing.business}</span><span class='per'>/साल</span></div>
+          <p class='plan-note'>अपनी खुद की ब्रांडिंग — हर पोस्टर पर</p>
+          <ul class='feat'>
+            {businessFeatures.map((f) => (
+              <li class='yes'><Icon name='check' size={16} /> {f}</li>
+            ))}
+          </ul>
+          <a href='/payment' class='btn btn-primary btn-lg'><Icon name='briefcase' size={16} /> Business लें</a>
         </div>
       </div>
 
@@ -105,7 +127,9 @@ const proFeatures = [
   .page-hero h1 { font-size: 36px; font-weight: 800; }
   .page-hero p { color: var(--muted); margin-top: 8px; }
 
-  .plans { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 24px; max-width: 800px; margin: 0 auto; }
+  .plans { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 24px; max-width: 1020px; margin: 0 auto; }
+  .plan-biz { border: 2px solid var(--gold); }
+  .ribbon.biz { background: var(--purple); color: #fff; }
   .plan { padding: 34px 30px; }
   .plan h3 { font-size: 22px; font-weight: 800; }
   .price { margin: 14px 0 4px; }
@@ -140,8 +164,8 @@ const proFeatures = [
 
   .guarantee { display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--muted); font-size: 14px; margin-top: 26px; }
 
+  @media (max-width: 940px) { .plans { grid-template-columns: 1fr; max-width: 480px; } }
   @media (max-width: 640px) {
-    .plans { grid-template-columns: 1fr; }
     .pay-row { flex-wrap: wrap; }
     .pay-label { width: 100%; }
   }

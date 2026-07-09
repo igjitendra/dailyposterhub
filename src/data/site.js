@@ -30,6 +30,7 @@ export const payment = {
 export const pricing = {
   monthly: 21,
   yearly: 99,
+  business: 299,
   currency: '₹',
   startsAt: 'मात्र ₹21/माह से शुरू',
 };

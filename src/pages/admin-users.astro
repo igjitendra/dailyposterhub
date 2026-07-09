@@ -30,6 +30,7 @@ import Icon from '../components/Icon.astro';
         <div class='fld'><input id='userEmail' type='email' placeholder='user@example.com' /></div>
         <div class='au-btns'>
           <button id='proBtn' class='btn btn-gold'>Pro चालू करें</button>
+          <button id='bizBtn' class='btn btn-primary'>Business चालू</button>
           <button id='freeBtn' class='btn btn-outline'>Free करें</button>
         </div>
       </div>
@@ -130,8 +131,9 @@ import Icon from '../components/Icon.astro';
         var initial = (u.name || 'U').trim().charAt(0).toUpperCase();
         var avStyle = u.avatar ? (" style=\"background-image:url('" + esc(u.avatar) + "')\"") : '';
         var avText = u.avatar ? '' : initial;
-        var isPro = u.plan === 'pro';
-        var badge = isPro ? '<span class="badge badge-pro">PRO</span>' : '<span class="badge badge-free">FREE</span>';
+        var isBiz = u.plan === 'business';
+        var isPro = u.plan === 'pro' || isBiz;
+        var badge = isBiz ? '<span class="badge badge-pro">BUSINESS</span>' : (isPro ? '<span class="badge badge-pro">PRO</span>' : '<span class="badge badge-free">FREE</span>');
         var btn = isPro
           ? '<button class="btn-mini to-free" data-email="' + esc(u.email) + '" data-plan="free">Free करें</button>'
           : '<button class="btn-mini to-pro" data-email="' + esc(u.email) + '" data-plan="pro">Pro चालू</button>';
@@ -174,7 +176,7 @@ import Icon from '../components/Icon.astro';
       }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
         .then(function (res) {
           if (res.ok) {
-            show((res.j.name || email) + ' का प्लान अब: ' + (res.j.plan === 'pro' ? 'PRO ✅' : 'FREE'), 'ok');
+            show((res.j.name || email) + ' का प्लान अब: ' + (res.j.plan === 'business' ? 'BUSINESS ✅' : (res.j.plan === 'pro' ? 'PRO ✅' : 'FREE')), 'ok');
             loadUsers();
           } else { show((res.j && res.j.message) || 'एरर।', 'err'); }
         }).catch(function () { show('नेटवर्क समस्या।', 'err'); });
@@ -183,6 +185,7 @@ import Icon from '../components/Icon.astro';
     document.getElementById('loadBtn').addEventListener('click', loadUsers);
     keyInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') loadUsers(); });
     document.getElementById('proBtn').addEventListener('click', function () { setPlan(emailInput.value.trim(), 'pro'); });
+    document.getElementById('bizBtn').addEventListener('click', function () { setPlan(emailInput.value.trim(), 'business'); });
     document.getElementById('freeBtn').addEventListener('click', function () { setPlan(emailInput.value.trim(), 'free'); });
     document.getElementById('search').addEventListener('input', function () { renderList(this.value); });
 

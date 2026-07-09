@@ -9,7 +9,7 @@ export async function onRequestPost({ request, env }) {
   let body;
   try { body = await request.json(); } catch (e) { return json({ error: 'bad-request' }, 400); }
   const email = String(body.email || '').trim().toLowerCase();
-  const plan = body.plan === 'pro' ? 'pro' : 'free';
+  const plan = (body.plan === 'pro' || body.plan === 'business') ? body.plan : 'free';
   if (!email) return json({ error: 'email', message: 'ईमेल डालें।' }, 400);
   const user = await getUser(env, email);
   if (!user) return json({ error: 'not-found', message: 'इस ईमेल का कोई यूज़र नहीं मिला।' }, 404);

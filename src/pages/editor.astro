@@ -19,6 +19,7 @@ import Layout from '../layouts/Layout.astro';
             <!-- POSTER + photo circle only -->
             <div class='stage' id='stage'>
               <img id='posterImg' class='poster-img' alt='poster' crossorigin='anonymous' />
+              <img id='brandOverlay' class='brand-overlay' alt='branding' />
               <div class='photo-circle empty' id='photoCircle'>फोटो</div>
             </div>
 
@@ -33,6 +34,7 @@ import Layout from '../layouts/Layout.astro';
         <!-- resize control OUTSIDE the image -->
         <div class='stage-controls'>
           <div class='sc-row'><span>फोटो साइज़</span><input id='sizeRange' type='range' min='22' max='85' value='45' /></div>
+          <div class='sc-row' id='brandCtl' style='display:none'><span>ब्रांडिंग साइज़</span><input id='brandRange' type='range' min='20' max='95' value='55' /></div>
           <p class='sc-hint'>फोटो को उंगली/माउस से खींचकर गोल फ्रेम पर रखें, स्लाइडर से छोटा-बड़ा करें।</p>
         </div>
       </div>
@@ -78,6 +80,9 @@ import Layout from '../layouts/Layout.astro';
   .photo-circle:active { cursor: grabbing; }
   .photo-circle.empty { background: rgba(255,255,255,.65); border: 3px dashed #B4145A; display: grid; place-items: center;
     color: #B4145A; font-weight: 800; font-size: 15px; line-height: 1; }
+  .brand-overlay { position: absolute; left: 50%; top: 82%; transform: translate(-50%,-50%); width: 55%; cursor: grab; touch-action: none; display: none; filter: drop-shadow(0 2px 6px rgba(0,0,0,.25)); }
+  .brand-overlay.show { display: block; }
+  .brand-overlay:active { cursor: grabbing; }
 
   /* TOP website strip */
   .brand-strip { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 11px 12px;
@@ -161,7 +166,8 @@ import Layout from '../layouts/Layout.astro';
       if (d && d.user) {
         if (!inName.value) inName.value = d.user.name || '';
         if (!prof.photo && !savedAvatar && d.user.avatar) { savedAvatar = d.user.avatar; setPhoto(savedAvatar); }
-        if (d.user.plan === 'pro') { strip.style.display = 'none'; document.getElementById('proNote').style.display = 'none'; }
+        if (d.user.plan === 'pro' || d.user.plan === 'business') { strip.style.display = 'none'; document.getElementById('proNote').style.display = 'none'; }
+        if (d.user.plan === 'business') { document.getElementById('nameStrip').style.display = 'none'; if (d.user.branding) { showBranding(d.user.branding); } }
         renderInfo();
       }
     }).catch(function () {});
@@ -197,6 +203,31 @@ import Layout from '../layouts/Layout.astro';
     pc.addEventListener('pointercancel', function () { drag = false; });
     document.getElementById('sizeRange').addEventListener('input', function () { sizePct = parseInt(this.value, 10); applyPhoto(); });
 
+    // ===== business branding overlay =====
+    var bo = document.getElementById('brandOverlay');
+    var brandCtl = document.getElementById('brandCtl');
+    var bpos = { xp: 50, yp: 82 }; var bsize = 55;
+    function applyBrand() { bo.style.left = bpos.xp + '%'; bo.style.top = bpos.yp + '%'; bo.style.width = bsize + '%'; }
+    function showBranding(url) {
+      if (url) { bo.src = url; bo.classList.add('show'); brandCtl.style.display = 'flex'; applyBrand(); }
+      else { bo.classList.remove('show'); brandCtl.style.display = 'none'; }
+    }
+    var brandData = null;
+    try { brandData = localStorage.getItem('ph_branding'); } catch (e) {}
+    showBranding(brandData);
+    var bdrag = false;
+    bo.addEventListener('pointerdown', function (e) { bdrag = true; bo.setPointerCapture(e.pointerId); e.preventDefault(); });
+    bo.addEventListener('pointermove', function (e) {
+      if (!bdrag) return;
+      var r = stage.getBoundingClientRect();
+      bpos.xp = Math.max(0, Math.min(100, ((e.clientX - r.left) / r.width) * 100));
+      bpos.yp = Math.max(0, Math.min(100, ((e.clientY - r.top) / r.height) * 100));
+      applyBrand();
+    });
+    bo.addEventListener('pointerup', function () { bdrag = false; });
+    bo.addEventListener('pointercancel', function () { bdrag = false; });
+    document.getElementById('brandRange').addEventListener('input', function () { bsize = parseInt(this.value, 10); applyBrand(); });
+
     // ===== export =====
     function build() { return html2canvas(capture, { useCORS: true, backgroundColor: '#ffffff', scale: 2, logging: false }); }
     function busy(btn, on, txt) { btn.disabled = on; if (on) { btn.dataset.t = btn.textContent; btn.textContent = txt; } else { btn.textContent = btn.dataset.t; } }
@@ -205,8 +236,8 @@ import Layout from '../layouts/Layout.astro';
       var btn = this; busy(btn, true, 'बन रहा है...');
       build().then(function (canvas) {
         var a = document.createElement('a');
-        a.download = 'posterhub-' + Date.now() + '.png';
-        a.href = canvas.toDataURL('image/png'); a.click();
+        a.download = 'posterhub-' + Date.now() + '.jpg';
+        a.href = canvas.toDataURL('image/jpeg', 0.92); a.click();
         busy(btn, false);
       }).catch(function () { busy(btn, false); alert('डाउनलोड में समस्या।'); });
     });
@@ -216,15 +247,15 @@ import Layout from '../layouts/Layout.astro';
       var text = 'Daily PosterHub से बनाया 👇 ' + SITE_URL;
       build().then(function (canvas) {
         canvas.toBlob(function (blob) {
-          var file = new File([blob], 'poster.png', { type: 'image/png' });
+          var file = new File([blob], 'poster.jpg', { type: 'image/jpeg' });
           if (navigator.canShare && navigator.canShare({ files: [file] })) {
             navigator.share({ files: [file], text: text, url: SITE_URL }).then(function () { busy(btn, false); }).catch(function () { busy(btn, false); });
           } else {
-            var a = document.createElement('a'); a.download = 'poster.png'; a.href = URL.createObjectURL(blob); a.click();
+            var a = document.createElement('a'); a.download = 'poster.jpg'; a.href = URL.createObjectURL(blob); a.click();
             window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
             busy(btn, false);
           }
-        }, 'image/png');
+        }, 'image/jpeg', 0.92);
       }).catch(function () { busy(btn, false); alert('शेयर में समस्या।'); });
     });
   })();
