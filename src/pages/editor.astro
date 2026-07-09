@@ -20,6 +20,7 @@ import Layout from '../layouts/Layout.astro';
             <div class='stage' id='stage'>
               <img id='posterImg' class='poster-img' alt='poster' crossorigin='anonymous' />
               <img id='brandOverlay' class='brand-overlay' alt='branding' />
+              <img id='wmMark' class='wm-mark show' src='/img/watermark.png' alt='watermark' crossorigin='anonymous' />
               <div class='date-badge' id='dateBadge'><span class='db-day' id='dbDay'></span><span class='db-date' id='dbDate'></span></div>
               <div class='photo-circle empty' id='photoCircle'>फोटो</div>
             </div>
@@ -85,7 +86,10 @@ import Layout from '../layouts/Layout.astro';
   .brand-overlay.show { display: block; }
   .brand-overlay:active { cursor: grabbing; }
   .date-badge { position: absolute; top: 10px; left: 10px; right: 10px; display: flex; align-items: flex-start; justify-content: space-between; pointer-events: none; z-index: 3; }
-  .db-day, .db-date { background: rgba(0,0,0,.5); color: #fff; font-size: 11px; font-weight: 700; padding: 4px 9px; border-radius: 20px; line-height: 1.25; letter-spacing: .2px; }
+  .db-day, .db-date { display: inline-block; background: #7C3AED; color: #fff; font-size: 12px; font-weight: 800; padding: 5px 11px; border-radius: 20px; line-height: 1.3; letter-spacing: .2px; box-shadow: 0 2px 8px rgba(0,0,0,.35); text-shadow: 0 1px 2px rgba(0,0,0,.45); }
+  .db-date { background: #B4145A; }
+  .wm-mark { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 62%; max-width: 62%; opacity: .38; pointer-events: none; display: none; z-index: 2; }
+  .wm-mark.show { display: block; }
 
   /* TOP website strip */
   .brand-strip { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 11px 12px;
@@ -145,6 +149,9 @@ import Layout from '../layouts/Layout.astro';
 
     var stage = document.getElementById('stage');
     var pc = document.getElementById('photoCircle');
+    var wmMark = document.getElementById('wmMark');
+    // watermark फ़ाइल नहीं मिली तो छिपा दो (broken image न दिखे)
+    if (wmMark) { wmMark.addEventListener('error', function () { wmMark.classList.remove('show'); wmMark.style.display = 'none'; }); }
     var strip = document.getElementById('brandStrip');
     var capture = document.getElementById('capture');
     var nsName = document.getElementById('nsName');
@@ -178,7 +185,7 @@ import Layout from '../layouts/Layout.astro';
       if (d && d.user) {
         if (!inName.value) inName.value = d.user.name || '';
         if (!prof.photo && !savedAvatar && d.user.avatar) { savedAvatar = d.user.avatar; setPhoto(savedAvatar); }
-        if (d.user.plan === 'pro' || d.user.plan === 'business') { strip.style.display = 'none'; document.getElementById('proNote').style.display = 'none'; }
+        if (d.user.plan === 'pro' || d.user.plan === 'business') { strip.style.display = 'none'; document.getElementById('proNote').style.display = 'none'; if (wmMark) wmMark.classList.remove('show'); }
         if (d.user.plan === 'business') { document.getElementById('nameStrip').style.display = 'none'; if (d.user.branding) { showBranding(d.user.branding); } }
         renderInfo();
       }

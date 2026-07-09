@@ -173,9 +173,14 @@ const fallback = templates;
       list.forEach(function (t) {
         var card = document.createElement('article');
         card.className = 'tpl-card card';
-        var badge = t.type === 'pro' ? '<span class="badge badge-pro">Pro</span>' : '<span class="badge badge-free">फ़्री</span>';
-        card.innerHTML = "<div class='tpl-thumb'><img src='" + esc(t.img) + "' alt='" + esc(t.title) + "' loading='lazy'>" + badge + "</div>" +
-          "<div class='tpl-body' style='padding:12px'>" +
+        var badgeStyle = 'position:absolute;top:12px;left:12px;z-index:2';
+        var badge = t.type === 'pro'
+          ? '<span class="badge badge-pro" style="' + badgeStyle + '">Pro</span>'
+          : '<span class="badge badge-free" style="' + badgeStyle + '">फ़्री</span>';
+        var catText = esc(t.description || t.category || '');
+        card.innerHTML = "<div class='tpl-thumb' style='position:relative'><img src='" + esc(t.img) + "' alt='" + esc(t.title) + "' loading='lazy' style='width:100%;display:block;aspect-ratio:3/4;object-fit:cover;border-radius:16px 16px 0 0'>" + badge + "</div>" +
+          "<div class='tpl-body' style='padding:12px;text-align:center'>" +
+          (catText ? "<div class='tpl-cat' style='font-size:13px;color:var(--muted);font-weight:600;margin-bottom:10px;text-align:center'>" + catText + "</div>" : "") +
           "<a href='/editor?img=" + encodeURIComponent(t.img || '') + "&title=" + encodeURIComponent(t.title || '') + "&type=" + encodeURIComponent(t.type || 'free') + "' class='btn btn-primary tpl-btn' style='display:flex;width:100%;justify-content:center;padding:13px 12px;font-size:15px'>एडिट करें</a></div>";
         grid.appendChild(card);
       });
