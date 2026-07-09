@@ -165,6 +165,15 @@ import { site, nav, pricing, categories } from '../data/site.js';
   backdrop?.addEventListener('click', close);
   drawer?.querySelectorAll('a').forEach((a) => a.addEventListener('click', close));
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+
+  // खोज बटन: यूछ़र से कीवर्ड लेकर Google पर "posterhub.pages.dev <keyword>" सर्च खोलता है
+  const searchBtn = document.getElementById('searchBtn');
+  searchBtn?.addEventListener('click', () => {
+    const q = (window.prompt('क्या खोजना है? (जैसे: good morning, birthday, धार्मिक)') || '').trim();
+    if (!q) return;
+    const url = 'https://www.google.com/search?q=' + encodeURIComponent('posterhub.pages.dev ' + q);
+    window.open(url, '_blank');
+  });
 </script>
 
 <script>
