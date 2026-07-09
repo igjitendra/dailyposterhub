@@ -1,0 +1,26 @@
+name = "daily-posterhub"
+compatibility_date = "2024-07-01"
+pages_build_output_dir = "dist"
+
+# R2 bucket jisme poster images + templates.json store honge.
+# Cloudflare Dashboard me bucket banao (naam niche wala) aur binding add karo.
+[[r2_buckets]]
+binding = "POSTERS"
+bucket_name = "posterhub-templates"
+
+# ADMIN_KEY ek SECRET hai -> yahan mat likho.
+# Set karo: Pages > Settings > Environment variables (Production + Preview)
+# ya local: .dev.vars file (dekho .dev.vars.example)
+
+# ---- Login/Auth ke liye KV namespace ----
+# Cloudflare Dashboard > Workers & Pages > KV > "Create namespace" (naam: posterhub-users)
+# Fir uski ID niche daalo. (Preview build ke liye preview_id bhi daal sakte ho.)
+[[kv_namespaces]]
+binding = "USERS"
+id = "9a0838969c46489397b7025d06af7dcc"
+# preview_id = "YAHAN_PREVIEW_KV_ID"
+
+# SESSION_SECRET ek SECRET hai -> Pages > Settings > Environment variables me daalo
+# (koi bhi lamba random string, jaise 40+ characters). Login sessions isse sign hote hain.
+# ADMIN_KEY wahi use hota hai /admin-users panel ke liye (Pro manual activate).
+# Done
