@@ -2,7 +2,7 @@
 # NOTE: neeche 3 jagah apni value daalein: repo, branch, base_url
 backend:
   name: github
-  repo: AtulPal/daily-posterhub      # <-- apna GitHub owner/repo (jaise username/repo-name)
+  repo: igjitendra/dailyposterhub      # <-- apna GitHub owner/repo (jaise username/repo-name)
   branch: main                       # <-- apni default branch
   base_url: https://posterhub.pages.dev   # <-- apna LIVE domain (OAuth ke liye)
   auth_endpoint: auth
