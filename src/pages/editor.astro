@@ -1,6 +1,5 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { site } from '../data/site.js';
 ---
 <Layout title='पोस्टर एडिटर — Daily PosterHub'>
   <section class='ed-wrap'>
@@ -8,37 +7,37 @@ import { site } from '../data/site.js';
 
       <!-- STAGE -->
       <div class='ed-stage-col'>
-        <div class='capture' id='capture'>
-          <div class='stage' id='stage'>
-            <img id='posterImg' class='poster-img' alt='poster' crossorigin='anonymous' />
+        <div class='stage-frame'>
+          <div class='capture' id='capture'>
+            <div class='stage' id='stage'>
+              <img id='posterImg' class='poster-img' alt='poster' crossorigin='anonymous' />
 
-            <!-- Free watermark (inside image) -->
-            <div class='watermark' id='watermark'>▶ @jitendrauno</div>
+              <!-- Free watermark (inside image) -->
+              <div class='watermark' id='watermark'>▶ @jitendrauno</div>
 
-            <!-- Personal brand kit -->
-            <div id='brandCard' class='kit' hidden>
-              <div class='kit-photo' id='kitPhoto'><span id='kitPhotoLetter'>D</span></div>
-              <div class='kit-info'>
-                <div class='kit-name' id='kitName'>आपका नाम</div>
-                <div class='kit-line'></div>
-                <div class='kit-row'><span class='kit-ic'><svg viewBox='0 0 24 24' width='11' height='11' fill='#fff'><path d='M10 2h4a2 2 0 0 1 2 2v2h3a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3V4a2 2 0 0 1 2-2zm4 4V4h-4v2h4z'/></svg></span><span id='kitProf'>प्रोफेशन यहाँ लिखें</span></div>
-                <div class='kit-row'><span class='kit-ic'><svg viewBox='0 0 24 24' width='11' height='11' fill='#fff'><path d='M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.1 21 3 13.9 3 5c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.4 0 .8-.3 1l-2.2 2.2z'/></svg></span><span id='kitPhone'>98765 43210</span></div>
-                <div class='kit-row'><span class='kit-ic'><svg viewBox='0 0 24 24' width='11' height='11' fill='#fff'><path d='M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-4 0-8 2-8 5v1h16v-1c0-3-4-5-8-5z'/></svg></span><span id='kitUser'>@yourusername</span></div>
-                <div class='kit-socials'>
-                  <span class='soc' style='background:#1877F2'><svg viewBox='0 0 24 24' width='11' height='11' fill='#fff'><path d='M13 22v-8h2.5l.5-3H13V9c0-.9.3-1.5 1.6-1.5H16V5c-.3 0-1.2-.1-2.2-.1C11.6 4.9 10 6.2 10 8.7V11H7.5v3H10v8h3z'/></svg></span>
-                  <span class='soc' style='background:#E4405F'><svg viewBox='0 0 24 24' width='11' height='11' fill='#fff'><path d='M12 8.5A3.5 3.5 0 1 0 12 15.5 3.5 3.5 0 0 0 12 8.5zM17 3H7a4 4 0 0 0-4 4v10a4 4 0 0 0 4 4h10a4 4 0 0 0 4-4V7a4 4 0 0 0-4-4zm-5 14a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm5.5-9a1 1 0 1 1 0-2 1 1 0 0 1 0 2z'/></svg></span>
-                  <span class='soc' style='background:#25D366'><svg viewBox='0 0 24 24' width='11' height='11' fill='#fff'><path d='M12 2a10 10 0 0 0-8.6 15l-1 3.7 3.8-1A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .3-3.3-.7-2.8-1.1-4.5-3.9-4.6-4.1-.1-.2-1-1.3-1-2.5s.6-1.8.9-2 .5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.1.1.3 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.2.7 1.1 1.5 1.7 1 .9 1.8 1.1 2 1.2.2.1.4.1.5-.1l.7-.9c.2-.2.3-.2.6-.1l1.8.9c.2.1.4.2.5.3.1.1.1.7-.1 1.3z'/></svg></span>
-                  <span class='soc' style='background:#FF0000'><svg viewBox='0 0 24 24' width='11' height='11' fill='#fff'><path d='M22 12s0-3.3-.4-4.8c-.2-.9-.9-1.5-1.7-1.7C18.3 5 12 5 12 5s-6.3 0-7.9.4c-.8.2-1.5.9-1.7 1.8C2 8.7 2 12 2 12s0 3.3.4 4.8c.2.9.9 1.5 1.7 1.8C5.7 19 12 19 12 19s6.3 0 7.9-.4c.8-.2 1.5-.9 1.7-1.7.4-1.6.4-4.9.4-4.9zm-12 3V9l5 3-5 3z'/></svg></span>
-                  <span class='kit-bar'></span>
-                  <span class='kit-brandname' id='kitName2'>आपका नाम</span>
+              <!-- Personal brand kit -->
+              <div id='brandCard' class='kit' hidden>
+                <div class='kit-photo' id='kitPhoto'><span id='kitPhotoLetter'>D</span></div>
+                <div class='kit-info'>
+                  <div class='kit-name' id='kitName'>आपका नाम</div>
+                  <div class='kit-line'></div>
+                  <div class='kit-row'><span class='kit-ic'><svg viewBox='0 0 24 24' width='11' height='11' fill='#fff'><path d='M10 2h4a2 2 0 0 1 2 2v2h3a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3V4a2 2 0 0 1 2-2zm4 4V4h-4v2h4z'/></svg></span><span id='kitProf'>प्रोफेशन यहाँ लिखें</span></div>
+                  <div class='kit-row'><span class='kit-ic'><svg viewBox='0 0 24 24' width='11' height='11' fill='#fff'><path d='M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.1 21 3 13.9 3 5c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.4 0 .8-.3 1l-2.2 2.2z'/></svg></span><span id='kitPhone'>98765 43210</span></div>
+                  <div class='kit-row'><span class='kit-ic'><svg viewBox='0 0 24 24' width='11' height='11' fill='#fff'><path d='M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-4 0-8 2-8 5v1h16v-1c0-3-4-5-8-5z'/></svg></span><span id='kitUser'>@yourusername</span></div>
+                  <div class='kit-socials'>
+                    <span class='soc' style='background:#1877F2'><svg viewBox='0 0 24 24' width='11' height='11' fill='#fff'><path d='M13 22v-8h2.5l.5-3H13V9c0-.9.3-1.5 1.6-1.5H16V5c-.3 0-1.2-.1-2.2-.1C11.6 4.9 10 6.2 10 8.7V11H7.5v3H10v8h3z'/></svg></span>
+                    <span class='soc' style='background:#E4405F'><svg viewBox='0 0 24 24' width='11' height='11' fill='#fff'><path d='M12 8.5A3.5 3.5 0 1 0 12 15.5 3.5 3.5 0 0 0 12 8.5zM17 3H7a4 4 0 0 0-4 4v10a4 4 0 0 0 4 4h10a4 4 0 0 0 4-4V7a4 4 0 0 0-4-4zm-5 14a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm5.5-9a1 1 0 1 1 0-2 1 1 0 0 1 0 2z'/></svg></span>
+                    <span class='soc' style='background:#25D366'><svg viewBox='0 0 24 24' width='11' height='11' fill='#fff'><path d='M12 2a10 10 0 0 0-8.6 15l-1 3.7 3.8-1A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .3-3.3-.7-2.8-1.1-4.5-3.9-4.6-4.1-.1-.2-1-1.3-1-2.5s.6-1.8.9-2 .5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.1.1.3 0 .5l-.4.5c-.1.2-.3.3-.1.6.1.2.7 1.1 1.5 1.7 1 .9 1.8 1.1 2 1.2.2.1.4.1.5-.1l.7-.9c.2-.2.3-.2.6-.1l1.8.9c.2.1.4.2.5.3.1.1.1.7-.1 1.3z'/></svg></span>
+                    <span class='soc' style='background:#FF0000'><svg viewBox='0 0 24 24' width='11' height='11' fill='#fff'><path d='M22 12s0-3.3-.4-4.8c-.2-.9-.9-1.5-1.7-1.7C18.3 5 12 5 12 5s-6.3 0-7.9.4c-.8.2-1.5.9-1.7 1.8C2 8.7 2 12 2 12s0 3.3.4 4.8c.2.9.9 1.5 1.7 1.8C5.7 19 12 19 12 19s6.3 0 7.9-.4c.8-.2 1.5-.9 1.7-1.7.4-1.6.4-4.9.4-4.9zm-12 3V9l5 3-5 3z'/></svg></span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <!-- Free plan branding strip -->
-          <div class='brand-strip' id='brandStrip'>
-            <svg viewBox='0 0 24 24' width='13' height='13'><path d='M12 3v10m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2' stroke='#fff' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>
-            <span>Download by <b>posterhub.pages.dev</b></span>
+            <!-- Free plan branding strip -->
+            <div class='brand-strip' id='brandStrip'>
+              <span class='bs-logo'>D</span>
+              <span class='bs-txt'><b>DailyPosterHub</b><small>फ्री पोस्टर रोज़ — posterhub.pages.dev</small></span>
+            </div>
           </div>
         </div>
       </div>
@@ -46,52 +45,35 @@ import { site } from '../data/site.js';
       <!-- CONTROLS -->
       <div class='ed-panel'>
         <h1>पोस्टर एडिट करें</h1>
-        <p class='ed-sub'>ब्रांड किट, टेक्स्ट या स्टिकर जोड़ें—खाली जगह पर खींचकर रखें, छोटा-बड़ा करें, फिर डाउनलोड/शेयर।</p>
+        <p class='ed-sub'>अपनी ब्रांड किट जोड़ें, खाली जगह पर खींचकर रखें, छोटा-बड़ा और पारदर्शी करें—फिर डाउनलोड/शेयर।</p>
 
         <div class='ed-actions'>
-          <button id='addBrand' class='btn btn-primary btn-sm'>＋ ब्रांड</button>
-          <button id='removeBrand' class='btn btn-outline btn-sm' hidden>ब्रांड हटाएं</button>
-          <button id='addText' class='btn btn-outline btn-sm'>＋ टेक्स्ट</button>
+          <button id='addBrand' class='btn btn-primary'>＋ ब्रांड किट जोड़ें</button>
+          <button id='removeBrand' class='btn btn-outline' hidden>ब्रांड हटाएं</button>
         </div>
 
-        <div class='ed-stickers'>
-          <span class='ed-stk-label'>स्टिकर:</span>
-          <div class='ed-stk-row' id='stkRow'></div>
-        </div>
-
-        <!-- selected element tools -->
-        <div class='ed-seltools' id='selTools' hidden>
-          <div class='ed-seltitle'>चुना गया एलिमेंट</div>
-          <label class='ed-fld' id='selTextWrap'>टेक्स्ट<input id='selText' type='text' placeholder='यहाँ लिखें' /></label>
-          <div class='ed-inline'>
-            <label id='selColorWrap'>रंग <input id='selColor' type='color' value='#ffffff' /></label>
-            <label class='ed-sizew'>साइज़ <input id='selSize' type='range' min='14' max='110' value='30' /></label>
-          </div>
-          <button id='selDel' class='btn btn-outline btn-sm'>एलिमेंट हटाएं</button>
-        </div>
-
-        <!-- brand kit fields -->
         <div class='ed-kitbox' id='kitBox' hidden>
-          <div class='ed-seltitle'>ब्रांड किट</div>
+          <div class='ed-seltitle'>आपकी जानकारी</div>
           <label class='ed-fld'>नाम<input id='inName' type='text' placeholder='आपका नाम' /></label>
           <label class='ed-fld'>प्रोफेशन<input id='inProf' type='text' placeholder='जैसे: फोटोग्राफर' /></label>
           <label class='ed-fld'>मोबाइल<input id='inPhone' type='text' placeholder='98765 43210' /></label>
           <label class='ed-fld'>यूज़रनेम<input id='inUser' type='text' placeholder='@yourusername' /></label>
           <label class='ed-fld'>फोटो<input id='inPhoto' type='file' accept='image/*' /></label>
-          <div class='ed-size'>
-            <span>किट साइज़</span>
-            <input id='sizeRange' type='range' min='55' max='150' value='100' />
-          </div>
-          <button id='saveKit' class='btn btn-gold btn-sm'>सेव करें</button>
+
+          <div class='ed-seltitle' style='margin-top:6px'>एडजस्ट</div>
+          <div class='ed-size'><span>साइज़</span><input id='sizeRange' type='range' min='55' max='150' value='100' /></div>
+          <div class='ed-size'><span>बैकग्राउंड</span><input id='bgRange' type='range' min='0' max='100' value='95' /></div>
+          <p class='ed-hint2'>बैकग्राउंड कम करें → पीछे का पोस्टर झलकेगा।</p>
+          <button id='saveKit' class='btn btn-gold btn-sm'>जानकारी सेव करें</button>
         </div>
 
-        <p class='ed-hint'>टिप: किसी भी एलिमेंट को उंगली/माउस से खींचकर खाली जगह पर रखें। एडिट के लिए एक बार टैप करें।</p>
+        <p class='ed-hint'>टिप: पोस्टर पर कार्ड को उंगली/माउस से खींचकर खाली जगह पर रखें।</p>
 
         <div class='ed-download'>
           <button id='btnDownload' class='btn btn-primary btn-lg'>⬇ डाउनलोड करें</button>
           <button id='btnShare' class='btn btn-gold btn-lg'>WhatsApp पर शेयर</button>
         </div>
-        <p class='ed-note' id='proNote'>फ्री प्लान में नीचे ब्रांडिंग पट्टी और हल्का वॉटरमार्क रहेगा। <a href='/payment'>Pro लें</a> — बिना वॉटरमार्क और HD डाउनलोड।</p>
+        <p class='ed-note' id='proNote'>फ्री प्लान में नीचे ब्रांडिंग पट्टी और हल्का वॉटरमार्क रहेगा। <a href='/payment'>Pro लें</a> — बिना ब्रांडिंग और HD डाउनलोड।</p>
       </div>
     </div>
   </section>
@@ -101,26 +83,21 @@ import { site } from '../data/site.js';
 
 <style>
   .ed-wrap { padding: 24px 16px 60px; background: var(--grad-soft); min-height: 80vh; }
-  .ed-grid { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 420px 1fr; gap: 28px; align-items: start; }
+  .ed-grid { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 420px 1fr; gap: 32px; align-items: start; }
 
-  .capture { background: #fff; border-radius: 14px; overflow: hidden; box-shadow: var(--shadow-sm); }
+  .stage-frame { background: #fff; border-radius: 18px; padding: 14px; box-shadow: 0 10px 30px rgba(124,58,237,.10); }
+  .capture { border-radius: 12px; overflow: hidden; }
   .stage { position: relative; width: 100%; line-height: 0; background: #f0eef7; overflow: hidden; }
   .poster-img { width: 100%; height: auto; display: block; }
 
-  .watermark { position: absolute; right: 8px; bottom: 8px; color: rgba(255,255,255,.82); font-size: 13px; font-weight: 800;
-    text-shadow: 0 1px 4px rgba(0,0,0,.6); pointer-events: none; line-height: 1; letter-spacing: .3px; }
-
-  .ov-text { position: absolute; transform: translate(-50%,-50%); color: #fff; font-weight: 800; font-size: 30px;
-    font-family: 'Noto Sans Devanagari', sans-serif; text-shadow: 0 2px 6px rgba(0,0,0,.55); cursor: grab; touch-action: none;
-    white-space: nowrap; padding: 2px 6px; line-height: 1.2; }
-  .ov-sticker { position: absolute; transform: translate(-50%,-50%); font-size: 46px; cursor: grab; touch-action: none; line-height: 1; }
-  .ov-text:active, .ov-sticker:active, .kit:active { cursor: grabbing; }
-  .sel { outline: 2px dashed var(--purple); outline-offset: 3px; border-radius: 4px; }
+  .watermark { position: absolute; right: 9px; bottom: 9px; color: rgba(255,255,255,.85); font-size: 13px; font-weight: 800;
+    text-shadow: 0 1px 4px rgba(0,0,0,.65); pointer-events: none; line-height: 1; letter-spacing: .3px; }
 
   .kit { position: absolute; left: 50%; top: 72%; transform: translate(-50%,-50%) scale(1); width: 78%; max-width: 340px;
     display: flex; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 12px;
-    background: rgba(252,233,239,.96); border: 1px solid rgba(180,20,90,.25); box-shadow: 0 4px 14px rgba(0,0,0,.12);
+    background: rgba(252,233,239,.95); border: 1px solid rgba(180,20,90,.25); box-shadow: 0 4px 14px rgba(0,0,0,.12);
     cursor: grab; touch-action: none; user-select: none; }
+  .kit:active { cursor: grabbing; }
   .kit-photo { flex-shrink: 0; width: 66px; height: 66px; border-radius: 50%; overflow: hidden; background: #ddd;
     border: 2px solid #B4145A; display: grid; place-items: center; color: #B4145A; font-weight: 800; font-size: 26px;
     background-size: cover; background-position: center; line-height: 1; }
@@ -129,35 +106,29 @@ import { site } from '../data/site.js';
   .kit-line { height: 1px; background: rgba(180,20,90,.3); margin: 4px 0 6px; }
   .kit-row { display: flex; align-items: center; gap: 6px; margin: 3px 0; font-size: 12.5px; font-weight: 600; color: #222; }
   .kit-ic { flex-shrink: 0; width: 18px; height: 18px; border-radius: 50%; background: #B4145A; display: grid; place-items: center; }
-  .kit-socials { display: flex; align-items: center; gap: 5px; margin-top: 6px; }
-  .soc { width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; }
-  .kit-bar { width: 1px; height: 15px; background: #999; margin: 0 3px; }
-  .kit-brandname { font-size: 12px; font-weight: 700; color: #222; }
+  .kit-socials { display: flex; align-items: center; gap: 6px; margin-top: 7px; }
+  .soc { width: 19px; height: 19px; border-radius: 50%; display: grid; place-items: center; }
 
-  .brand-strip { display: flex; align-items: center; justify-content: center; gap: 7px; padding: 9px 10px;
-    background: linear-gradient(90deg,#7C3AED,#B4145A); color: #fff; font-size: 12.5px; font-weight: 600; line-height: 1.2; }
-  .brand-strip b { font-weight: 800; }
+  .brand-strip { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 11px 12px;
+    background: linear-gradient(90deg,#7C3AED,#B4145A); color: #fff; }
+  .bs-logo { width: 30px; height: 30px; border-radius: 8px; background: rgba(255,255,255,.22); display: grid; place-items: center;
+    font-weight: 800; font-size: 17px; font-family: 'Poppins', sans-serif; flex-shrink: 0; }
+  .bs-txt { display: flex; flex-direction: column; line-height: 1.25; text-align: left; }
+  .bs-txt b { font-size: 14px; font-weight: 800; letter-spacing: .2px; }
+  .bs-txt small { font-size: 11px; opacity: .92; }
 
   .ed-panel h1 { font-size: 22px; font-weight: 800; }
   .ed-sub { color: var(--muted); font-size: 13.5px; margin: 6px 0 16px; line-height: 1.6; }
-  .ed-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
-  .ed-stickers { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
-  .ed-stk-label { font-size: 13px; font-weight: 700; color: var(--muted); }
-  .ed-stk-row { display: flex; flex-wrap: wrap; gap: 4px; }
-  .stk { font-size: 22px; line-height: 1; background: #fff; border: 1px solid var(--line); border-radius: 9px; padding: 5px 7px; cursor: pointer; }
-  .stk:hover { border-color: var(--purple); }
-
-  .ed-seltools, .ed-kitbox { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+  .ed-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+  .ed-kitbox { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-bottom: 14px; }
   .ed-seltitle { font-size: 13px; font-weight: 800; color: var(--purple); margin-bottom: 10px; }
   .ed-fld { display: block; font-size: 13px; font-weight: 700; margin-bottom: 10px; }
   .ed-fld input { width: 100%; margin-top: 5px; border: 1px solid var(--line); border-radius: 9px; padding: 9px 11px; font-family: inherit; font-size: 14px; outline: none; }
   .ed-fld input:focus { border-color: var(--purple); }
-  .ed-inline { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; font-size: 13px; font-weight: 700; }
-  .ed-inline input[type=color] { width: 40px; height: 30px; border: 1px solid var(--line); border-radius: 6px; vertical-align: middle; }
-  .ed-sizew { flex: 1; display: flex; align-items: center; gap: 8px; }
-  .ed-sizew input { flex: 1; }
-  .ed-size { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; margin: 6px 0 14px; }
+  .ed-size { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; margin: 6px 0 10px; }
+  .ed-size span { width: 78px; flex-shrink: 0; }
   .ed-size input { flex: 1; }
+  .ed-hint2 { font-size: 11.5px; color: var(--muted); margin: 0 0 14px; line-height: 1.5; }
   .ed-hint { font-size: 12px; color: var(--muted); margin: 0 0 16px; line-height: 1.6; }
   .ed-download { display: flex; flex-direction: column; gap: 10px; }
   .ed-download .btn { width: 100%; }
@@ -166,7 +137,7 @@ import { site } from '../data/site.js';
 
   @media (max-width: 820px) {
     .ed-grid { grid-template-columns: 1fr; gap: 20px; }
-    .ed-stage-col { max-width: 400px; margin: 0 auto; width: 100%; }
+    .ed-stage-col { max-width: 380px; margin: 0 auto; width: 100%; }
     .ed-panel { max-width: 500px; margin: 0 auto; width: 100%; }
   }
 </style>
@@ -184,88 +155,6 @@ import { site } from '../data/site.js';
     var strip = document.getElementById('brandStrip');
     var watermark = document.getElementById('watermark');
     var capture = document.getElementById('capture');
-    var isPro = false;
-
-    // ===== selection handling =====
-    var sel = null;
-    var selTools = document.getElementById('selTools');
-    var selText = document.getElementById('selText');
-    var selColor = document.getElementById('selColor');
-    var selSize = document.getElementById('selSize');
-    var selTextWrap = document.getElementById('selTextWrap');
-    var selColorWrap = document.getElementById('selColorWrap');
-
-    function selectEl(el) {
-      if (sel) sel.classList.remove('sel');
-      sel = el;
-      if (!el) { selTools.hidden = true; return; }
-      el.classList.add('sel');
-      selTools.hidden = false;
-      var isText = el.classList.contains('ov-text');
-      selTextWrap.style.display = isText ? 'block' : 'none';
-      selColorWrap.style.display = isText ? 'inline-block' : 'none';
-      if (isText) { selText.value = el.textContent; selColor.value = rgbToHex(el.style.color) || '#ffffff'; }
-      var fs = parseInt(el.style.fontSize) || (isText ? 30 : 46);
-      selSize.value = Math.max(14, Math.min(110, fs));
-    }
-    function rgbToHex(c) {
-      if (!c) return null;
-      if (c.charAt(0) === '#') return c;
-      var m = c.match(/\d+/g); if (!m) return null;
-      return '#' + m.slice(0, 3).map(function (x) { return ('0' + parseInt(x).toString(16)).slice(-2); }).join('');
-    }
-    selText.addEventListener('input', function () { if (sel && sel.classList.contains('ov-text')) sel.textContent = this.value; });
-    selColor.addEventListener('input', function () { if (sel && sel.classList.contains('ov-text')) sel.style.color = this.value; });
-    selSize.addEventListener('input', function () { if (sel) sel.style.fontSize = this.value + 'px'; });
-    document.getElementById('selDel').addEventListener('click', function () { if (sel) { sel.remove(); selectEl(null); } });
-
-    stage.addEventListener('pointerdown', function (e) { if (e.target === stage || e.target === posterImg) selectEl(null); });
-
-    // ===== generic draggable for overlays =====
-    function makeDraggable(el, xp, yp) {
-      el.style.left = xp + '%'; el.style.top = yp + '%';
-      el.dataset.xp = xp; el.dataset.yp = yp;
-      var drag = false;
-      el.addEventListener('pointerdown', function (e) { drag = true; el.setPointerCapture(e.pointerId); selectEl(el); e.stopPropagation(); e.preventDefault(); });
-      el.addEventListener('pointermove', function (e) {
-        if (!drag) return;
-        var r = stage.getBoundingClientRect();
-        var nx = Math.max(0, Math.min(100, ((e.clientX - r.left) / r.width) * 100));
-        var ny = Math.max(0, Math.min(100, ((e.clientY - r.top) / r.height) * 100));
-        el.style.left = nx + '%'; el.style.top = ny + '%';
-      });
-      el.addEventListener('pointerup', function () { drag = false; });
-      el.addEventListener('pointercancel', function () { drag = false; });
-    }
-
-    // ===== add text =====
-    document.getElementById('addText').addEventListener('click', function () {
-      var el = document.createElement('div');
-      el.className = 'ov-text';
-      el.textContent = 'यहाँ लिखें';
-      el.style.fontSize = '30px';
-      el.style.color = '#ffffff';
-      stage.appendChild(el);
-      makeDraggable(el, 50, 35);
-      selectEl(el);
-      selText.focus();
-    });
-
-    // ===== stickers =====
-    var STICKERS = ['🎉','❤️','🌸','✨','🙏','🔥','🎂','⭐','🌹','😊','👍','💯'];
-    var stkRow = document.getElementById('stkRow');
-    STICKERS.forEach(function (s) {
-      var b = document.createElement('button');
-      b.className = 'stk'; b.type = 'button'; b.textContent = s;
-      b.addEventListener('click', function () {
-        var el = document.createElement('div');
-        el.className = 'ov-sticker'; el.textContent = s; el.style.fontSize = '46px';
-        stage.appendChild(el);
-        makeDraggable(el, 50, 50);
-        selectEl(el);
-      });
-      stkRow.appendChild(b);
-    });
 
     // ===== profile / brand kit =====
     var prof = {};
@@ -288,7 +177,6 @@ import { site } from '../data/site.js';
     function renderKit() {
       var name = inName.value.trim() || 'आपका नाम';
       document.getElementById('kitName').textContent = name;
-      document.getElementById('kitName2').textContent = name;
       document.getElementById('kitProf').textContent = inProf.value.trim() || 'प्रोफेशन यहाँ लिखें';
       document.getElementById('kitPhone').textContent = inPhone.value.trim() || '98765 43210';
       var u = inUser.value.trim() || '@yourusername';
@@ -308,7 +196,7 @@ import { site } from '../data/site.js';
       if (d && d.user) {
         if (!inName.value) inName.value = d.user.name || '';
         if (!prof.photo && d.user.avatar) savedAvatar = d.user.avatar;
-        if (d.user.plan === 'pro') { isPro = true; strip.style.display = 'none'; watermark.style.display = 'none'; document.getElementById('proNote').style.display = 'none'; }
+        if (d.user.plan === 'pro') { strip.style.display = 'none'; watermark.style.display = 'none'; document.getElementById('proNote').style.display = 'none'; }
         renderKit();
       }
     }).catch(function () {});
@@ -326,7 +214,7 @@ import { site } from '../data/site.js';
       prof.phone = inPhone.value.trim(); prof.username = inUser.value.trim();
       try { localStorage.setItem('ph_profile', JSON.stringify(prof)); } catch (e) {}
       renderKit();
-      var b = this; b.textContent = '✓ सेव हो गया'; setTimeout(function () { b.textContent = 'सेव करें'; }, 1500);
+      var b = this; b.textContent = '✓ सेव हो गया'; setTimeout(function () { b.textContent = 'जानकारी सेव करें'; }, 1500);
     });
 
     document.getElementById('addBrand').addEventListener('click', function () {
@@ -340,12 +228,18 @@ import { site } from '../data/site.js';
       document.getElementById('kitBox').hidden = true;
     });
 
-    // brand card drag + scale
-    var pos = { xp: 50, yp: 72 }; var scale = 1;
-    function applyKit() { card.style.left = pos.xp + '%'; card.style.top = pos.yp + '%'; card.style.transform = 'translate(-50%,-50%) scale(' + scale + ')'; }
+    // ===== brand card drag + scale + bg opacity =====
+    var pos = { xp: 50, yp: 72 }; var scale = 1; var bgAlpha = 0.95;
+    function applyKit() {
+      card.style.left = pos.xp + '%';
+      card.style.top = pos.yp + '%';
+      card.style.transform = 'translate(-50%,-50%) scale(' + scale + ')';
+      card.style.background = 'rgba(252,233,239,' + bgAlpha + ')';
+      card.style.borderColor = 'rgba(180,20,90,' + (bgAlpha * 0.28) + ')';
+    }
     applyKit();
     var kdrag = false;
-    card.addEventListener('pointerdown', function (e) { kdrag = true; card.setPointerCapture(e.pointerId); e.stopPropagation(); e.preventDefault(); });
+    card.addEventListener('pointerdown', function (e) { kdrag = true; card.setPointerCapture(e.pointerId); e.preventDefault(); });
     card.addEventListener('pointermove', function (e) {
       if (!kdrag) return;
       var r = stage.getBoundingClientRect();
@@ -356,14 +250,11 @@ import { site } from '../data/site.js';
     card.addEventListener('pointerup', function () { kdrag = false; });
     card.addEventListener('pointercancel', function () { kdrag = false; });
     document.getElementById('sizeRange').addEventListener('input', function () { scale = this.value / 100; applyKit(); });
+    document.getElementById('bgRange').addEventListener('input', function () { bgAlpha = this.value / 100; applyKit(); });
 
     // ===== export =====
     function build() {
-      if (sel) sel.classList.remove('sel');
-      return html2canvas(capture, { useCORS: true, backgroundColor: '#ffffff', scale: 2, logging: false }).then(function (c) {
-        if (sel) sel.classList.add('sel');
-        return c;
-      });
+      return html2canvas(capture, { useCORS: true, backgroundColor: '#ffffff', scale: 2, logging: false });
     }
     function busy(btn, on, txt) { btn.disabled = on; if (on) { btn.dataset.t = btn.textContent; btn.textContent = txt; } else { btn.textContent = btn.dataset.t; } }
 

@@ -50,9 +50,16 @@ const fallback = templates;
   .chip { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; padding: 8px 16px; border-radius: 999px; background: #fff; border: 1px solid var(--line); cursor: pointer; font-family: inherit; color: var(--ink); }
   .chip.active, .chip:hover { background: var(--purple); color: #fff; border-color: var(--purple); }
 
-  .date-strip { display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 12px; margin-bottom: 12px; border-bottom: 1px solid var(--line); scrollbar-width: thin; }
-  .datechip { flex-shrink: 0; font-size: 13.5px; font-weight: 700; padding: 9px 15px; border-radius: 12px; background: var(--bg); border: 1px solid var(--line); cursor: pointer; font-family: inherit; color: var(--ink); white-space: nowrap; }
-  .datechip.active { background: var(--grad); color: #fff; border-color: transparent; }
+  .date-strip { display: flex; gap: 14px; overflow-x: auto; padding: 8px 2px 16px; margin-bottom: 10px; scrollbar-width: none; }
+  .date-strip::-webkit-scrollbar { display: none; }
+  .storycircle { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: none; cursor: pointer; font-family: inherit; padding: 0; }
+  .storycircle .ring { width: 58px; height: 58px; border-radius: 50%; padding: 3px; background: var(--line); display: grid; place-items: center; transition: transform .15s; }
+  .storycircle .inner { width: 100%; height: 100%; border-radius: 50%; background: #fff; display: grid; place-items: center; line-height: 1; color: var(--ink); }
+  .storycircle .inner b { font-size: 18px; font-weight: 800; }
+  .storycircle .inner span { font-size: 10px; color: var(--muted); font-weight: 700; margin-top: 2px; }
+  .storycircle .lbl { font-size: 12px; font-weight: 700; color: var(--muted); white-space: nowrap; }
+  .storycircle.active .ring { background: linear-gradient(135deg,#F5B301,#7C3AED,#B4145A); transform: scale(1.06); }
+  .storycircle.active .lbl { color: var(--purple); }
 
   .grid-info { font-size: 13.5px; color: var(--muted); margin: 4px 0 16px; font-weight: 600; }
   .daily-note { font-size: 13px; color: var(--muted); margin: 0 0 14px; line-height: 1.5; }
@@ -79,6 +86,8 @@ const fallback = templates;
 <script is:inline>
   (function () {
     var HMONTHS = ['जनवरी','फ़रवरी','मार्च','अप्रैल','मई','जून','जुलाई','अगस्त','सितंबर','अक्टूबर','नवंबर','दिसंबर'];
+    var HMON_SHORT = ['जन','फ़र','मार्च','अप्रै','मई','जून','जुल','अग','सित','अक्तू','नव','दिस'];
+    var HDAYS = ['रवि','सोम','मंगल','बुध','गुरु','शुक्र','शनि'];
     var POSTERS = [];
     var fallback = [];
     try { fallback = JSON.parse(document.getElementById('fallbackData').textContent) || []; } catch (e) {}
@@ -98,15 +107,14 @@ const fallback = templates;
       for (var i = 0; i < 7; i++) {
         var d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i);
         var val = pad(d.getMonth() + 1) + '-' + pad(d.getDate());
-        var dateTxt = d.getDate() + ' ' + HMONTHS[d.getMonth()];
-        var label = i === 0 ? ('आज · ' + dateTxt) : (i === 1 ? ('कल · ' + dateTxt) : dateTxt);
+        var lbl = i === 0 ? 'आज' : (i === 1 ? 'कल' : HDAYS[d.getDay()]);
         var b = document.createElement('button');
-        b.className = 'datechip' + (i === 0 ? ' active' : '');
+        b.className = 'storycircle' + (i === 0 ? ' active' : '');
         b.setAttribute('data-md', val);
-        b.textContent = label;
+        b.innerHTML = "<span class='ring'><span class='inner'><b>" + d.getDate() + "</b><span>" + HMON_SHORT[d.getMonth()] + "</span></span></span><span class='lbl'>" + lbl + "</span>";
         b.addEventListener('click', function () {
           selectedMD = this.getAttribute('data-md');
-          var all = document.querySelectorAll('.datechip');
+          var all = document.querySelectorAll('.storycircle');
           for (var j = 0; j < all.length; j++) all[j].classList.toggle('active', all[j] === this);
           render();
         });
