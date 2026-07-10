@@ -10,18 +10,14 @@ import Layout from '../layouts/Layout.astro';
         <div class='stage-frame'>
           <div class='capture' id='capture'>
 
-            <!-- TOP strip: website branding (free plan, outside image) -->
-            <div class='brand-strip' id='brandStrip'>
-              <span class='bs-logo'>D</span>
-              <span class='bs-txt'><b>DailyPosterHub</b><small>फ्री पोस्टर रोज़ — posterhub.pages.dev</small></span>
-            </div>
+            <!-- TOP strip: website branding image (free plan, outside image) -->
+            <img class='brand-top' id='brandStrip' src='/img/branding.webp' alt='DailyPosterHub' crossorigin='anonymous' />
 
             <!-- POSTER + photo circle only -->
             <div class='stage' id='stage'>
               <img id='posterImg' class='poster-img' alt='poster' crossorigin='anonymous' />
               <img id='brandOverlay' class='brand-overlay' alt='branding' />
               <img id='wmMark' class='wm-mark show' src='/img/watermark.png' alt='watermark' crossorigin='anonymous' />
-              <div class='date-badge' id='dateBadge'><span class='db-day' id='dbDay'></span><span class='db-date' id='dbDate'></span></div>
               <div class='photo-circle empty' id='photoCircle'>फोटो</div>
             </div>
 
@@ -108,6 +104,7 @@ import Layout from '../layouts/Layout.astro';
   .wm-mark.show { display: block; }
 
   /* TOP website strip */
+  .brand-top { display: block; width: 100%; height: auto; }
   .brand-strip { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 11px 12px;
     background: linear-gradient(90deg,#7C3AED,#B4145A); color: #fff; }
   .bs-logo { width: 30px; height: 30px; border-radius: 8px; background: rgba(255,255,255,.22); display: inline-flex; align-items: center; justify-content: center;
