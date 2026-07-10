@@ -1,0 +1,108 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
+
+const PROMPT = `Create a professional, ultra-realistic profile picture from the uploaded photo. Keep my exact face, features and identity 100% the same — do not change my face shape, eyes, nose or skin tone. Head-and-shoulders portrait, confident friendly smile, neat well-groomed hair, clean business-casual outfit. Soft studio lighting, sharp focus, natural skin texture, smooth softly-blurred professional background. High detail, 4K, centered, square 1:1 crop. Make it look like a premium LinkedIn / social-media profile photo.`;
+---
+<Layout title='प्रो प्रोफाइल फोटो कैसे बनाएं — Daily PosterHub' description='अपनी आम फोटो से ChatGPT की मदद से एकदम प्रोफेशनल प्रोफाइल फोटो बनाएं — पूरा हिंदी गाइड और रेडी प्रॉम्प्ट।'>
+  <section class='section'>
+    <div class='container mpp'>
+      <a href='/account' class='back'>← मेरा खाता</a>
+      <h1 class='mpp-title'><Icon name='image' size={22} /> प्रो प्रोफाइल फोटो कैसे बनाएं</h1>
+      <p class='mpp-sub'>अपनी आम सेल्फी से ChatGPT की मदद से एकदम प्रोफेशनल (LinkedIn जैसी) प्रोफाइल फोटो बनाएं — बिल्कुल फ्री। नीचे रेडी प्रॉम्प्ट है, बस कॉपी करें और ChatGPT में फोटो के साथ paste करें।</p>
+
+      <div class='card prompt-card'>
+        <div class='pc-head'>
+          <span class='pc-label'><Icon name='edit' size={15} /> रेडी प्रॉम्प्ट</span>
+          <button id='copyPrompt' class='btn btn-gold btn-sm'><Icon name='image' size={14} /> प्रॉम्प्ट कॉपी करें & ChatGPT खोलें</button>
+        </div>
+        <pre id='promptText' class='prompt-text'>{PROMPT}</pre>
+      </div>
+
+      <div id='mppToast' class='mpp-toast' hidden>✅ प्रॉम्प्ट कॉपी हो गया — ChatGPT खुल रहा है...</div>
+
+      <h2><Icon name='check-circle' size={18} /> कैसे इस्तेमाल करें (आसान स्टेप्स)</h2>
+      <ol class='steps'>
+        <li>ऊपर दिए <b>“प्रॉम्प्ट कॉपी करें & ChatGPT खोलें”</b> बटन पर क्लिक करें — प्रॉम्प्ट कॉपी हो जाएगा और ChatGPT का नया chat खुल जाएगा।</li>
+        <li>ChatGPT में <b>लॉगिन</b> करें (फ्री अकाउंट से भी चलेगा)।</li>
+        <li>चैट बॉक्स में <b>📎 / फोटो आइकन</b> दबाकर अपनी फोटो <b>upload</b> करें।</li>
+        <li>उसी बॉक्स में प्रॉम्प्ट <b>paste</b> करें (कॉपी पहले ही हो चुका है) और <b>भेजें</b>।</li>
+        <li>कुछ सेकंड में आपकी <b>प्रो प्रोफाइल फोटो</b> बन जाएगी — उसे <b>download</b> करें।</li>
+        <li>वापस आकर उसी फोटो को अपनी <b>प्रोफाइल फोटो</b> या पोस्टर में लगाएं।</li>
+      </ol>
+
+      <h2><Icon name='image' size={18} /> अच्छी फोटो कैसे खींचें</h2>
+      <ul class='tips'>
+        <li>चेहरा सीधा कैमरे की तरफ रखें, अच्छी रोशनी में खींचें (दिन की रोशनी सबसे बढ़िया)।</li>
+        <li>पीछे सादा/साफ background (जैसे दीवार) रखें।</li>
+        <li>फोटो साफ हो, धुंधली न हो; चेहरा कंधे तक पूरा दिखे।</li>
+        <li>भारी filter/beauty mode बंद रखें — नैचुरल फोटो पर सबसे अच्छा रिज़ल्ट आता है।</li>
+        <li>अकेले व्यक्ति की फोटो रखें (group फोटो नहीं)।</li>
+      </ul>
+
+      <div class='mpp-note'><Icon name='crown' size={16} /> टिप: एक ही फोटो पर “और formal/और bright/blue background” जैसा लिखकर दोबारा भेजें तो अलग-अलग वेरिएशन मिल जाएँगे।</div>
+
+      <div class='mpp-bottom'>
+        <button id='copyPrompt2' class='btn btn-gold btn-lg'><Icon name='image' size={16} /> प्रॉम्प्ट कॉपी करें & ChatGPT खोलें</button>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script is:inline>
+  (function () {
+    var promptEl = document.getElementById('promptText');
+    var toast = document.getElementById('mppToast');
+    function fallbackCopy(str) {
+      var ta = document.createElement('textarea');
+      ta.value = str; ta.style.position = 'fixed'; ta.style.top = '-1000px'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.focus(); ta.select();
+      try { document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(ta);
+    }
+    function go() {
+      var text = (promptEl.innerText || promptEl.textContent || '').trim();
+      var done = function () {
+        if (toast) { toast.hidden = false; }
+        setTimeout(function () { window.open('https://chatgpt.com/', '_blank'); }, 700);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function () { fallbackCopy(text); done(); });
+      } else { fallbackCopy(text); done(); }
+    }
+    ['copyPrompt', 'copyPrompt2'].forEach(function (id) {
+      var b = document.getElementById(id);
+      if (b) b.addEventListener('click', go);
+    });
+  })();
+</script>
+
+<style>
+  .mpp { max-width: 760px; margin: 0 auto; }
+  .back { display: inline-block; color: var(--purple); font-weight: 700; font-size: 14px; margin-bottom: 18px; }
+  .mpp-title { font-size: 28px; font-weight: 800; line-height: 1.25; display: flex; align-items: center; gap: 9px; }
+  .mpp-title :global(.icon) { color: var(--purple); }
+  .mpp-sub { color: var(--muted); font-size: 15px; line-height: 1.7; margin: 10px 0 24px; }
+
+  .prompt-card { padding: 16px 18px; background: #fff; }
+  .pc-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+  .pc-label { font-weight: 800; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; }
+  .pc-label :global(.icon) { color: var(--purple); }
+  .prompt-text { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; font-size: 14px; line-height: 1.7; color: var(--ink); white-space: pre-wrap; word-break: break-word; font-family: inherit; margin: 0; }
+
+  .mpp-toast { margin: 14px 0 0; background: #DCFCE7; color: #166534; font-weight: 700; font-size: 13.5px; padding: 10px 14px; border-radius: 10px; }
+
+  .mpp h2 { font-size: 20px; font-weight: 800; margin: 30px 0 12px; display: flex; align-items: center; gap: 8px; }
+  .mpp h2 :global(.icon) { color: var(--purple); }
+  .steps, .tips { padding-left: 22px; color: var(--ink); }
+  .steps li { margin-bottom: 12px; line-height: 1.7; }
+  .tips li { margin-bottom: 9px; line-height: 1.7; }
+
+  .mpp-note { margin: 24px 0 6px; background: var(--grad-soft); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; font-size: 13.5px; line-height: 1.6; color: var(--ink); display: flex; align-items: flex-start; gap: 9px; }
+  .mpp-note :global(.icon) { color: var(--gold-dark); flex-shrink: 0; margin-top: 2px; }
+
+  .mpp-bottom { margin-top: 26px; }
+  .mpp-bottom .btn { width: 100%; }
+
+  @media (max-width: 560px) { .mpp-title { font-size: 23px; } }
+</style>

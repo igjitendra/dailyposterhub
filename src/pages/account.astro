@@ -20,6 +20,8 @@ import Icon from '../components/Icon.astro';
 
       <p id='avatarMsg' class='avatar-msg' hidden></p>
 
+      <a href='/make-profile-picture' class='btn btn-primary btn-lg mpp-cta-btn'><Icon name='image' size={16} /> AI प्रोफाइल फोटो बनाएं</a>
+
       <div class='acc-row'><span class='k'>प्लान</span><span class='v' id='planText'>—</span></div>
       <div class='acc-row' id='phoneRow' hidden><span class='k'>मोबाइल</span><span class='v' id='phoneText'>—</span></div>
       <div class='acc-row' id='sinceRow' hidden><span class='k'>जॉइन किया</span><span class='v' id='sinceText'>—</span></div>
@@ -76,6 +78,7 @@ import Icon from '../components/Icon.astro';
   .avatar-msg { font-size: 13px; font-weight: 600; padding: 9px 12px; border-radius: 9px; margin-bottom: 14px; }
   .avatar-msg.ok { background: #DCFCE7; color: #166534; }
   .avatar-msg.err { background: #FEE2E2; color: #B91C1C; }
+  .mpp-cta-btn { width: 100%; margin-bottom: 18px; }
 
   .acc-row { display: flex; align-items: center; justify-content: space-between; padding: 11px 0; border-bottom: 1px solid var(--line); font-size: 14.5px; }
   .acc-row .k { color: var(--muted); }
