@@ -66,6 +66,7 @@ import Layout from '../layouts/Layout.astro';
 </Layout>
 
 <script is:inline src='https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js'></script>
+<script is:inline src='https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js'></script>
 
 <style>
   .ed-wrap { padding: 24px 16px 60px; background: var(--grad-soft); min-height: 80vh; }
@@ -252,7 +253,7 @@ import Layout from '../layouts/Layout.astro';
 
     // ===== export =====
     // IMPORTANT: फ़ॉन्ट पूरी तरह लोड होने का इंतज़ार करो, वरना html2canvas
-    // fallback फ़ॉन्ट की माप से capture क���ता है और टेक्स्ट (दिन/तारीख़, ब्रांडिंग,
+    // fallback फ़ॉन्ट की माप से capture क�����ता है और टेक्स्ट (दिन/तारीख़, ब्रांडिंग,
     // नाम) ऊपर-नीचे खिसक जाता है। fonts.ready + थोड़ा delay इसे ठीक करता है।
     function build() {
       var f = document.fonts;
@@ -271,7 +272,21 @@ import Layout from '../layouts/Layout.astro';
       return pre
         .then(function () { return ready; })
         .then(function () { return new Promise(function (res) { setTimeout(res, 250); }); })
-        .then(function () { return html2canvas(capture, { useCORS: true, backgroundColor: '#ffffff', scale: 2, logging: false, imageTimeout: 0 }); });
+        .then(function () { return renderCanvas(); });
+    }
+
+    // मुख्य रेंडरर: html-to-image (SVG foreignObject) = ब्राउज़र का अपना
+    // rendering → download बिल्कुल website जैसा, टेक्स्ट की खिसकन खत्म।
+    // सभी इमेज same-origin हैं इसलिए canvas taint नहीं होता। backup: html2canvas।
+    function renderCanvas() {
+      var opts = { pixelRatio: 2, backgroundColor: '#ffffff', cacheBust: true };
+      if (window.htmlToImage && window.htmlToImage.toCanvas) {
+        // पहला render warm-up (foreignObject में इमेज कभी-कभी पहली बार छूट जाती है), फिर असली
+        return window.htmlToImage.toCanvas(capture, opts)
+          .then(function () { return window.htmlToImage.toCanvas(capture, opts); })
+          .catch(function () { return html2canvas(capture, { useCORS: true, backgroundColor: '#ffffff', scale: 2, logging: false, imageTimeout: 0 }); });
+      }
+      return html2canvas(capture, { useCORS: true, backgroundColor: '#ffffff', scale: 2, logging: false, imageTimeout: 0 });
     }
     function busy(btn, on, txt) { btn.disabled = on; if (on) { btn.dataset.t = btn.textContent; btn.textContent = txt; } else { btn.textContent = btn.dataset.t; } }
 
