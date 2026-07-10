@@ -385,8 +385,6 @@ import Layout from '../layouts/Layout.astro';
       var opts = { pixelRatio: 2, backgroundColor: '#ffffff', cacheBust: true };
       var frozen = [pc, wmMark, bo].map(freezeEl).filter(Boolean);
       function restore() { frozen.forEach(function (f) { if (f.prev === null) f.el.removeAttribute('style'); else f.el.setAttribute('style', f.prev); }); }
-      var ops = textOverlayOps();
-      hideText();
       var task;
       if (window.htmlToImage && window.htmlToImage.toCanvas) {
         // पहला render warm-up (foreignObject में इमेज कभी-कभी पहली बार छूट जाती है), फिर असली
@@ -396,7 +394,7 @@ import Layout from '../layouts/Layout.astro';
       } else {
         task = html2canvas(capture, { useCORS: true, backgroundColor: '#ffffff', scale: 2, logging: false, imageTimeout: 0 });
       }
-      return task.then(function (cv) { restore(); showText(); drawText(cv, ops); return cv; }, function (err) { restore(); showText(); throw err; });
+      return task.then(function (cv) { restore(); return cv; }, function (err) { restore(); throw err; });
     }
     function busy(btn, on, txt) { btn.disabled = on; if (on) { btn.dataset.t = btn.textContent; btn.textContent = txt; } else { btn.textContent = btn.dataset.t; } }
 
