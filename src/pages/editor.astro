@@ -83,7 +83,7 @@ import Layout from '../layouts/Layout.astro';
   .ed-grid { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 420px 1fr; gap: 32px; align-items: start; }
 
   .stage-frame { background: #fff; border-radius: 18px; padding: 12px; box-shadow: 0 10px 30px rgba(124,58,237,.10); }
-  .capture { border-radius: 12px; overflow: hidden; background: #fff; }
+  .capture { border-radius: 0; overflow: hidden; background: #fff; }
   .stage { position: relative; width: 100%; line-height: 0; background: #f0eef7; overflow: hidden; }
   .poster-img { width: 100%; height: auto; display: block; }
 
@@ -168,7 +168,7 @@ import Layout from '../layouts/Layout.astro';
     var posterImg = document.getElementById('posterImg');
     posterImg.src = imgUrl || '/img/preview-morning.webp';
 
-    // आज की तारीख़ + दिन (ऊपर लेफ्ट दिन, राइट तारीख़)
+    // आज की ��ारीख़ + दिन (ऊपर लेफ्ट दिन, राइट तारीख़)
     var HDAYS = ['रविवार','सोमवार','मंगलवार','बुधवार','गुरुवार','शुक्रवार','शनिवार'];
     var HMON = ['जनवरी','फ़रवरी','मार्च','अप्रैल','मई','जून','जुलाई','अगस्त','सितंबर','अक्टूबर','नवंबर','दिसंबर'];
     var _now = new Date();
@@ -370,11 +370,15 @@ import Layout from '../layouts/Layout.astro';
       if (!ops || !ops.items.length || !ops.capW) return;
       var ctx = cv.getContext('2d');
       var ratio = cv.width / ops.capW;
-      ctx.textBaseline = 'middle';
+      ctx.textBaseline = 'alphabetic';
       ops.items.forEach(function (it) {
         ctx.font = it.weight + ' ' + (it.size * ratio) + 'px ' + it.family;
         ctx.fillStyle = it.color; ctx.textAlign = it.align;
-        ctx.fillText(it.text, it.x * ratio, it.y * ratio);
+        var cy = it.y * ratio;
+        var m = ctx.measureText(it.text);
+        var asc = m.actualBoundingBoxAscent, desc = m.actualBoundingBoxDescent;
+        var baseline = (asc || desc) ? (cy + (asc - desc) / 2) : cy;
+        ctx.fillText(it.text, it.x * ratio, baseline);
       });
     }
     function renderCanvas() {
