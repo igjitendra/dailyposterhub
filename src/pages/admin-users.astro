@@ -35,6 +35,18 @@ import Icon from '../components/Icon.astro';
         </div>
       </div>
 
+      <div class='au-card card' id='dlCard' hidden>
+        <h2>📥 सबसे ज़्यादा डाउनलोड होने वाले पोस्टर</h2>
+        <p class='au-sub' style='margin:0 0 14px'>कुल डाउनलोड: <b id='dlTotal'>0</b></p>
+        <div class='table-wrap'>
+          <table class='utable'>
+            <thead><tr><th>#</th><th>पोस्टर</th><th>डाउनलोड</th></tr></thead>
+            <tbody id='dlBody'></tbody>
+          </table>
+        </div>
+        <p id='dlEmpty' class='muted' hidden>अभी कोई डाउनलोड नहीं।</p>
+      </div>
+
       <div class='au-card card' id='listCard' hidden>
         <div class='list-head'>
           <h2>सभी यूज़र</h2>
@@ -147,6 +159,23 @@ import Icon from '../components/Icon.astro';
       });
     }
 
+    function loadDownloadStats() {
+      fetch('/api/track-download').then(function (r) { return r.json(); }).then(function (d) {
+        document.getElementById('dlCard').hidden = false;
+        document.getElementById('dlTotal').textContent = (d.total || 0).toLocaleString('en-IN');
+        var body = document.getElementById('dlBody');
+        var empty = document.getElementById('dlEmpty');
+        var top = d.top || [];
+        body.innerHTML = '';
+        empty.hidden = top.length > 0;
+        top.forEach(function (t, i) {
+          var tr = document.createElement('tr');
+          tr.innerHTML = '<td>' + (i + 1) + '</td><td>' + esc(t.title) + '</td><td><b>' + (t.count || 0) + '</b></td>';
+          body.appendChild(tr);
+        });
+      }).catch(function () {});
+    }
+
     function loadUsers() {
       var key = keyInput.value.trim();
       if (!key) { show('Admin Key डालें।', 'err'); return; }
@@ -159,6 +188,7 @@ import Icon from '../components/Icon.astro';
           USERS = res.j.users || [];
           renderStats(res.j);
           renderList('');
+          loadDownloadStats();
           msg.hidden = true;
         }).catch(function () { show('नेटवर्क समस्या।', 'err'); });
     }
