@@ -1,4 +1,4 @@
-import { json } from '../../_auth.js';
+import { json } from '../_auth.js';
 
 // POST /api/track-download  { title }  -> ek download count karo
 // GET  /api/track-download             -> { total, top: [{title,count}] }
