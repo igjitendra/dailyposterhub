@@ -102,17 +102,17 @@ import Layout from '../layouts/Layout.astro';
   .brand-overlay.show { display: block; }
   .brand-overlay:active { cursor: grabbing; }
   .date-badge { position: absolute; top: 12px; left: 12px; right: 12px; display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; pointer-events: none; z-index: 3; }
-  .db-day, .db-date { display: inline-block; background: #7C3AED; color: #fff; font-size: 13px; font-weight: 700; padding: 5px 14px 13px; line-height: 1; border-radius: 22px; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,.28); }
+  .db-day, .db-date { display: inline-block; background: #7C3AED; color: #fff; font-size: 13px; font-weight: 700; padding: 10px 14px; line-height: 1; border-radius: 22px; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,.28); }
   .db-date { background: #B4145A; }
   .wm-mark { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 62%; max-width: 62%; opacity: .38; pointer-events: none; display: none; z-index: 2; }
   .wm-mark.show { display: block; }
 
   /* TOP website strip */
-  .brand-strip { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 7px 12px 14px;
+  .brand-strip { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 11px 12px;
     background: linear-gradient(90deg,#7C3AED,#B4145A); color: #fff; }
   .bs-logo { width: 30px; height: 30px; border-radius: 8px; background: rgba(255,255,255,.22); display: inline-flex; align-items: center; justify-content: center;
     font-weight: 800; font-size: 17px; font-family: 'Poppins', sans-serif; flex-shrink: 0; }
-  .bs-txt { display: flex; flex-direction: column; line-height: 1.2; text-align: left; margin-top: -1px; }
+  .bs-txt { display: flex; flex-direction: column; line-height: 1.25; text-align: left; }
   .bs-txt b { font-size: 14px; font-weight: 800; letter-spacing: .2px; }
   .bs-txt small { font-size: 11px; opacity: .92; }
 
@@ -324,10 +324,68 @@ import Layout from '../layouts/Layout.astro';
       el.style.transform = 'none';
       return { el: el, prev: prev };
     }
+    // ===== download-only text overlay =====
+    // pill / branding / नाम का text canvas पर सीधे fillText से बीचोबीच
+    // (textBaseline=middle) लिखो — रैस्टराइज़ की खिसकन खत्म। यह सिर्फ़
+    // downloaded canvas पर लगता है — website/editor preview पर कोई असर नहीं।
+    var STACK = "'Noto Sans Devanagari','Poppins',sans-serif";
+    var _txtEls = null;
+    function txtEls() {
+      if (_txtEls) return _txtEls;
+      var list = [];
+      ['dbDay', 'dbDate', 'nsName', 'nsProf'].forEach(function (id) { var e = document.getElementById(id); if (e) list.push(e); });
+      var bs = document.getElementById('brandStrip');
+      if (bs) ['.bs-logo', '.bs-txt b', '.bs-txt small'].forEach(function (s) { var e = bs.querySelector(s); if (e) list.push(e); });
+      _txtEls = list; return list;
+    }
+    function hideText() { txtEls().forEach(function (e) { e.dataset.oc = e.style.color || ''; e.style.color = 'transparent'; }); }
+    function showText() { txtEls().forEach(function (e) { e.style.color = e.dataset.oc || ''; delete e.dataset.oc; }); }
+    function textOverlayOps() {
+      var cr = capture.getBoundingClientRect();
+      var items = [];
+      function push(el, o) {
+        if (!el) return;
+        var cs = window.getComputedStyle(el);
+        if (cs.display === 'none' || cs.visibility === 'hidden') return;
+        var r = el.getBoundingClientRect();
+        if (!r.width || !r.height) return;
+        var text = (o.text != null ? o.text : el.textContent) || '';
+        if (!text.trim()) return;
+        items.push({ text: text, align: o.align || 'center', color: o.color, weight: o.weight, size: o.size, family: o.family || STACK,
+          x: (o.align === 'left' ? (r.left - cr.left) : (r.left - cr.left + r.width / 2)), y: (r.top - cr.top + r.height / 2) });
+      }
+      push(document.getElementById('dbDay'), { size: 13, weight: 700, color: '#ffffff' });
+      push(document.getElementById('dbDate'), { size: 13, weight: 700, color: '#ffffff' });
+      var bs = document.getElementById('brandStrip');
+      if (bs && window.getComputedStyle(bs).display !== 'none') {
+        push(bs.querySelector('.bs-logo'), { size: 17, weight: 800, color: '#ffffff', family: "'Poppins',sans-serif" });
+        push(bs.querySelector('.bs-txt b'), { size: 14, weight: 800, color: '#ffffff', align: 'left' });
+        push(bs.querySelector('.bs-txt small'), { size: 11, weight: 400, color: 'rgba(255,255,255,.92)', align: 'left' });
+      }
+      var ns = document.getElementById('nameStrip');
+      if (ns && window.getComputedStyle(ns).display !== 'none') {
+        push(document.getElementById('nsName'), { size: 17, weight: 800, color: '#1E1B2E' });
+        push(document.getElementById('nsProf'), { size: 11.5, weight: 600, color: '#6B6880' });
+      }
+      return { capW: cr.width, items: items };
+    }
+    function drawText(cv, ops) {
+      if (!ops || !ops.items.length || !ops.capW) return;
+      var ctx = cv.getContext('2d');
+      var ratio = cv.width / ops.capW;
+      ctx.textBaseline = 'middle';
+      ops.items.forEach(function (it) {
+        ctx.font = it.weight + ' ' + (it.size * ratio) + 'px ' + it.family;
+        ctx.fillStyle = it.color; ctx.textAlign = it.align;
+        ctx.fillText(it.text, it.x * ratio, it.y * ratio);
+      });
+    }
     function renderCanvas() {
       var opts = { pixelRatio: 2, backgroundColor: '#ffffff', cacheBust: true };
       var frozen = [pc, wmMark, bo].map(freezeEl).filter(Boolean);
       function restore() { frozen.forEach(function (f) { if (f.prev === null) f.el.removeAttribute('style'); else f.el.setAttribute('style', f.prev); }); }
+      var ops = textOverlayOps();
+      hideText();
       var task;
       if (window.htmlToImage && window.htmlToImage.toCanvas) {
         // पहला render warm-up (foreignObject में इमेज कभी-कभी पहली बार छूट जाती है), फिर असली
@@ -337,7 +395,7 @@ import Layout from '../layouts/Layout.astro';
       } else {
         task = html2canvas(capture, { useCORS: true, backgroundColor: '#ffffff', scale: 2, logging: false, imageTimeout: 0 });
       }
-      return task.then(function (cv) { restore(); return cv; }, function (err) { restore(); throw err; });
+      return task.then(function (cv) { restore(); showText(); drawText(cv, ops); return cv; }, function (err) { restore(); showText(); throw err; });
     }
     function busy(btn, on, txt) { btn.disabled = on; if (on) { btn.dataset.t = btn.textContent; btn.textContent = txt; } else { btn.textContent = btn.dataset.t; } }
 
