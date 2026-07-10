@@ -252,12 +252,25 @@ import Layout from '../layouts/Layout.astro';
 
     // ===== export =====
     // IMPORTANT: फ़ॉन्ट पूरी तरह लोड होने का इंतज़ार करो, वरना html2canvas
-    // fallback फ़ॉन्ट की माप से capture करता है और टेक्स्ट (दिन/तारीख़, ब्रांडिंग,
+    // fallback फ़ॉन्ट की माप से capture क���ता है और टेक्स्ट (दिन/तारीख़, ब्रांडिंग,
     // नाम) ऊपर-नीचे खिसक जाता है। fonts.ready + थोड़ा delay इसे ठीक करता है।
     function build() {
-      var fontsReady = (document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
-      return fontsReady
-        .then(function () { return new Promise(function (res) { setTimeout(res, 150); }); })
+      var f = document.fonts;
+      // capture से पहले ज़रूरी फ़ॉन्ट स्पष्ट रूप से लोड करो (weights जो पोस्टर में इस्तेमाल होते हैं)
+      var pre = Promise.resolve();
+      if (f && f.load) {
+        pre = Promise.all([
+          f.load('700 13px "Noto Sans Devanagari"'),
+          f.load('800 17px "Noto Sans Devanagari"'),
+          f.load('600 12px "Noto Sans Devanagari"'),
+          f.load('800 14px "Poppins"'),
+          f.load('800 17px "Poppins"')
+        ]).catch(function () {});
+      }
+      var ready = (f && f.ready) ? f.ready : Promise.resolve();
+      return pre
+        .then(function () { return ready; })
+        .then(function () { return new Promise(function (res) { setTimeout(res, 250); }); })
         .then(function () { return html2canvas(capture, { useCORS: true, backgroundColor: '#ffffff', scale: 2, logging: false, imageTimeout: 0 }); });
     }
     function busy(btn, on, txt) { btn.disabled = on; if (on) { btn.dataset.t = btn.textContent; btn.textContent = txt; } else { btn.textContent = btn.dataset.t; } }
