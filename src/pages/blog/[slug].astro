@@ -84,6 +84,63 @@ const faqLd = faqs.length ? {
   {faqLd && <script type='application/ld+json' set:html={JSON.stringify(faqLd)} />}
 </Layout>
 
+<script>
+  function phFallbackCopy(str) {
+    var ta = document.createElement('textarea');
+    ta.value = str; ta.style.position = 'fixed'; ta.style.top = '-1000px'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta);
+  }
+  function phInitQuoteActions() {
+    var quotes = document.querySelectorAll('.post-body blockquote');
+    quotes.forEach(function (bq) {
+      if (bq.dataset.qa) return;
+      bq.dataset.qa = '1';
+      var text = (bq.innerText || bq.textContent || '').trim();
+      if (!text) return;
+      var payload = text + '\n\n' + location.origin;
+
+      var bar = document.createElement('div');
+      bar.className = 'q-actions';
+
+      var copyBtn = document.createElement('button');
+      copyBtn.type = 'button';
+      copyBtn.className = 'q-btn q-copy';
+      copyBtn.textContent = '📋 कॉपी';
+
+      var shareBtn = document.createElement('button');
+      shareBtn.type = 'button';
+      shareBtn.className = 'q-btn q-share';
+      shareBtn.textContent = '🔗 शेयर';
+
+      copyBtn.addEventListener('click', function () {
+        var reset = function () {
+          copyBtn.textContent = '✅ कॉपी हुआ';
+          setTimeout(function () { copyBtn.textContent = '📋 कॉपी'; }, 1500);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(payload).then(reset, function () { phFallbackCopy(payload); reset(); });
+        } else { phFallbackCopy(payload); reset(); }
+      });
+
+      shareBtn.addEventListener('click', function () {
+        if (navigator.share) {
+          navigator.share({ text: payload }).catch(function () {});
+        } else {
+          window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(payload), '_blank');
+        }
+      });
+
+      bar.appendChild(copyBtn);
+      bar.appendChild(shareBtn);
+      bq.after(bar);
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', phInitQuoteActions);
+  else phInitQuoteActions();
+</script>
+
 <style>
   .post-wrap { max-width: 780px; margin: 0 auto; }
   .back { display: inline-block; color: var(--purple); font-weight: 700; font-size: 14px; margin-bottom: 20px; }
@@ -107,6 +164,14 @@ const faqLd = faqs.length ? {
   .post-body :global(li) { margin-bottom: 8px; line-height: 1.7; }
   .post-body :global(img) { max-width: 100%; border-radius: 12px; margin: 10px 0; }
   .post-body :global(a) { color: var(--purple); text-decoration: underline; }
+  .post-body :global(blockquote) { background: #fff; border: 1px solid var(--line); border-left: 4px solid var(--purple); border-radius: 12px; padding: 16px 18px; margin: 18px 0 0; font-size: 17px; line-height: 1.75; color: var(--ink); font-style: normal; white-space: pre-line; }
+  .post-body :global(blockquote p) { margin: 0; }
+  :global(.q-actions) { display: flex; gap: 10px; margin: 10px 0 22px; flex-wrap: wrap; }
+  :global(.q-btn) { cursor: pointer; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font-weight: 700; font-size: 13.5px; padding: 8px 16px; border-radius: 999px; display: inline-flex; align-items: center; gap: 6px; transition: all .15s ease; font-family: inherit; }
+  :global(.q-btn:hover) { border-color: var(--purple); color: var(--purple); }
+  :global(.q-btn.q-share) { background: var(--purple); color: #fff; border-color: var(--purple); }
+  :global(.q-btn.q-share:hover) { opacity: .9; color: #fff; }
+  :global(.q-btn:active) { transform: scale(.96); }
 
   .faq { margin-top: 40px; border-top: 1px solid var(--line); padding-top: 26px; }
   .faq h2 { font-size: 22px; font-weight: 800; margin-bottom: 16px; }
