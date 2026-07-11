@@ -1,65 +1,50 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import PageHero from '../../components/PageHero.astro';
 import Icon from '../../components/Icon.astro';
-import { categories, templates } from '../../data/site.js';
+import { categories, heroPreviews } from '../../data/site.js';
 
 export function getStaticPaths() {
-  return categories
-    .filter((c) => c.slug !== 'all')
-    .map((c) => ({ params: { category: c.slug }, props: { cat: c } }));
+  return categories.filter((c) => c.slug !== 'all').map((c) => ({ params: { category: c.slug }, props: { cat: c } }));
 }
-
 const { cat } = Astro.props;
-// Demo: show templates repeated. Real app me category ke hisaab se R2/DB se aayenge.
-const list = [...templates, ...templates].map((t, i) => ({ ...t, id: i + 1 }));
-const otherCats = categories.filter((c) => c.slug !== 'all' && c.slug !== cat.slug);
+const allCategories = categories.filter((c) => c.slug !== 'all');
+const showcase = [
+  { img: heroPreviews[0].img, title: 'सुंदर सुबह संदेश', type: 'free' },
+  { img: heroPreviews[1].img, title: 'दिल से शुभकामनाएं', type: 'pro' },
+  { img: heroPreviews[2].img, title: 'विशेष अवसर poster', type: 'free' },
+  { img: heroPreviews[0].img, title: 'आज का संदेश', type: 'pro' },
+  { img: heroPreviews[1].img, title: 'आपके नाम के साथ', type: 'free' },
+  { img: heroPreviews[2].img, title: 'खास पोस्टर design', type: 'pro' },
+];
 ---
-<Layout title={cat.name + ' पोस्टर — Daily PosterHub'}>
-  <PageHero
-    title={cat.name + ' <span class="grad-text">पोस्टर</span>'}
-    crumb={cat.name}
-    subtitle={cat.name + ' के सुंदर पोस्टर — नाम और फोटो जोड़कर डाउनलोड करें'}
-  />
-  <section class='section'>
+<Layout title={cat.name + ' पोस्टर — Daily PosterHub'} description={cat.name + ' के लिए सुंदर हिंदी पोस्टर चुनें, अपना नाम और फोटो जोड़ें, फिर तुरंत डाउनलोड करें।'}>
+  <section class='category-hero'>
+    <div class='container category-hero-inner'>
+      <div class='category-crumb'><a href='/'>होम</a><span>/</span><a href='/categories'>श्रेणियां</a><span>/</span><b>{cat.name}</b></div>
+      <div class='category-mark' style={'color:' + cat.color + ';background:' + cat.bg}><Icon name={cat.icon} size={31} /></div>
+      <span class='category-overline'>POSTER COLLECTION</span>
+      <h1>{cat.name} <span>पोस्टर</span></h1>
+      <p>{cat.name} के लिए बनाए गए सुंदर poster designs। अपना नाम, फोटो या छोटा message जोड़कर तुरंत तैयार करें।</p>
+      <div class='category-actions'><a href='#posters' class='btn btn-primary'>पोस्टर चुनें <Icon name='arrow-right' size={17} /></a><a href='/posters' class='simple-link'>सभी पोस्टर देखें <Icon name='arrow-right' size={16} /></a></div>
+    </div>
+  </section>
+
+  <section class='category-content' id='posters'>
     <div class='container'>
-      <div class='chips'>
-        {otherCats.map((c) => (
-          <a href={'/categories/' + c.slug} class='chip'><Icon name={c.icon} size={15} /> {c.name}</a>
-        ))}
-      </div>
-      <div class='tpl-grid'>
-        {list.map((t) => (
-          <article class='tpl-card card'>
-            <div class='tpl-thumb'>
-              <img src={t.img} alt={t.title} loading='lazy' />
-              <span class={'badge ' + (t.type === 'pro' ? 'badge-pro' : 'badge-free')}>{t.type === 'pro' ? 'Pro' : 'फ्री'}</span>
-            </div>
-            <div class='tpl-body'>
-              <h4>{t.title}</h4>
-              <span class='tpl-cat'>{cat.name}</span>
-              <a href='/posters' class='btn btn-primary btn-sm tpl-btn'><Icon name='edit' size={15} /> एडिट करें</a>
-            </div>
+      <div class='category-nav'><span>दूसरी categories</span><div>{allCategories.map((c) => <a class={c.slug === cat.slug ? 'active' : ''} href={'/categories/' + c.slug}><Icon name={c.icon} size={15} /> {c.name}</a>)}</div></div>
+      <div class='collection-heading'><div><span class='collection-kicker'>चुनिंदा designs</span><h2>{cat.name} के लिए लोकप्रिय posters</h2></div><p><Icon name='edit' size={16} /> Poster खोलें और अपनी जानकारी जोड़ें</p></div>
+      <div class='collection-grid'>
+        {showcase.map((item, i) => (
+          <article class='collection-card'>
+            <div class='collection-image'><img src={item.img} alt={item.title + ' — ' + cat.name} loading={i < 3 ? 'eager' : 'lazy'} /><span class={'collection-badge ' + item.type}>{item.type === 'pro' ? 'PRO' : 'FREE'}</span><span class='number'>0{i + 1}</span></div>
+            <div class='collection-info'><h3>{item.title}</h3><p>{cat.name} · नाम और फोटो जोड़ें</p><a href={'/editor?img=' + encodeURIComponent(item.img) + '&title=' + encodeURIComponent(item.title) + '&type=' + item.type}>एडिट करें <Icon name='arrow-right' size={16} /></a></div>
           </article>
         ))}
       </div>
+      <div class='category-tip'><span><Icon name='sparkles' size={20} /></span><div><b>अपना poster अलग बनाइए</b><p>Editor में नाम, profession और photo जोड़ें। Pro plan में watermark के बिना HD download भी मिलता है।</p></div><a href='/pricing' class='simple-link'>Pro देखें <Icon name='arrow-right' size={16} /></a></div>
     </div>
   </section>
 </Layout>
-
 <style>
-  .chips { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 28px; }
-  .chip { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; padding: 8px 16px; border-radius: 999px; background: #fff; border: 1px solid var(--line); }
-  .chip:hover { background: var(--purple); color: #fff; border-color: var(--purple); }
-  .tpl-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-  .tpl-thumb { position: relative; }
-  .tpl-thumb img { aspect-ratio: 3/4; object-fit: cover; width: 100%; border-radius: var(--radius) var(--radius) 0 0; background: linear-gradient(135deg,#EDE9FE,#E0E7FF); }
-  .tpl-thumb .badge { position: absolute; top: 12px; left: 12px; }
-  .tpl-body { padding: 14px 16px 18px; }
-  .tpl-body h4 { font-size: 15px; }
-  .tpl-cat { display: block; font-size: 13px; color: var(--muted); margin: 4px 0 12px; }
-  .tpl-btn { width: 100%; gap: 6px; }
-  @media (max-width: 1024px) { .tpl-grid { grid-template-columns: repeat(3, 1fr); } }
-  @media (max-width: 760px) { .tpl-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 440px) { .tpl-grid { grid-template-columns: 1fr; } }
+.category-hero{position:relative;overflow:hidden;padding:55px 0 65px;background:linear-gradient(135deg,#faf9ff,#eeeaff)}.category-hero:after{content:'';position:absolute;width:420px;height:420px;right:-200px;bottom:-280px;border-radius:50%;background:#d9e5ff}.category-hero-inner{position:relative;z-index:1;text-align:center}.category-crumb{display:flex;justify-content:center;align-items:center;gap:8px;color:var(--muted);font-size:12px}.category-crumb a{color:var(--purple);font-weight:700}.category-mark{display:grid;place-items:center;width:68px;height:68px;margin:22px auto 12px;border-radius:20px}.category-overline,.collection-kicker{color:var(--purple);font-size:11px;font-weight:800;letter-spacing:.1em}.category-hero h1{margin-top:8px;font-size:clamp(34px,4vw,50px);line-height:1.14;font-weight:800;letter-spacing:-1px}.category-hero h1 span{color:var(--purple)}.category-hero p{max-width:590px;margin:12px auto 0;color:var(--muted);font-size:16px;line-height:1.7}.category-actions{display:flex;justify-content:center;align-items:center;gap:20px;margin-top:26px}.simple-link{display:inline-flex;align-items:center;gap:7px;color:var(--purple);font-size:14px;font-weight:800}.simple-link:hover{gap:11px}.category-content{padding:38px 0 76px;background:#fbfaff}.category-nav{display:flex;align-items:flex-start;gap:16px;margin-bottom:41px}.category-nav>span{min-width:95px;padding-top:10px;color:var(--muted);font-size:12px;font-weight:800;letter-spacing:.03em;text-transform:uppercase}.category-nav>div{display:flex;flex-wrap:wrap;gap:8px}.category-nav a{display:inline-flex;align-items:center;gap:6px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;color:#5a556c;font-size:13px;font-weight:700;transition:.2s}.category-nav a:hover,.category-nav a.active{border-color:var(--purple);background:var(--purple);color:#fff}.collection-heading{display:flex;align-items:end;justify-content:space-between;gap:22px;margin-bottom:25px}.collection-heading h2{margin-top:5px;font-size:clamp(24px,3vw,34px);line-height:1.2;font-weight:800}.collection-heading p{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:12px}.collection-heading p :global(.icon){color:var(--purple)}.collection-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.collection-card{overflow:hidden;border:1px solid var(--line);border-radius:17px;background:#fff;box-shadow:0 4px 15px rgba(37,27,80,.06);transition:.23s}.collection-card:hover{transform:translateY(-6px);border-color:#d3c8ff;box-shadow:0 19px 31px rgba(50,32,115,.13)}.collection-image{position:relative;aspect-ratio:4/5;overflow:hidden;background:#eeeafd}.collection-image img{width:100%;height:100%;object-fit:cover;transition:transform .35s}.collection-card:hover img{transform:scale(1.06)}.collection-badge{position:absolute;top:12px;left:12px;padding:5px 8px;border-radius:7px;font-size:10px;font-weight:800;letter-spacing:.05em}.collection-badge.free{background:#dcf8e6;color:#177142}.collection-badge.pro{background:#ffe7a4;color:#715000}.number{position:absolute;right:12px;bottom:9px;color:#fff;font:800 23px Poppins,sans-serif;text-shadow:0 2px 8px rgba(0,0,0,.45)}.collection-info{padding:15px 16px 17px}.collection-info h3{font-size:16px}.collection-info p{margin-top:4px;color:var(--muted);font-size:12px}.collection-info a{display:inline-flex;align-items:center;gap:6px;margin-top:14px;color:var(--purple);font-size:13px;font-weight:800}.collection-info a:hover{gap:10px}.category-tip{display:flex;align-items:center;gap:14px;margin-top:36px;padding:18px 21px;border:1px solid #dfd7fa;border-radius:15px;background:linear-gradient(110deg,#f1edff,#fff)}.category-tip>span{display:grid;place-items:center;width:42px;height:42px;border-radius:12px;background:#e4ddff;color:var(--purple)}.category-tip b{font-size:14px}.category-tip p{margin-top:2px;color:var(--muted);font-size:12px}.category-tip .simple-link{margin-left:auto;white-space:nowrap}@media(max-width:800px){.collection-grid{grid-template-columns:repeat(2,1fr)}.collection-heading{align-items:flex-start;flex-direction:column;gap:8px}.category-nav{flex-direction:column;gap:8px}}@media(max-width:520px){.category-hero{padding:42px 0 50px}.category-actions{flex-direction:column;gap:14px}.category-actions .btn{width:100%}.category-content{padding:28px 0 53px}.category-nav>div{flex-wrap:nowrap;max-width:100%;overflow-x:auto;padding-bottom:4px}.category-nav a{white-space:nowrap}.collection-grid{gap:11px}.collection-info{padding:11px}.collection-info h3{font-size:14px}.collection-info p{font-size:11px}.collection-info a{margin-top:10px;font-size:12px}.category-tip{align-items:flex-start;flex-wrap:wrap;padding:16px}.category-tip .simple-link{margin:3px 0 0 56px}.category-tip p{line-height:1.55}}
 </style>

@@ -1,207 +1,63 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import Icon from '../../components/Icon.astro';
-import { categories, templates } from '../../data/site.js';
+import { categories, heroPreviews } from '../../data/site.js';
 const cats = categories.filter((c) => c.slug !== 'all');
-const fallback = templates;
+const fallback = [
+  { id: 'morning', img: heroPreviews[0].img, title: 'सुप्रभात', category: 'गुड मॉर्निंग', type: 'free', description: 'हर सुबह की प्यारी शुभकामना', posterDate: '' },
+  { id: 'birthday', img: heroPreviews[1].img, title: 'जन्मदिन शुभकामनाएं', category: 'जन्मदिन', type: 'pro', description: 'अपनों के लिए खास बर्थडे पोस्टर', posterDate: '' },
+  { id: 'ram', img: heroPreviews[2].img, title: 'जय श्री राम', category: 'धार्मिक', type: 'free', description: 'भक्ति और आस्था का पोस्टर', posterDate: '' },
+  { id: 'wish', img: heroPreviews[0].img, title: 'आज की शुभकामना', category: 'शुभकामनाएं', type: 'pro', description: 'नाम जोड़कर तुरंत शेयर करें', posterDate: '' },
+  { id: 'festival', img: heroPreviews[2].img, title: 'पर्व विशेष', category: 'त्योहार', type: 'free', description: 'त्योहार के लिए सुंदर design', posterDate: '' },
+  { id: 'offer', img: heroPreviews[1].img, title: 'खास ऑफर', category: 'बिज़नेस', type: 'pro', description: 'अपने business offer का poster', posterDate: '' },
+];
 ---
-<Layout title='डेली पोस्टर — Daily PosterHub'>
-  <section class='page-hero'>
-    <div class='container'>
-      <h1>विशेष <span class='grad-text'>दिवस</span></h1>
-      <p>खास दिनों के पोस्टर — जयंती, पुण्यतिथि, त्योहार व अन्य खास मौके। तारीख़ चुनें, एडिट करें और डाउनलोड करें।</p>
+<Layout title='पोस्टर चुनें और एडिट करें — Daily PosterHub' description='हर मौके के लिए हिंदी पोस्टर चुनें, अपना नाम और फोटो जोड़ें, फिर तुरंत डाउनलोड या शेयर करें।'>
+  <section class='poster-hero'>
+    <div class='hero-glow left'></div><div class='hero-glow right'></div>
+    <div class='container poster-hero-inner'>
+      <div class='poster-breadcrumb'><a href='/'>होम</a><span>/</span><b>पोस्टर लाइब्रेरी</b></div>
+      <span class='library-kicker'><Icon name='sparkles' size={15} /> रोज़ के लिए तैयार designs</span>
+      <h1>अपना पसंदीदा <span>पोस्टर चुनें</span></h1>
+      <p>Category चुनें, अपना नाम और फोटो जोड़ें, फिर poster को डाउनलोड या सीधे share करें।</p>
+      <div class='library-stats'><span><Icon name='edit' size={16} /> आसान editor</span><span><Icon name='download' size={16} /> तुरंत डाउनलोड</span><span><Icon name='smartphone' size={16} /> मोबाइल friendly</span></div>
     </div>
   </section>
 
-  <section class='section' style='padding-top:24px'>
+  <section class='poster-library'>
     <div class='container'>
-      <div class='filters' id='catFilters'>
-        <button class='chip active' data-cat='__daily__'><Icon name='sparkles' size={15} /> विशेष दिवस</button>
-        <button class='chip' data-cat='__all__'><Icon name='grid' size={15} /> सभी</button>
-        {cats.map((c) => (
-          <button class='chip' data-cat={c.name}><Icon name={c.icon} size={15} /> {c.name}</button>
-        ))}
+      <div class='library-tools'>
+        <div class='search-box'><Icon name='search' size={19} /><input id='posterSearch' type='search' placeholder='पोस्टर खोजें — जैसे जन्मदिन, धार्मिक...' aria-label='पोस्टर खोजें' /><button id='clearSearch' aria-label='खोज हटाएं'>×</button></div>
+        <a class='browse-categories' href='/categories'><Icon name='grid' size={17} /> सभी categories</a>
       </div>
 
-      <div class='date-strip' id='dateStrip'></div>
-
-      <p class='daily-note' id='dailyNote'>आज के विशेष दिवस — जयंती, पुण्यतिथि, त्योहार व अन्य खास मौकों के पोस्टर। नई तारीख़ अपने-आप जुड़ती रहती है।</p>
-
-      <div class='grid-info' id='gridInfo'></div>
-
-      <div class='tpl-grid' id='tplGrid'></div>
-
-      <div class='empty' id='emptyBox' hidden>
-        <Icon name='image' size={30} />
-        <p id='emptyText'>इस तारीख़ के लिए अभी कोई पोस्टर नहीं है।</p>
+      <div class='filter-wrap'>
+        <p class='filter-label'>श्रेणी के अनुसार देखें</p>
+        <div class='filters' id='catFilters'>
+          <button class='filter-chip active' data-cat='__all__'><Icon name='grid' size={15} /> सभी पोस्टर</button>
+          <button class='filter-chip' data-cat='__daily__'><Icon name='sparkles' size={15} /> विशेष दिवस</button>
+          {cats.map((c) => <button class='filter-chip' data-cat={c.name}><Icon name={c.icon} size={15} /> {c.name}</button>)}
+        </div>
       </div>
+
+      <div class='daily-panel' id='dailyPanel' hidden>
+        <div><span class='daily-icon'><Icon name='clock' size={18} /></span><div><b>अगले 7 दिन के special posters</b><p>तारीख़ चुनें और उस दिन के लिए उपलब्ध poster देखें।</p></div></div>
+        <div class='date-strip' id='dateStrip'></div>
+      </div>
+
+      <div class='result-bar'><div><span id='resultTitle'>सभी पोस्टर</span><small id='resultCount'></small></div><span class='result-hint'><Icon name='edit' size={15} /> कोई भी poster चुनकर edit करें</span></div>
+      <div class='poster-grid' id='tplGrid'></div>
+      <div class='empty-state' id='emptyBox' hidden><span><Icon name='image' size={31} /></span><h2 id='emptyTitle'>अभी कोई poster नहीं मिला</h2><p id='emptyText'>दूसरी category या अलग keyword आज़माएं।</p><button class='btn btn-outline' id='resetFilters'>सभी पोस्टर देखें</button></div>
     </div>
   </section>
+
+  <section class='library-cta'><div class='container'><div><span>अपना design नहीं मिला?</span><h2>सभी categories में नया poster खोजें</h2></div><a href='/categories' class='btn btn-white'>Categories देखें <Icon name='arrow-right' size={17} /></a></div></section>
 </Layout>
 
 <script id='fallbackData' type='application/json' set:html={JSON.stringify(fallback)}></script>
-
 <style>
-  .page-hero { background: var(--grad-soft); padding: 44px 0; text-align: center; }
-  .page-hero h1 { font-size: 36px; font-weight: 800; }
-  .page-hero p { color: var(--muted); margin-top: 8px; }
-
-  .filters { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
-  .chip { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; padding: 8px 16px; border-radius: 999px; background: #fff; border: 1px solid var(--line); cursor: pointer; font-family: inherit; color: var(--ink); }
-  .chip.active, .chip:hover { background: var(--purple); color: #fff; border-color: var(--purple); }
-
-  .date-strip { display: flex; gap: 14px; overflow-x: auto; padding: 8px 2px 16px; margin-bottom: 10px; scrollbar-width: none; }
-  .date-strip::-webkit-scrollbar { display: none; }
-  .storycircle { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: none; cursor: pointer; font-family: inherit; padding: 0; }
-  .storycircle .ring { width: 58px; height: 58px; border-radius: 50%; padding: 3px; background: var(--line); display: grid; place-items: center; transition: transform .15s; }
-  .storycircle .inner { width: 100%; height: 100%; border-radius: 50%; background: #fff; display: grid; place-items: center; line-height: 1; color: var(--ink); overflow: hidden; }
-  .storycircle .inner.has-img { background-size: cover; background-position: center; }
-  .storycircle.has-poster .ring { background: linear-gradient(135deg,#F5B301,#7C3AED,#B4145A); }
-  .storycircle .inner b { font-size: 18px; font-weight: 800; }
-  .storycircle .inner span { font-size: 10px; color: var(--muted); font-weight: 700; margin-top: 2px; }
-  .storycircle .lbl { font-size: 12px; font-weight: 700; color: var(--muted); white-space: nowrap; }
-  .storycircle.active .ring { background: linear-gradient(135deg,#F5B301,#7C3AED,#B4145A); transform: scale(1.06); }
-  .storycircle.active .lbl { color: var(--purple); }
-
-  .grid-info { font-size: 13.5px; color: var(--muted); margin: 4px 0 16px; font-weight: 600; }
-  .daily-note { font-size: 13px; color: var(--muted); margin: 0 0 14px; line-height: 1.5; }
-
-  .tpl-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-  .tpl-card { overflow: hidden; }
-  .tpl-thumb { position: relative; }
-  .tpl-thumb img { aspect-ratio: 3/4; object-fit: cover; width: 100%; border-radius: var(--radius) var(--radius) 0 0; background: linear-gradient(135deg,#EDE9FE,#E0E7FF); display: block; }
-  .tpl-thumb .badge { position: absolute; top: 12px; left: 12px; }
-  .tpl-body { padding: 10px; }
-  .tpl-btn { width: 100%; justify-content: center; gap: 6px; font-size: 15px; padding: 12px; }
-
-  .empty { text-align: center; padding: 60px 20px; color: var(--muted); }
-  .empty :global(.icon) { color: var(--line); margin-bottom: 10px; }
-  .empty p { font-size: 15px; }
-
-  @media (max-width: 1024px) { .tpl-grid { grid-template-columns: repeat(3, 1fr); } }
-  @media (max-width: 760px) { .tpl-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 560px) {
-    .tpl-grid { grid-template-columns: 1fr; gap: 16px; }
-    .tpl-thumb img { aspect-ratio: 4/5; }
-    .page-hero h1 { font-size: 28px; }
-    .tpl-btn { width: 100%; justify-content: center; }
-  }
+.poster-hero{position:relative;overflow:hidden;padding:68px 0 76px;background:linear-gradient(135deg,#f8f6ff,#eae7ff 62%,#e7f0ff)}.poster-hero-inner{position:relative;z-index:1;text-align:center}.hero-glow{position:absolute;border-radius:50%;filter:blur(2px);opacity:.55}.hero-glow.left{width:360px;height:360px;left:-180px;top:-150px;background:#d7ccff}.hero-glow.right{width:390px;height:390px;right:-190px;bottom:-200px;background:#cde5ff}.poster-breadcrumb{display:flex;justify-content:center;align-items:center;gap:8px;color:var(--muted);font-size:12px}.poster-breadcrumb a{color:var(--purple);font-weight:700}.library-kicker{display:inline-flex;align-items:center;gap:7px;margin-top:18px;padding:7px 12px;border:1px solid #dcd4ff;border-radius:999px;background:#fff;color:var(--purple);font-size:12px;font-weight:800}.poster-hero h1{margin-top:15px;font-size:clamp(34px,4vw,52px);line-height:1.12;letter-spacing:-1px;font-weight:800}.poster-hero h1 span{color:var(--purple)}.poster-hero p{max-width:620px;margin:14px auto 0;color:var(--muted);font-size:16px;line-height:1.7}.library-stats{display:flex;justify-content:center;flex-wrap:wrap;gap:10px 20px;margin-top:25px}.library-stats span{display:inline-flex;align-items:center;gap:6px;color:#504b69;font-size:13px;font-weight:700}.library-stats :global(.icon){color:var(--purple)}.poster-library{padding:42px 0 78px;background:#fbfaff}.library-tools{display:flex;align-items:center;gap:14px}.search-box{display:flex;align-items:center;flex:1;gap:11px;padding:0 15px;border:1px solid var(--line);border-radius:13px;background:#fff;box-shadow:0 4px 16px rgba(35,25,75,.05)}.search-box :global(.icon){color:var(--purple)}.search-box input{width:100%;height:50px;border:0;outline:0;background:transparent;font:600 14px inherit;color:var(--ink)}.search-box button{border:0;background:transparent;color:#aaa4bb;font-size:24px;line-height:1;cursor:pointer}.browse-categories{display:inline-flex;align-items:center;gap:7px;min-height:50px;padding:0 15px;border:1px solid #d7ceff;border-radius:12px;background:#f5f2ff;color:var(--purple);font-size:13px;font-weight:800;white-space:nowrap}.filter-wrap{margin:31px 0 23px}.filter-label{margin-bottom:10px;color:var(--muted);font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}.filters{display:flex;flex-wrap:wrap;gap:9px}.filter-chip{display:inline-flex;align-items:center;gap:6px;min-height:39px;padding:8px 13px;border:1px solid var(--line);border-radius:10px;background:#fff;color:#57526b;font:700 13px inherit;cursor:pointer;transition:.2s}.filter-chip:hover,.filter-chip.active{border-color:var(--purple);background:var(--purple);color:#fff;box-shadow:0 8px 17px rgba(124,58,237,.18)}.daily-panel{display:flex;align-items:center;justify-content:space-between;gap:24px;margin:0 0 25px;padding:18px 20px;border:1px solid #ded6fa;border-radius:16px;background:linear-gradient(120deg,#f2eeff,#fff)}.daily-panel>div:first-child{display:flex;align-items:center;gap:12px}.daily-icon{display:grid;place-items:center;width:39px;height:39px;border-radius:11px;background:#e3dcff;color:var(--purple)}.daily-panel b{font-size:14px}.daily-panel p{margin-top:2px;color:var(--muted);font-size:12px}.date-strip{display:flex;gap:8px;overflow-x:auto;padding:2px}.date-chip{flex:none;display:grid;place-items:center;width:49px;height:49px;border:1px solid var(--line);border-radius:11px;background:#fff;color:var(--muted);font:700 11px inherit;cursor:pointer}.date-chip b{font-size:15px;color:var(--ink)}.date-chip.active{border-color:var(--purple);background:var(--purple);color:#fff}.date-chip.active b{color:#fff}.result-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:19px}.result-bar>div{display:flex;align-items:baseline;gap:9px}.result-bar #resultTitle{font-size:20px;font-weight:800}.result-bar small{color:var(--muted);font-size:12px;font-weight:700}.result-hint{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:12px}.result-hint :global(.icon){color:var(--purple)}.poster-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}.poster-card{overflow:hidden;border:1px solid var(--line);border-radius:16px;background:#fff;box-shadow:0 3px 12px rgba(37,27,80,.05);transition:.23s}.poster-card:hover{transform:translateY(-6px);border-color:#d1c5ff;box-shadow:0 18px 30px rgba(50,32,115,.13)}.poster-image{position:relative;overflow:hidden;aspect-ratio:3/4;background:#eeeafd}.poster-image img{width:100%;height:100%;object-fit:cover;transition:transform .35s}.poster-card:hover .poster-image img{transform:scale(1.05)}.poster-badge{position:absolute;top:10px;left:10px;border-radius:7px;padding:5px 8px;font-size:10px;font-weight:800;letter-spacing:.04em}.poster-badge.free{background:#dcf8e6;color:#177142}.poster-badge.pro{background:#ffe7a4;color:#715000}.quick-edit{position:absolute;right:10px;bottom:10px;display:grid;place-items:center;width:38px;height:38px;border:0;border-radius:11px;background:#fff;color:var(--purple);box-shadow:0 4px 15px rgba(0,0,0,.15);cursor:pointer;opacity:0;transform:translateY(8px);transition:.22s}.poster-card:hover .quick-edit{opacity:1;transform:none}.poster-info{padding:13px 14px 15px}.poster-info h2{font-size:15px;line-height:1.3}.poster-info p{min-height:34px;margin-top:4px;color:var(--muted);font-size:12px;line-height:1.4}.poster-footer{display:flex;align-items:center;justify-content:space-between;margin-top:12px}.poster-footer span{color:#777189;font-size:11px;font-weight:700}.poster-footer a{display:inline-flex;align-items:center;gap:5px;color:var(--purple);font-size:12px;font-weight:800}.empty-state{max-width:500px;margin:18px auto;padding:58px 24px;text-align:center;border:1px dashed #cfc5ef;border-radius:18px;background:#fff}.empty-state>span{display:grid;place-items:center;width:56px;height:56px;margin:auto;border-radius:15px;background:#eeeaff;color:var(--purple)}.empty-state h2{margin-top:16px;font-size:19px}.empty-state p{margin:7px 0 19px;color:var(--muted);font-size:14px}.library-cta{padding:31px 0;background:var(--grad);color:#fff}.library-cta .container{display:flex;align-items:center;justify-content:space-between;gap:20px}.library-cta span{color:#ded7ff;font-size:12px;font-weight:800}.library-cta h2{margin-top:2px;font-size:24px}.btn-white{border-radius:11px}@media(max-width:900px){.poster-grid{grid-template-columns:repeat(3,1fr)}}@media(max-width:650px){.poster-hero{padding:46px 0 54px}.poster-library{padding:28px 0 54px}.library-tools{align-items:stretch;flex-direction:column}.browse-categories{justify-content:center}.daily-panel{align-items:flex-start;flex-direction:column;gap:13px}.result-hint{display:none}.poster-grid{grid-template-columns:repeat(2,1fr);gap:11px}.poster-info{padding:11px}.poster-info h2{font-size:13px}.poster-info p{font-size:11px}.quick-edit{display:none}.library-cta .container{align-items:flex-start;flex-direction:column}.library-cta .btn{width:100%}}@media(max-width:370px){.poster-grid{grid-template-columns:1fr}}
 </style>
-
 <script is:inline>
-  (function () {
-    var HMONTHS = ['जनवरी','फ़रवरी','मार्च','अप्रैल','मई','जून','जुलाई','अगस्त','सितंबर','अक्टूबर','नवंबर','दिसंबर'];
-    var HMON_SHORT = ['जन','फ़र','मार्च','अप्रै','मई','जून','जुल','अग','सित','अक्तू','नव','दिस'];
-    var HDAYS = ['रवि','सोम','मंगल','बुध','गुरु','शुक्र','शनि'];
-    var POSTERS = [];
-    var fallback = [];
-    try { fallback = JSON.parse(document.getElementById('fallbackData').textContent) || []; } catch (e) {}
-
-    var mode = 'daily';
-    var selectedMD = null;
-
-    function pad(n) { return String(n).padStart(2, '0'); }
-    function toMD(s) { if (!s) return null; var m = String(s).match(/^(\d{4})-(\d{2})-(\d{2})/); return m ? (m[2] + '-' + m[3]) : null; }
-    function byLatest(a, b) { return String(b.createdAt || '').localeCompare(String(a.createdAt || '')); }
-    function esc(s) { var d = document.createElement('div'); d.textContent = (s == null ? '' : s); return d.innerHTML; }
-
-    function posterForMD(md) {
-      var src = POSTERS.length ? POSTERS : fallback;
-      var found = src.filter(function (p) { return toMD(p.posterDate) === md; }).sort(byLatest);
-      return found.length ? found[0] : null;
-    }
-
-    function buildDateChips() {
-      var strip = document.getElementById('dateStrip');
-      strip.innerHTML = '';
-      var today = new Date();
-      if (!selectedMD) selectedMD = pad(today.getMonth() + 1) + '-' + pad(today.getDate());
-      for (var i = 0; i < 7; i++) {
-        var d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i);
-        var val = pad(d.getMonth() + 1) + '-' + pad(d.getDate());
-        var lbl = i === 0 ? 'आज' : (i === 1 ? 'कल' : HDAYS[d.getDay()]);
-        var p = posterForMD(val);
-        var inner = p
-          ? "<span class='inner has-img' style=\"background-image:url('" + esc(p.img) + "')\"></span>"
-          : "<span class='inner'><b>" + d.getDate() + "</b><span>" + HMON_SHORT[d.getMonth()] + "</span></span>";
-        var b = document.createElement('button');
-        b.className = 'storycircle' + (val === selectedMD ? ' active' : '') + (p ? ' has-poster' : '');
-        b.setAttribute('data-md', val);
-        b.innerHTML = "<span class='ring'>" + inner + "</span><span class='lbl'>" + lbl + "</span>";
-        b.addEventListener('click', function () {
-          selectedMD = this.getAttribute('data-md');
-          var all = document.querySelectorAll('.storycircle');
-          for (var j = 0; j < all.length; j++) all[j].classList.toggle('active', all[j] === this);
-          render();
-        });
-        strip.appendChild(b);
-      }
-    }
-
-    function render() {
-      var grid = document.getElementById('tplGrid');
-      var empty = document.getElementById('emptyBox');
-      var info = document.getElementById('gridInfo');
-      var strip = document.getElementById('dateStrip');
-      var list = [];
-
-      var note = document.getElementById('dailyNote');
-      if (mode === 'daily') {
-        strip.style.display = 'flex';
-        if (note) note.style.display = 'block';
-        list = POSTERS.filter(function (p) { return toMD(p.posterDate) === selectedMD; }).sort(byLatest);
-      } else {
-        strip.style.display = 'none';
-        if (note) note.style.display = 'none';
-        var src = POSTERS.length ? POSTERS : fallback;
-        if (mode === '__all__') list = src.slice().sort(byLatest);
-        else list = src.filter(function (p) { return p.category === mode; }).sort(byLatest);
-      }
-
-      info.textContent = list.length ? (list.length + ' पोस्टर') : '';
-      grid.innerHTML = '';
-
-      if (!list.length) {
-        empty.hidden = false;
-        document.getElementById('emptyText').textContent = mode === 'daily'
-          ? 'इस दिन के लिए अभी कोई विशेष पोस्टर नहीं — जल्द ही जोड़े जाएंगे!'
-          : 'इस श्रेणी में अभी कोई पोस्टर नहीं है।';
-        return;
-      }
-      empty.hidden = true;
-
-      list.forEach(function (t) {
-        var card = document.createElement('article');
-        card.className = 'tpl-card card';
-        var badgeStyle = 'position:absolute;top:12px;left:12px;z-index:2';
-        var badge = t.type === 'pro'
-          ? '<span class="badge badge-pro" style="' + badgeStyle + '">Pro</span>'
-          : '<span class="badge badge-free" style="' + badgeStyle + '">फ़्री</span>';
-        var catText = esc(t.description || t.category || '');
-        card.innerHTML = "<div class='tpl-thumb' style='position:relative'><img src='" + esc(t.img) + "' alt='" + esc(t.title) + "' loading='lazy' style='width:100%;display:block;aspect-ratio:3/4;object-fit:cover;border-radius:16px 16px 0 0'>" + badge + "</div>" +
-          "<div class='tpl-body' style='padding:12px;text-align:center'>" +
-          (catText ? "<div class='tpl-cat' style='font-size:13px;color:var(--muted);font-weight:600;margin-bottom:10px;text-align:center'>" + catText + "</div>" : "") +
-          "<a href='/editor?img=" + encodeURIComponent(t.img || '') + "&title=" + encodeURIComponent(t.title || '') + "&type=" + encodeURIComponent(t.type || 'free') + "' class='btn btn-primary tpl-btn' style='display:flex;width:100%;justify-content:center;padding:13px 12px;font-size:15px'>एडिट करें</a></div>";
-        grid.appendChild(card);
-      });
-    }
-
-    var chips = document.querySelectorAll('#catFilters .chip');
-    for (var i = 0; i < chips.length; i++) {
-      chips[i].addEventListener('click', function () {
-        for (var j = 0; j < chips.length; j++) chips[j].classList.toggle('active', chips[j] === this);
-        var c = this.getAttribute('data-cat');
-        mode = c === '__daily__' ? 'daily' : c;
-        render();
-      });
-    }
-
-    buildDateChips();
-    render();
-    fetch('/api/templates').then(function (r) { return r.json(); }).then(function (d) {
-      POSTERS = Array.isArray(d) ? d : [];
-      buildDateChips();
-      render();
-    }).catch(function () { render(); });
-  })();
+(function(){var POSTERS=[],fallback=[];try{fallback=JSON.parse(document.getElementById('fallbackData').textContent)||[]}catch(e){}var mode='__all__',query='',selectedMD='';var grid=document.getElementById('tplGrid'),empty=document.getElementById('emptyBox'),daily=document.getElementById('dailyPanel'),title=document.getElementById('resultTitle'),count=document.getElementById('resultCount');function esc(v){var d=document.createElement('div');d.textContent=v==null?'':v;return d.innerHTML}function src(){return POSTERS.length?POSTERS:fallback}function md(v){var x=String(v||'').match(/^\d{4}-(\d{2})-(\d{2})/);return x?x[1]+'-'+x[2]:''}function render(){var list=src().filter(function(p){var match=mode==='__all__'||(mode==='__daily__'?md(p.posterDate)===selectedMD:p.category===mode);var hay=(p.title+' '+p.category+' '+(p.description||'')).toLowerCase();return match&&hay.indexOf(query.toLowerCase())>-1});daily.hidden=mode!=='__daily__';title.textContent=query?'खोज के नतीजे':mode==='__all__'?'सभी पोस्टर':mode==='__daily__'?'विशेष दिवस':mode;count.textContent=list.length?list.length+' posters':'';grid.innerHTML='';empty.hidden=!!list.length;if(!list.length){document.getElementById('emptyTitle').textContent=mode==='__daily__'?'इस तारीख़ के लिए poster नहीं मिला':'अभी कोई poster नहीं मिला';return}list.forEach(function(p){var card=document.createElement('article');card.className='poster-card';var kind=p.type==='pro'?'pro':'free';card.innerHTML="<div class='poster-image'><img src='"+esc(p.img)+"' alt='"+esc(p.title)+"' loading='lazy'><span class='poster-badge "+kind+"'>"+(kind==='pro'?'PRO':'FREE')+"</span><a class='quick-edit' aria-label='Edit' href='/editor?img="+encodeURIComponent(p.img||'')+"&title="+encodeURIComponent(p.title||'')+"&type="+encodeURIComponent(p.type||'free')+"'>✎</a></div><div class='poster-info'><h2>"+esc(p.title)+"</h2><p>"+esc(p.description||p.category||'')+"</p><div class='poster-footer'><span>"+esc(p.category||'Poster')+"</span><a href='/editor?img="+encodeURIComponent(p.img||'')+"&title="+encodeURIComponent(p.title||'')+"&type="+encodeURIComponent(p.type||'free')+"'>एडिट करें →</a></div></div>";grid.appendChild(card)})}function dates(){var box=document.getElementById('dateStrip'),now=new Date();selectedMD=String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');for(var i=0;i<7;i++){var d=new Date(now.getFullYear(),now.getMonth(),now.getDate()+i),v=String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'),b=document.createElement('button');b.className='date-chip'+(i===0?' active':'');b.dataset.md=v;b.innerHTML='<b>'+d.getDate()+'</b><span>'+(i===0?'आज':'दिन')+'</span>';b.onclick=function(){selectedMD=this.dataset.md;document.querySelectorAll('.date-chip').forEach(function(x){x.classList.toggle('active',x===b)});render()};box.appendChild(b)}}document.querySelectorAll('.filter-chip').forEach(function(b){b.onclick=function(){mode=b.dataset.cat;document.querySelectorAll('.filter-chip').forEach(function(x){x.classList.toggle('active',x===b)});render()}});document.getElementById('posterSearch').oninput=function(){query=this.value;render()};document.getElementById('clearSearch').onclick=function(){document.getElementById('posterSearch').value='';query='';render()};document.getElementById('resetFilters').onclick=function(){mode='__all__';query='';document.getElementById('posterSearch').value='';document.querySelectorAll('.filter-chip').forEach(function(x){x.classList.toggle('active',x.dataset.cat==='__all__')});render()};dates();render();fetch('/api/templates').then(function(r){return r.json()}).then(function(data){if(Array.isArray(data)&&data.length)POSTERS=data;render()}).catch(function(){render()})})();
 </script>
