@@ -2,19 +2,20 @@
 import Layout from '../../layouts/Layout.astro';
 import Icon from '../../components/Icon.astro';
 import { categories, heroPreviews } from '../../data/site.js';
+import { festivalCalendar } from '../../data/festivals.js';
 
 export function getStaticPaths() {
   return categories.filter((c) => c.slug !== 'all').map((c) => ({ params: { category: c.slug }, props: { cat: c } }));
 }
 const { cat } = Astro.props;
 const allCategories = categories.filter((c) => c.slug !== 'all');
+const isFestival = cat.slug === 'festival';
+const buildYear = new Date().getFullYear();
+const festivalOptions = [...festivalCalendar(buildYear), ...festivalCalendar(buildYear + 1)];
 const showcase = [
-  { img: heroPreviews[0].img, title: 'सुंदर सुबह संदेश', type: 'free' },
-  { img: heroPreviews[1].img, title: 'दिल से शुभकामनाएं', type: 'pro' },
-  { img: heroPreviews[2].img, title: 'विशेष अवसर poster', type: 'free' },
-  { img: heroPreviews[0].img, title: 'आज का संदेश', type: 'pro' },
-  { img: heroPreviews[1].img, title: 'आपके नाम के साथ', type: 'free' },
-  { img: heroPreviews[2].img, title: 'खास पोस्टर design', type: 'pro' },
+  { id:'demo-1', img:heroPreviews[0].img, title:'सुंदर सुबह संदेश', category:cat.name, type:'free', description:'नाम और फोटो जोड़कर तैयार करें' },
+  { id:'demo-2', img:heroPreviews[1].img, title:'दिल से शुभकामनाएं', category:cat.name, type:'pro', description:'खास मौके के लिए सुंदर पोस्टर' },
+  { id:'demo-3', img:heroPreviews[2].img, title:'विशेष अवसर पोस्टर', category:cat.name, type:'free', description:'अपनी पहचान के साथ शेयर करें' },
 ];
 ---
 <Layout title={cat.name + ' पोस्टर — Daily PosterHub'} description={cat.name + ' के लिए सुंदर हिंदी पोस्टर चुनें, अपना नाम और फोटो जोड़ें, फिर तुरंत डाउनलोड करें।'}>
@@ -22,9 +23,9 @@ const showcase = [
     <div class='container category-hero-inner'>
       <div class='category-crumb'><a href='/'>होम</a><span>/</span><a href='/categories'>श्रेणियां</a><span>/</span><b>{cat.name}</b></div>
       <div class='category-mark' style={'color:' + cat.color + ';background:' + cat.bg}><Icon name={cat.icon} size={31} /></div>
-      <span class='category-overline'>POSTER COLLECTION</span>
+      <span class='category-overline'>{isFestival ? 'UPCOMING FESTIVALS' : 'POSTER COLLECTION'}</span>
       <h1>{cat.name} <span>पोस्टर</span></h1>
-      <p>{cat.name} के लिए बनाए गए सुंदर poster designs। अपना नाम, फोटो या छोटा message जोड़कर तुरंत तैयार करें।</p>
+      <p>{isFestival ? 'आने वाले त्योहार तारीख़ के क्रम में देखें। त्योहार चुनते ही उससे जुड़े उपलब्ध पोस्टर नीचे दिखाई देंगे।' : cat.name + ' के लिए बनाए गए सुंदर poster designs। अपना नाम, फोटो या छोटा message जोड़कर तुरंत तैयार करें।'}</p>
       <div class='category-actions'><a href='#posters' class='btn btn-primary'>पोस्टर चुनें <Icon name='arrow-right' size={17} /></a><a href='/posters' class='simple-link'>सभी पोस्टर देखें <Icon name='arrow-right' size={16} /></a></div>
     </div>
   </section>
@@ -32,19 +33,65 @@ const showcase = [
   <section class='category-content' id='posters'>
     <div class='container'>
       <div class='category-nav'><span>दूसरी categories</span><div>{allCategories.map((c) => <a class={c.slug === cat.slug ? 'active' : ''} href={'/categories/' + c.slug}><Icon name={c.icon} size={15} /> {c.name}</a>)}</div></div>
-      <div class='collection-heading'><div><span class='collection-kicker'>चुनिंदा designs</span><h2>{cat.name} के लिए लोकप्रिय posters</h2></div><p><Icon name='edit' size={16} /> Poster खोलें और अपनी जानकारी जोड़ें</p></div>
-      <div class='collection-grid'>
-        {showcase.map((item, i) => (
-          <article class='collection-card'>
-            <div class='collection-image'><img src={item.img} alt={item.title + ' — ' + cat.name} loading={i < 3 ? 'eager' : 'lazy'} /><span class={'collection-badge ' + item.type}>{item.type === 'pro' ? 'PRO' : 'FREE'}</span><span class='number'>0{i + 1}</span></div>
-            <div class='collection-info'><h3>{item.title}</h3><p>{cat.name} · नाम और फोटो जोड़ें</p><a href={'/editor?img=' + encodeURIComponent(item.img) + '&title=' + encodeURIComponent(item.title) + '&type=' + item.type}>एडिट करें <Icon name='arrow-right' size={16} /></a></div>
-          </article>
-        ))}
-      </div>
+
+      {isFestival && (
+        <section class='festival-panel' aria-labelledby='festivalHeading'>
+          <div class='festival-heading'>
+            <div><span class='collection-kicker'>तारीख़ के अनुसार</span><h2 id='festivalHeading'>हाल ही में आने वाले त्योहार</h2></div>
+            <button id='showAllFestivals' class='festival-all' type='button'>सभी त्योहार पोस्टर</button>
+          </div>
+          <div class='festival-strip' id='festivalStrip' aria-label='आने वाले त्योहार'></div>
+          <p class='festival-note'>तारीख़ें 2026 के curated calendar और वार्षिक fixed dates पर आधारित हैं। स्थानीय/चंद्र कैलेंडर के अनुसार कुछ पर्व एक दिन आगे-पीछे हो सकते हैं।</p>
+        </section>
+      )}
+
+      <div class='collection-heading'><div><span class='collection-kicker'>चुनिंदा designs</span><h2 id='collectionTitle'>{cat.name} के लिए उपलब्ध posters</h2></div><p><Icon name='edit' size={16} /> Poster खोलें और अपनी जानकारी जोड़ें</p></div>
+      <div class='collection-grid' id='collectionGrid'></div>
+      <div class='empty-posters' id='emptyPosters' hidden><span><Icon name='image' size={28} /></span><h3>अभी इस त्योहार का पोस्टर अपलोड नहीं हुआ</h3><p>ऊपर से दूसरा त्योहार चुनें या सभी पोस्टर देखें।</p><a href='/posters' class='btn btn-outline'>सभी पोस्टर देखें</a></div>
+
       <div class='category-tip'><span><Icon name='sparkles' size={20} /></span><div><b>अपना poster अलग बनाइए</b><p>Editor में नाम, profession और photo जोड़ें। Pro plan में watermark के बिना HD download भी मिलता है।</p></div><a href='/pricing' class='simple-link'>Pro देखें <Icon name='arrow-right' size={16} /></a></div>
     </div>
   </section>
 </Layout>
+<script id='categoryData' type='application/json' set:html={JSON.stringify({ category:cat.name, isFestival, festivals:festivalOptions, showcase })}></script>
 <style>
-.category-hero{position:relative;overflow:hidden;padding:55px 0 65px;background:linear-gradient(135deg,#faf9ff,#eeeaff)}.category-hero:after{content:'';position:absolute;width:420px;height:420px;right:-200px;bottom:-280px;border-radius:50%;background:#d9e5ff}.category-hero-inner{position:relative;z-index:1;text-align:center}.category-crumb{display:flex;justify-content:center;align-items:center;gap:8px;color:var(--muted);font-size:12px}.category-crumb a{color:var(--purple);font-weight:700}.category-mark{display:grid;place-items:center;width:68px;height:68px;margin:22px auto 12px;border-radius:20px}.category-overline,.collection-kicker{color:var(--purple);font-size:11px;font-weight:800;letter-spacing:.1em}.category-hero h1{margin-top:8px;font-size:clamp(34px,4vw,50px);line-height:1.14;font-weight:800;letter-spacing:-1px}.category-hero h1 span{color:var(--purple)}.category-hero p{max-width:590px;margin:12px auto 0;color:var(--muted);font-size:16px;line-height:1.7}.category-actions{display:flex;justify-content:center;align-items:center;gap:20px;margin-top:26px}.simple-link{display:inline-flex;align-items:center;gap:7px;color:var(--purple);font-size:14px;font-weight:800}.simple-link:hover{gap:11px}.category-content{padding:38px 0 76px;background:#fbfaff}.category-nav{display:flex;align-items:flex-start;gap:16px;margin-bottom:41px}.category-nav>span{min-width:95px;padding-top:10px;color:var(--muted);font-size:12px;font-weight:800;letter-spacing:.03em;text-transform:uppercase}.category-nav>div{display:flex;flex-wrap:wrap;gap:8px}.category-nav a{display:inline-flex;align-items:center;gap:6px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;color:#5a556c;font-size:13px;font-weight:700;transition:.2s}.category-nav a:hover,.category-nav a.active{border-color:var(--purple);background:var(--purple);color:#fff}.collection-heading{display:flex;align-items:end;justify-content:space-between;gap:22px;margin-bottom:25px}.collection-heading h2{margin-top:5px;font-size:clamp(24px,3vw,34px);line-height:1.2;font-weight:800}.collection-heading p{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:12px}.collection-heading p :global(.icon){color:var(--purple)}.collection-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.collection-card{overflow:hidden;border:1px solid var(--line);border-radius:17px;background:#fff;box-shadow:0 4px 15px rgba(37,27,80,.06);transition:.23s}.collection-card:hover{transform:translateY(-6px);border-color:#d3c8ff;box-shadow:0 19px 31px rgba(50,32,115,.13)}.collection-image{position:relative;aspect-ratio:4/5;overflow:hidden;background:#eeeafd}.collection-image img{width:100%;height:100%;object-fit:cover;transition:transform .35s}.collection-card:hover img{transform:scale(1.06)}.collection-badge{position:absolute;top:12px;left:12px;padding:5px 8px;border-radius:7px;font-size:10px;font-weight:800;letter-spacing:.05em}.collection-badge.free{background:#dcf8e6;color:#177142}.collection-badge.pro{background:#ffe7a4;color:#715000}.number{position:absolute;right:12px;bottom:9px;color:#fff;font:800 23px Poppins,sans-serif;text-shadow:0 2px 8px rgba(0,0,0,.45)}.collection-info{padding:15px 16px 17px}.collection-info h3{font-size:16px}.collection-info p{margin-top:4px;color:var(--muted);font-size:12px}.collection-info a{display:inline-flex;align-items:center;gap:6px;margin-top:14px;color:var(--purple);font-size:13px;font-weight:800}.collection-info a:hover{gap:10px}.category-tip{display:flex;align-items:center;gap:14px;margin-top:36px;padding:18px 21px;border:1px solid #dfd7fa;border-radius:15px;background:linear-gradient(110deg,#f1edff,#fff)}.category-tip>span{display:grid;place-items:center;width:42px;height:42px;border-radius:12px;background:#e4ddff;color:var(--purple)}.category-tip b{font-size:14px}.category-tip p{margin-top:2px;color:var(--muted);font-size:12px}.category-tip .simple-link{margin-left:auto;white-space:nowrap}@media(max-width:800px){.collection-grid{grid-template-columns:repeat(2,1fr)}.collection-heading{align-items:flex-start;flex-direction:column;gap:8px}.category-nav{flex-direction:column;gap:8px}}@media(max-width:520px){.category-hero{padding:42px 0 50px}.category-actions{flex-direction:column;gap:14px}.category-actions .btn{width:100%}.category-content{padding:28px 0 53px}.category-nav>div{flex-wrap:nowrap;max-width:100%;overflow-x:auto;padding-bottom:4px}.category-nav a{white-space:nowrap}.collection-grid{gap:11px}.collection-info{padding:11px}.collection-info h3{font-size:14px}.collection-info p{font-size:11px}.collection-info a{margin-top:10px;font-size:12px}.category-tip{align-items:flex-start;flex-wrap:wrap;padding:16px}.category-tip .simple-link{margin:3px 0 0 56px}.category-tip p{line-height:1.55}}
+.category-hero{position:relative;overflow:hidden;padding:55px 0 65px;background:linear-gradient(135deg,#faf9ff,#eeeaff)}.category-hero:after{content:'';position:absolute;width:420px;height:420px;right:-200px;bottom:-280px;border-radius:50%;background:#d9e5ff}.category-hero-inner{position:relative;z-index:1;text-align:center}.category-crumb{display:flex;justify-content:center;align-items:center;gap:8px;color:var(--muted);font-size:12px}.category-crumb a{color:var(--purple);font-weight:700}.category-mark{display:grid;place-items:center;width:68px;height:68px;margin:22px auto 12px;border-radius:20px}.category-overline,.collection-kicker{color:var(--purple);font-size:11px;font-weight:800;letter-spacing:.1em}.category-hero h1{margin-top:8px;font-size:clamp(34px,4vw,50px);line-height:1.14;font-weight:800;letter-spacing:-1px}.category-hero h1 span{color:var(--purple)}.category-hero p{max-width:650px;margin:12px auto 0;color:var(--muted);font-size:16px;line-height:1.7}.category-actions{display:flex;justify-content:center;align-items:center;gap:20px;margin-top:26px}.simple-link{display:inline-flex;align-items:center;gap:7px;color:var(--purple);font-size:14px;font-weight:800}.simple-link:hover{gap:11px}.category-content{padding:38px 0 76px;background:#fbfaff}.category-nav{display:flex;align-items:flex-start;gap:16px;margin-bottom:34px}.category-nav>span{min-width:95px;padding-top:10px;color:var(--muted);font-size:12px;font-weight:800;letter-spacing:.03em;text-transform:uppercase}.category-nav>div{display:flex;flex-wrap:wrap;gap:8px}.category-nav a{display:inline-flex;align-items:center;gap:6px;min-height:42px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;color:#5a556c;font-size:13px;font-weight:700;transition:.2s}.category-nav a:hover,.category-nav a.active{border-color:var(--purple);background:var(--purple);color:#fff}.festival-panel{margin-bottom:38px;padding:24px;border:1px solid #fed7aa;border-radius:18px;background:linear-gradient(135deg,#fff7ed,#fff)}.festival-heading{display:flex;align-items:end;justify-content:space-between;gap:18px;margin-bottom:16px}.festival-heading h2{margin-top:4px;font-size:clamp(22px,3vw,30px)}.festival-all{min-height:44px;padding:9px 14px;border:1px solid #fdba74;border-radius:10px;background:#fff;color:#c2410c;font:800 13px inherit;cursor:pointer}.festival-all.active,.festival-all:hover{background:#ea580c;color:#fff}.festival-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.festival-card{display:flex;align-items:center;gap:11px;min-height:76px;padding:12px;border:1px solid #ffedd5;border-radius:13px;background:#fff;text-align:left;cursor:pointer;transition:.2s}.festival-card:hover,.festival-card.active{transform:translateY(-2px);border-color:#f97316;box-shadow:0 8px 18px rgba(234,88,12,.12)}.festival-card.active{background:#fff7ed}.festival-date{display:grid;place-items:center;flex:0 0 44px;height:50px;border-radius:11px;background:#ffedd5;color:#c2410c;font-size:11px;font-weight:800}.festival-date b{font:800 18px/1 Poppins,sans-serif}.festival-copy{min-width:0}.festival-copy b{display:block;font-size:13px;line-height:1.35}.festival-copy small{display:block;margin-top:3px;color:var(--muted);font-size:11px}.festival-note{margin-top:14px;color:var(--muted);font-size:11.5px;line-height:1.55}.collection-heading{display:flex;align-items:end;justify-content:space-between;gap:22px;margin-bottom:25px}.collection-heading h2{margin-top:5px;font-size:clamp(24px,3vw,34px);line-height:1.2;font-weight:800}.collection-heading p{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:12px}.collection-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.collection-card{overflow:hidden;border:1px solid var(--line);border-radius:17px;background:#fff;box-shadow:0 4px 15px rgba(37,27,80,.06);transition:.23s}.collection-card:hover{transform:translateY(-6px);border-color:#d3c8ff;box-shadow:0 19px 31px rgba(50,32,115,.13)}.collection-image{position:relative;aspect-ratio:4/5;overflow:hidden;background:#eeeafd}.collection-image img{width:100%;height:100%;object-fit:cover;transition:transform .35s}.collection-card:hover img{transform:scale(1.06)}.collection-badge{position:absolute;top:12px;left:12px;padding:5px 8px;border-radius:7px;font-size:10px;font-weight:800}.collection-badge.free{background:#dcf8e6;color:#177142}.collection-badge.pro{background:#ffe7a4;color:#715000}.festival-badge{position:absolute;right:12px;bottom:10px;max-width:75%;padding:5px 8px;border-radius:7px;background:rgba(124,58,237,.92);color:#fff;font-size:10px;font-weight:800}.collection-info{padding:15px 16px 17px}.collection-info h3{font-size:16px}.collection-info p{margin-top:4px;color:var(--muted);font-size:12px}.collection-info a{display:inline-flex;align-items:center;gap:6px;margin-top:14px;color:var(--purple);font-size:13px;font-weight:800}.empty-posters{padding:46px 20px;text-align:center;border:1px dashed #d8cfea;border-radius:17px;background:#fff}.empty-posters>span{display:grid;place-items:center;width:52px;height:52px;margin:auto;border-radius:14px;background:#eeeaff;color:var(--purple)}.empty-posters h3{margin-top:13px;font-size:18px}.empty-posters p{margin:5px 0 17px;color:var(--muted);font-size:13px}.category-tip{display:flex;align-items:center;gap:14px;margin-top:36px;padding:18px 21px;border:1px solid #dfd7fa;border-radius:15px;background:linear-gradient(110deg,#f1edff,#fff)}.category-tip>span{display:grid;place-items:center;width:42px;height:42px;border-radius:12px;background:#e4ddff;color:var(--purple)}.category-tip b{font-size:14px}.category-tip p{margin-top:2px;color:var(--muted);font-size:12px}.category-tip .simple-link{margin-left:auto;white-space:nowrap}@media(max-width:900px){.festival-strip{grid-template-columns:repeat(3,1fr)}}@media(max-width:800px){.collection-grid{grid-template-columns:repeat(2,1fr)}.collection-heading,.festival-heading{align-items:flex-start;flex-direction:column;gap:10px}.category-nav{flex-direction:column;gap:8px}}@media(max-width:620px){.festival-panel{padding:17px}.festival-strip{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:4px}.festival-card{flex:0 0 220px;scroll-snap-align:start}.festival-all{width:100%}}@media(max-width:520px){.category-hero{padding:42px 0 50px}.category-actions{flex-direction:column;gap:14px}.category-actions .btn{width:100%}.category-content{padding:28px 0 53px}.category-nav>div{flex-wrap:nowrap;max-width:100%;overflow-x:auto;padding-bottom:4px}.category-nav a{white-space:nowrap}.collection-grid{grid-template-columns:1fr;gap:14px}.category-tip{align-items:flex-start;flex-wrap:wrap;padding:16px}.category-tip .simple-link{margin:3px 0 0 56px}.category-tip p{line-height:1.55}}
 </style>
+<script is:inline>
+(function(){
+  var data={};try{data=JSON.parse(document.getElementById('categoryData').textContent)||{}}catch(e){}
+  var all=[],selected='';
+  var grid=document.getElementById('collectionGrid'),empty=document.getElementById('emptyPosters'),heading=document.getElementById('collectionTitle');
+  function esc(v){var d=document.createElement('div');d.textContent=v==null?'':v;return d.innerHTML}
+  function formatDate(value){try{return new Intl.DateTimeFormat('hi-IN',{day:'numeric',month:'long',year:'numeric'}).format(new Date(value+'T00:00:00'))}catch(e){return value}}
+  function editorUrl(p){return '/editor?img='+encodeURIComponent(p.img||'')+'&title='+encodeURIComponent(p.title||'')+'&type='+encodeURIComponent(p.type||'free')}
+  function render(){
+    var list=all.filter(function(p){
+      if(p.category!==data.category)return false;
+      if(!data.isFestival||!selected)return true;
+      return p.festivalId===selected||p.festivalName===selected||p.posterDate===selected;
+    });
+    grid.innerHTML='';empty.hidden=!!list.length;
+    if(data.isFestival){var fest=(data.festivals||[]).find(function(f){return f.id===selected});heading.textContent=fest?fest.name+' के पोस्टर':'सभी त्योहार पोस्टर'}
+    else heading.textContent=data.category+' के लिए उपलब्ध posters';
+    list.forEach(function(p){
+      var type=p.type==='pro'?'pro':'free',card=document.createElement('article');card.className='collection-card';
+      card.innerHTML="<div class='collection-image'><img src='"+esc(p.img)+"' alt='"+esc(p.title)+"' loading='lazy'><span class='collection-badge "+type+"'>"+(type==='pro'?'PRO':'FREE')+"</span>"+(p.festivalName?"<span class='festival-badge'>"+esc(p.festivalName)+"</span>":'')+"</div><div class='collection-info'><h3>"+esc(p.title)+"</h3><p>"+esc(p.festivalName||(p.description||p.category||''))+"</p><a href='"+editorUrl(p)+"'>एडिट करें →</a></div>";
+      grid.appendChild(card);
+    });
+  }
+  function renderFestivals(){
+    if(!data.isFestival)return;
+    var box=document.getElementById('festivalStrip'),today=new Date();today.setHours(0,0,0,0);var todayIso=new Date(today.getTime()-today.getTimezoneOffset()*60000).toISOString().slice(0,10);
+    var upcoming=(data.festivals||[]).filter(function(f){return f.date>=todayIso});
+    if(!upcoming.length)upcoming=(data.festivals||[]).slice(-16);
+    var requested=new URLSearchParams(location.search).get('festival');
+    selected=requested||((upcoming[0]||{}).id||'');
+    box.innerHTML='';
+    upcoming.forEach(function(f){var dt=new Date(f.date+'T00:00:00'),b=document.createElement('button');b.type='button';b.className='festival-card'+(f.id===selected?' active':'');b.dataset.id=f.id;b.innerHTML="<span class='festival-date'><b>"+dt.getDate()+"</b>"+new Intl.DateTimeFormat('hi-IN',{month:'short'}).format(dt)+"</span><span class='festival-copy'><b>"+esc(f.name)+"</b><small>"+esc(formatDate(f.date))+"</small></span>";b.onclick=function(){selected=f.id;box.querySelectorAll('.festival-card').forEach(function(x){x.classList.toggle('active',x===b)});document.getElementById('showAllFestivals').classList.remove('active');history.replaceState(null,'','?festival='+encodeURIComponent(f.id)+'#posters');render()};box.appendChild(b)});
+    document.getElementById('showAllFestivals').onclick=function(){selected='';box.querySelectorAll('.festival-card').forEach(function(x){x.classList.remove('active')});this.classList.add('active');history.replaceState(null,'',location.pathname+'#posters');render()};
+  }
+  renderFestivals();
+  fetch('/api/templates').then(function(r){return r.json()}).then(function(list){all=Array.isArray(list)?list:[];if(!all.some(function(p){return p.category===data.category})&&!data.isFestival)all=data.showcase||[];render()}).catch(function(){all=data.isFestival?[]:(data.showcase||[]);render()});
+})();
+</script>

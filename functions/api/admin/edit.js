@@ -12,6 +12,8 @@ export async function onRequestPost({ request, env }) {
   item.type = body.type === 'pro' ? 'pro' : 'free';
   item.description = String(body.description || '').trim().slice(0, 500);
   item.posterDate = String(body.posterDate || '').trim();
+  item.festivalName = item.category === 'त्योहार' ? String(body.festivalName || item.festivalName || '').trim().slice(0, 120) : '';
+  item.festivalId = item.category === 'त्योहार' ? String(body.festivalId || item.festivalId || '').trim().slice(0, 180) : '';
   item.updatedAt = new Date().toISOString();
   await writeIndex(env, list);
   return json({ ok: true, template: item });

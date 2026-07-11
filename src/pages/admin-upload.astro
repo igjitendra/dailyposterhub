@@ -1,6 +1,8 @@
 ---
 import '../styles/global.css';
 import { categories } from '../data/site.js';
+import { festivalCalendar } from '../data/festivals.js';
+const festivalOptions = [...festivalCalendar(new Date().getFullYear()), ...festivalCalendar(new Date().getFullYear() + 1)];
 const cats = categories.filter((c) => c.slug !== 'all');
 ---
 <!doctype html>
@@ -45,11 +47,20 @@ const cats = categories.filter((c) => c.slug !== 'all');
           <input name='title' required placeholder='जैसे: सुप्रभात — फूल' />
         </label>
         <label>श्रेणी (Category)
-          <select name='category' required>
+          <select id='categorySelect' name='category' required>
             <option value=''>चुनें...</option>
             {cats.map((c) => (<option value={c.name}>{c.name}</option>))}
           </select>
         </label>
+        <div id='festivalFld' class='festival-box' hidden>
+          <label>त्योहार चुनें *
+            <select id='festivalChoice' name='festivalChoice'>
+              <option value=''>त्योहार चुनें...</option>
+              {festivalOptions.map((fest) => (<option value={fest.date + '|' + fest.name}>{fest.name} — {new Intl.DateTimeFormat('hi-IN', { day:'numeric', month:'long', year:'numeric' }).format(new Date(fest.date + 'T00:00:00'))}</option>))}
+            </select>
+          </label>
+          <p class='daily-hint'>चुना हुआ त्योहार user को Festival category में तारीख़ के क्रम में दिखेगा।</p>
+        </div>
         <div class='type-row'>
           <span>प्रकार:</span>
           <label class='rad'><input type='radio' name='type' value='free' checked /> फ्री</label>
@@ -108,6 +119,9 @@ const cats = categories.filter((c) => c.slug !== 'all');
     .up-card input, .up-card select, .up-card textarea { border: 1px solid var(--line); border-radius: 10px; padding: 11px 13px; font-family: inherit; font-size: 14.5px; outline: none; background: #fff; }
     .up-card input:focus, .up-card select:focus, .up-card textarea:focus { border-color: var(--purple); }
     .up-card input[type=radio], .up-card input[type=checkbox] { width: auto; padding: 0; border: none; }
+    [hidden] { display: none !important; }
+    .festival-box { margin-bottom:14px; padding:14px; border:1px solid #fed7aa; border-radius:12px; background:#fff7ed; }
+    .festival-box label { margin-bottom:0; }
     .type-row { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; font-size: 14px; font-weight: 600; }
     .rad, .chk { flex-direction: row !important; align-items: center; gap: 7px; font-weight: 500 !important; }
     .chk { margin-bottom: 14px; font-size: 14px; }
@@ -165,8 +179,23 @@ const cats = categories.filter((c) => c.slug !== 'all');
 
     $('#logoutBtn').addEventListener('click', () => { sessionStorage.removeItem(KEY_STORE); location.reload(); });
 
+    const categorySelect = $('#categorySelect');
+    const festivalFld = $('#festivalFld');
+    const festivalChoice = $('#festivalChoice');
+    const dailyBox = document.querySelector('.daily-box');
+    function syncCategoryFields() {
+      const festival = categorySelect.value === 'त्योहार';
+      festivalFld.hidden = !festival;
+      festivalChoice.required = festival;
+      dailyBox.hidden = festival;
+      if (!festival) festivalChoice.value = '';
+      if (festival) { isDaily.checked = false; dateFld.style.display = 'none'; dateFld.querySelector('input').value = ''; }
+    }
+    categorySelect.addEventListener('change', syncCategoryFields);
+
     const isDaily = $('#isDaily');
     const dateFld = $('#dateFld');
+    syncCategoryFields();
     isDaily.addEventListener('change', () => {
       dateFld.style.display = isDaily.checked ? 'flex' : 'none';
       if (!isDaily.checked) dateFld.querySelector('input').value = '';
@@ -194,6 +223,7 @@ const cats = categories.filter((c) => c.slug !== 'all');
         if (r.ok && data.ok) {
           formMsg.textContent = '✓ अपलोड सफल!';
           form.reset();
+          syncCategoryFields();
           preview.style.display = 'none';
           await loadList();
         } else {
@@ -223,7 +253,8 @@ const cats = categories.filter((c) => c.slug !== 'all');
           row.className = 'row';
           const badge = t.type === 'pro' ? 'Pro' : 'फ्री';
           const dateTag = t.posterDate ? ` • 📅 ${esc(t.posterDate)}` : '';
-          row.innerHTML = `<img src='${esc(t.img)}' alt='' loading='lazy'><div class='row-info'><strong>${esc(t.title)}</strong><span>${esc(t.category)} • ${badge}${dateTag}</span></div><button class='del' data-id='${esc(t.id)}'>हटाएं</button>`;
+          const festivalTag = t.festivalName ? ` • 🔥 ${esc(t.festivalName)}` : '';
+          row.innerHTML = `<img src='${esc(t.img)}' alt='' loading='lazy'><div class='row-info'><strong>${esc(t.title)}</strong><span>${esc(t.category)} • ${badge}${festivalTag}${dateTag}</span></div><button class='del' data-id='${esc(t.id)}'>हटाएं</button>`;
           listEl.appendChild(row);
         });
         listEl.querySelectorAll('.del').forEach((b) => {
