@@ -3,6 +3,7 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import WhatsAppChannel from '../components/WhatsAppChannel.astro';
 import PwaInstall from '../components/PwaInstall.astro';
+import AdSlots from '../components/AdSlots.astro';
 import { site } from '../data/site.js';
 import '../styles/global.css';
 
@@ -61,9 +62,11 @@ const canonical = canonicalUrl || new URL(Astro.url.pathname, Astro.site).toStri
   </head>
   <body>
     <Header />
+    <AdSlots />
     <main>
       <slot />
     </main>
+    <AdSlots placement='footer' />
     <Footer />
     <WhatsAppChannel />
     <PwaInstall />

@@ -1,0 +1,32 @@
+---
+const { placement = 'header' } = Astro.props;
+const targetId = placement === 'footer' ? 'dphAdFooter' : 'dphAdHeader';
+const codeKey = placement === 'footer' ? 'footerCode' : 'headerCode';
+---
+<div id={targetId} data-code-key={codeKey} class="dph-ad-slot" hidden aria-label="Advertisement"></div>
+
+<style is:global>
+  .dph-ad-slot[hidden] { display:none!important; }
+  .dph-ad-slot { width:min(100% - 32px, 1120px); min-height:1px; margin:16px auto; overflow:hidden; text-align:center; }
+</style>
+
+<script is:inline data-target={targetId}>
+  (function () {
+    var target = document.getElementById(document.currentScript.dataset.target);
+    function addCode(code) {
+      if (!target || !code) return;
+      target.hidden = false;
+      target.appendChild(document.createRange().createContextualFragment(code));
+    }
+    fetch('/api/site-settings').then(function (r) { return r.json(); }).then(function (data) {
+      var ads = data && data.ads;
+      if (!ads || !ads.enabled) return;
+      if (ads.scriptUrl && /^https:\/\//i.test(ads.scriptUrl) && !document.querySelector('script[data-dph-ad-script]')) {
+        var script = document.createElement('script');
+        script.async = true; script.src = ads.scriptUrl; script.dataset.dphAdScript = 'true';
+        document.head.appendChild(script);
+      }
+      addCode(ads[target.dataset.codeKey]);
+    }).catch(function () {});
+  })();
+</script>
