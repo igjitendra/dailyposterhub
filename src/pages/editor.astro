@@ -16,10 +16,10 @@ import Layout from '../layouts/Layout.astro';
             <!-- POSTER + photo circle only -->
             <div class='stage' id='stage'>
               <img id='posterImg' class='poster-img' alt='poster' crossorigin='anonymous' />
+              <img id='brandOverlay' class='brand-overlay' alt='branding' />
               <img id='wmMark' class='wm-mark show' src='/img/watermark.png' alt='watermark' crossorigin='anonymous' />
               <div class='photo-circle empty' id='photoCircle'>फोटो</div>
             </div>
-            <img id='brandOverlay' class='brand-overlay' alt='branding' />
 
             <!-- BOTTOM strip: name + number (outside image) -->
             <div class='name-strip' id='nameStrip'>
@@ -96,7 +96,7 @@ import Layout from '../layouts/Layout.astro';
     color: #B4145A; font-weight: 800; font-size: 15px; line-height: 1; }
   .hide-photo { display:flex; align-items:center; gap:7px; margin:8px 0; font-size:13px; font-weight:700; color:var(--muted); }
   .hide-photo input { width:16px; height:16px; }
-  .brand-overlay { display:none; width:100%; height:auto; max-height:none; object-fit:fill; background:#fff; }
+  .brand-overlay { position: absolute; left: 50%; top: 82%; transform: translate(-50%,-50%); width: 55%; cursor: grab; touch-action: none; display: none; filter: drop-shadow(0 2px 6px rgba(0,0,0,.25)); }
   .brand-overlay.show { display: block; }
   .brand-overlay:active { cursor: grabbing; }
   .date-badge { position: absolute; top: 12px; left: 12px; right: 12px; display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; pointer-events: none; z-index: 3; }
@@ -263,7 +263,7 @@ import Layout from '../layouts/Layout.astro';
     var bpos = { xp: 50, yp: 82 }; var bsize = 55;
     function applyBrand() { bo.style.left = bpos.xp + '%'; bo.style.top = bpos.yp + '%'; bo.style.width = bsize + '%'; }
     function showBranding(url) {
-      if (url) { bo.src = url; bo.classList.add('show'); brandCtl.style.display = 'none'; }
+      if (url) { bo.src = url; bo.classList.add('show'); brandCtl.style.display = 'flex'; applyBrand(); }
       else { bo.classList.remove('show'); brandCtl.style.display = 'none'; }
     }
     var brandData = null;

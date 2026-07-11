@@ -60,7 +60,7 @@ const canonical = canonicalUrl || new URL(Astro.url.pathname, Astro.site).toStri
       rel='stylesheet'
     />
   </head>
-  <body style='-webkit-user-select:none;user-select:none'>
+  <body>
     <Header />
     <AdSlots />
     <main>
@@ -72,6 +72,5 @@ const canonical = canonicalUrl || new URL(Astro.url.pathname, Astro.site).toStri
     <WhatsAppChannel />
     <AdSlots placement='sticky' />
     <PwaInstall />
-    <script is:inline>document.addEventListener('contextmenu',function(e){e.preventDefault()});document.addEventListener('dragstart',function(e){if(e.target.tagName==='IMG')e.preventDefault()});document.addEventListener('copy',function(e){e.preventDefault()});document.addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&['s','u','p','c'].indexOf(e.key.toLowerCase())>=0)e.preventDefault()});</script>
   </body>
 </html>
