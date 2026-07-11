@@ -9,20 +9,21 @@ const cur = pricing.currency || '₹';
 const plans = [
   { id: 'monthly', label: 'मासिक प्लान', amount: pricing.monthly, per: '/ माह' },
   { id: 'yearly', label: 'वार्षिक प्लान', amount: pricing.yearly, per: '/ साल', best: true },
+  { id: 'business', label: 'बिज़नेस प्लान', amount: pricing.business, per: '/ साल' },
 ];
 ---
 <Layout title='पेमेंट — Daily PosterHub Pro'>
   <section class='pay-hero'>
     <div class='container'>
-      <h1>Pro <span class='grad-text'>अपग्रेड</span></h1>
-      <p>UPI से पेमेंट करें · जानकारी भेजें · 2 घंटे में Pro चालू</p>
+      <h1>प्लान <span class='grad-text'>अपग्रेड</span></h1>
+      <p>UPI से पेमेंट करें · जानकारी भेजें · 2 घंटे में चालू</p>
     </div>
   </section>
 
   <section class='section' style='padding-top:26px'>
     <div class='container pay-wrap'
          data-upi={upiId} data-payee={payee} data-wa={wa} data-cur={cur}
-         data-amt-monthly={String(plans[0].amount)} data-amt-yearly={String(plans[1].amount)}>
+         data-amt-monthly={String(plans[0].amount)} data-amt-yearly={String(plans[1].amount)} data-amt-business={String(pricing.business)}>
 
       <div class='pay-card card'>
         <div class='step-h'><span class='step-n'>1</span><h3>प्लान चुनें</h3></div>
@@ -96,7 +97,7 @@ const plans = [
   .step-n { width: 28px; height: 28px; border-radius: 50%; background: var(--purple); color: #fff; font-weight: 700; display: grid; place-items: center; font-size: 14px; }
   .step-h h3 { font-size: 17px; font-weight: 700; }
 
-  .plan-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .plan-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
   .plan { position: relative; cursor: pointer; }
   .plan input { position: absolute; opacity: 0; }
   .plan-in { border: 2px solid var(--line); border-radius: 14px; padding: 16px; text-align: center; transition: .15s; }
@@ -132,6 +133,7 @@ const plans = [
 
   @media (max-width: 560px) {
     .pay-grid { grid-template-columns: 1fr; }
+    .plan-row { grid-template-columns: 1fr; }
     .qr-box { margin-bottom: 6px; }
   }
 </style>
@@ -145,15 +147,17 @@ const plans = [
     var payee = wrap.dataset.payee;
     var wa = wrap.dataset.wa;
     var cur = wrap.dataset.cur || '₹';
-    var amts = { monthly: Number(wrap.dataset.amtMonthly), yearly: Number(wrap.dataset.amtYearly) };
-    var plan = 'yearly';
+    var amts = { monthly: Number(wrap.dataset.amtMonthly), yearly: Number(wrap.dataset.amtYearly), business: Number(wrap.dataset.amtBusiness) };
+    var planNames = { monthly: 'Pro मासिक', yearly: 'Pro वार्षिक', business: 'Business वार्षिक' };
+    var qp = new URLSearchParams(location.search).get('plan');
+    var plan = (qp && amts[qp]) ? qp : 'yearly';
     var qrEl = document.getElementById('qr');
     var amtShow = document.getElementById('amtShow');
     var payNow = document.getElementById('payNow');
 
     function upiString() {
       var amt = amts[plan];
-      var tn = 'DailyPosterHub Pro ' + plan;
+      var tn = 'DailyPosterHub ' + (planNames[plan] || plan);
       return 'upi://pay?pa=' + encodeURIComponent(upiId) + '&pn=' + encodeURIComponent(payee) + '&am=' + amt + '&cu=INR&tn=' + encodeURIComponent(tn);
     }
     function renderQR() {
@@ -191,12 +195,12 @@ const plans = [
       if (!name || !acc) { msg.textContent = 'कृपया नाम और अकाउंट ईमेल/मोबाइल भरें।'; msg.className = 'send-msg err'; return; }
       var btn = this; btn.disabled = true; msg.className = 'send-msg'; msg.textContent = 'तैयार हो रहा है...';
       var lines = [
-        'नमस्ते! मैंने Daily PosterHub Pro के लिए payment किया है।',
-        'प्लान: ' + (plan === 'yearly' ? 'वार्षिक' : 'मासिक') + ' (' + cur + amts[plan] + ')',
+        'नमस्ते! मैंने Daily PosterHub के लिए payment किया है।',
+        'प्लान: ' + (planNames[plan] || plan) + ' (' + cur + amts[plan] + ')',
         'नाम: ' + name,
         'अकाउंट: ' + acc,
         'UPI Ref/Txn: ' + (txn || '-'),
-        'कृपया मेरा Pro चालू कर दें। धन्यवाद!'
+        'कृपया मेरा प्लान चालू कर दें। धन्यवाद!'
       ];
       var url = 'https://wa.me/' + wa + '?text=' + encodeURIComponent(lines.join('\n'));
       msg.textContent = 'WhatsApp खुल रहा है...';
@@ -205,7 +209,7 @@ const plans = [
     });
 
     renderQR();
-    var yearlyLabel = document.querySelector('.plan[data-plan=yearly]');
-    if (yearlyLabel) yearlyLabel.classList.add('sel');
+    var selRadio = document.querySelector('input[name=plan][value=' + plan + ']');
+    if (selRadio) { selRadio.checked = true; selRadio.closest('.plan').classList.add('sel'); }
   })();
 </script>
