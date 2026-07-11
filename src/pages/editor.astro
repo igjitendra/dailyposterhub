@@ -217,7 +217,7 @@ import Layout from '../layouts/Layout.astro';
         if (!inName.value) inName.value = d.user.name || '';
         if (!prof.photo && !savedAvatar && d.user.avatar) { savedAvatar = d.user.avatar; setPhoto(savedAvatar); }
         if (d.user.plan === 'pro' || d.user.plan === 'business') { isPaid = true; strip.style.display = 'none'; document.getElementById('proNote').style.display = 'none'; if (wmMark) wmMark.classList.remove('show'); }
-        if (d.user.plan === 'business') { document.getElementById('nameStrip').style.display = 'none'; if (d.user.branding) { showBranding(d.user.branding); } }
+        if (d.user.plan === 'business') { document.getElementById('nameStrip').style.display = 'none'; var savedStrip = localStorage.getItem('ph_branding'); if (savedStrip) { showBranding(savedStrip); } }
         renderInfo();
       }
     }).catch(function () {});
@@ -259,7 +259,7 @@ import Layout from '../layouts/Layout.astro';
     var bpos = { xp: 50, yp: 82 }; var bsize = 55;
     function applyBrand() { bo.style.left = bpos.xp + '%'; bo.style.top = bpos.yp + '%'; bo.style.width = bsize + '%'; }
     function showBranding(url) {
-      if (url) { bo.src = url; bo.classList.add('show'); brandCtl.style.display = 'flex'; applyBrand(); }
+      if (url) { bo.src = url; bo.classList.add('show'); brandCtl.style.display = 'none'; }
       else { bo.classList.remove('show'); brandCtl.style.display = 'none'; }
     }
     var brandData = null;
