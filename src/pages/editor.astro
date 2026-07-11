@@ -16,10 +16,10 @@ import Layout from '../layouts/Layout.astro';
             <!-- POSTER + photo circle only -->
             <div class='stage' id='stage'>
               <img id='posterImg' class='poster-img' alt='poster' crossorigin='anonymous' />
+              <img id='brandOverlay' class='brand-overlay' alt='branding' />
               <img id='wmMark' class='wm-mark show' src='/img/watermark.png' alt='watermark' crossorigin='anonymous' />
               <div class='photo-circle empty' id='photoCircle'>फोटो</div>
             </div>
-            <img id='brandOverlay' class='brand-overlay' alt='branding' />
 
             <!-- BOTTOM strip: name + number (outside image) -->
             <div class='name-strip' id='nameStrip'>
@@ -31,7 +31,7 @@ import Layout from '../layouts/Layout.astro';
 
         <!-- resize control OUTSIDE the image -->
         <div class='stage-controls'>
-          <div class='sc-row'><span>फोटो साइज़</span><input id='sizeRange' type='range' min='22' max='85' value='45' /></div>
+          <div class='sc-row'><span>फोटो साइज़</span><input id='sizeRange' type='range' min='22' max='85' value='45' /></div><label class='hide-photo'><input id='hidePhoto' type='checkbox' /> फोटो छिपाएं</label>
           <div class='sc-row' id='brandCtl' style='display:none'><span>ब्रांडिंग साइज़</span><input id='brandRange' type='range' min='20' max='95' value='55' /></div>
           <p class='sc-hint'>फोटो को उंगली/माउस से खींचकर गोल फ्रेम पर रखें, स्लाइडर से छोटा-बड़ा करें।</p>
         </div>
@@ -94,9 +94,11 @@ import Layout from '../layouts/Layout.astro';
   .photo-circle:active { cursor: grabbing; }
   .photo-circle.empty { background: rgba(255,255,255,.65); border: 3px dashed #B4145A; display: grid; place-items: center;
     color: #B4145A; font-weight: 800; font-size: 15px; line-height: 1; }
-  .brand-overlay { display:none; width:100%; max-height:105px; object-fit:contain; background:#fff; cursor:default; touch-action:none; }
-  .brand-overlay.show { display:block; }
-  .brand-overlay:active { cursor:default; }
+  .hide-photo { display:flex; align-items:center; gap:7px; margin:8px 0; font-size:13px; font-weight:700; color:var(--muted); }
+  .hide-photo input { width:16px; height:16px; }
+  .brand-overlay { position: absolute; left: 50%; top: 82%; transform: translate(-50%,-50%); width: 55%; cursor: grab; touch-action: none; display: none; filter: drop-shadow(0 2px 6px rgba(0,0,0,.25)); }
+  .brand-overlay.show { display: block; }
+  .brand-overlay:active { cursor: grabbing; }
   .date-badge { position: absolute; top: 12px; left: 12px; right: 12px; display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; pointer-events: none; z-index: 3; }
   .db-day, .db-date { display: inline-block; background: #7C3AED; color: #fff; font-size: 13px; font-weight: 700; padding: 10px 14px; line-height: 1; border-radius: 22px; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,.28); }
   .db-date { background: #B4145A; }
@@ -168,7 +170,7 @@ import Layout from '../layouts/Layout.astro';
     var posterImg = document.getElementById('posterImg');
     posterImg.src = imgUrl || '/img/preview-morning.webp';
 
-    // आज की ���ारीख़ + दिन (ऊपर लेफ्ट दिन, राइट तारीख़)
+    // आज की ��ारीख़ + दिन (ऊपर लेफ्ट दिन, राइट तारीख़)
     var HDAYS = ['रविवार','सोमवार','मंगलवार','बुधवार','गुरुवार','शुक्रवार','शनिवार'];
     var HMON = ['जनवरी','फ़रवरी','मार्च','अप्रैल','मई','जून','जुलाई','अगस्त','सितंबर','अक्टूबर','नवंबर','दिसंबर'];
     var _now = new Date();
@@ -217,7 +219,7 @@ import Layout from '../layouts/Layout.astro';
         if (!inName.value) inName.value = d.user.name || '';
         if (!prof.photo && !savedAvatar && d.user.avatar) { savedAvatar = d.user.avatar; setPhoto(savedAvatar); }
         if (d.user.plan === 'pro' || d.user.plan === 'business') { isPaid = true; strip.style.display = 'none'; document.getElementById('proNote').style.display = 'none'; if (wmMark) wmMark.classList.remove('show'); }
-        if (d.user.plan === 'business') { document.getElementById('nameStrip').style.display = 'none'; var savedStrip = localStorage.getItem('ph_branding'); if (savedStrip) { showBranding(savedStrip); } }
+        if (d.user.plan === 'business') { document.getElementById('nameStrip').style.display = 'none'; if (d.user.branding) { showBranding(d.user.branding); } }
         renderInfo();
       }
     }).catch(function () {});
@@ -252,6 +254,8 @@ import Layout from '../layouts/Layout.astro';
     pc.addEventListener('pointerup', function () { drag = false; });
     pc.addEventListener('pointercancel', function () { drag = false; });
     document.getElementById('sizeRange').addEventListener('input', function () { sizePct = parseInt(this.value, 10); applyPhoto(); });
+    document.getElementById('hidePhoto').addEventListener('change', function () { pc.style.display = this.checked ? 'none' : ''; try { localStorage.setItem('ph_hide_photo', this.checked ? '1' : '0'); } catch (e) {} });
+    try { if (localStorage.getItem('ph_hide_photo') === '1') { document.getElementById('hidePhoto').checked = true; pc.style.display = 'none'; } } catch (e) {}
 
     // ===== business branding overlay =====
     var bo = document.getElementById('brandOverlay');
@@ -259,7 +263,7 @@ import Layout from '../layouts/Layout.astro';
     var bpos = { xp: 50, yp: 82 }; var bsize = 55;
     function applyBrand() { bo.style.left = bpos.xp + '%'; bo.style.top = bpos.yp + '%'; bo.style.width = bsize + '%'; }
     function showBranding(url) {
-      if (url) { bo.src = url; bo.classList.add('show'); brandCtl.style.display = 'none'; }
+      if (url) { bo.src = url; bo.classList.add('show'); brandCtl.style.display = 'flex'; applyBrand(); }
       else { bo.classList.remove('show'); brandCtl.style.display = 'none'; }
     }
     var brandData = null;

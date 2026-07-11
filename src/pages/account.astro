@@ -46,8 +46,7 @@ import Icon from '../components/Icon.astro';
 
       <div class='acc-profile' id='brandingBox' hidden>
         <h2><Icon name='image' size={15} /> बिज़नेस ब्रांडिंग</h2>
-        <p class='prof-note'>अपनी branding strip बनाएं — यह Business poster के नीचे दिखाई देगी।</p>
-        <a href='/business-branding' class='btn btn-primary btn-sm' style='width:100%;margin-bottom:12px'>Branding Layout बनाएं</a>
+        <p class='prof-note'>अपनी तैयार ब्रांडिंग इमेज (PNG/JPG) अपलोड करें — यह हर पोस्टर पर आएगी, जिसे आप खींचकर और छोटा-बड़ा कर सकते हैं।</p>
         <img id='brandingPreview' class='branding-preview' hidden alt='branding' />
         <label class='prof-fld'>ब्रांडिंग इमेज<input id='brandingInput' type='file' accept='image/*' /></label>
         <button id='brandingClear' class='btn btn-outline btn-sm' hidden>ब्रांडिंग हटाएं</button>
@@ -214,7 +213,7 @@ import Icon from '../components/Icon.astro';
           } else {
             msg.className = 'avatar-msg err'; msg.textContent = (res.j && res.j.message) || 'अपलोड नहीं हुआ।';
           }
-        }).catch(function () { msg.className = 'avatar-msg err'; msg.textContent = 'नेटव��्क समस्या।'; });
+        }).catch(function () { msg.className = 'avatar-msg err'; msg.textContent = 'नेटवर्क समस्या।'; });
     });
 
     document.getElementById('logoutBtn').addEventListener('click', function () {
