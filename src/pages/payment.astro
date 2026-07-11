@@ -198,6 +198,7 @@ const plans = [
         'UPI Ref/Txn: ' + (txn || '-'),
         'कृपया मेरा Pro चालू कर दें। धन्यवाद!'
       ];
+      fetch('/api/payment-request',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({name:name,account:acc,txn:txn,plan:plan,amount:amts[plan]})}).catch(function(){});
       var url = 'https://wa.me/' + wa + '?text=' + encodeURIComponent(lines.join('\n'));
       msg.textContent = 'WhatsApp खुल रहा है...';
       window.location.href = url;

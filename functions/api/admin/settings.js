@@ -1,34 +1,7 @@
 import { json, isAuthed } from '../../_lib.js';
-
 const KEY = 'settings:app';
-const defaults = {
-  general: { siteName: 'Daily PosterHub', tagline: 'हर दिन नया पोस्टर, आपके अपने अंदाज़ में', supportEmail: 'support@posterhub.pages.dev', whatsapp: '916387617678', upiId: 'canvapro@upi', maintenance: false, maintenanceMessage: 'हम थोड़ी देर में वापस आएंगे।' },
-  ads: { enabled: false, provider: 'Google AdSense', scriptUrl: '', topCode: '', contentCode: '', footerCode: '', stickyCode: '' },
-};
-function cleanString(value, max) { return String(value || '').trim().slice(0, max); }
-function cleanUrl(value) { const url = cleanString(value, 500); return /^https:\/\//i.test(url) ? url : ''; }
-function cleanCode(value, max) { return String(value || '').slice(0, max); }
-async function load(env) {
-  const fallback = { general: { ...defaults.general }, ads: { ...defaults.ads } };
-  if (!env.USERS) return fallback;
-  const raw = await env.USERS.get(KEY); if (!raw) return fallback;
-  try { const saved = JSON.parse(raw); return { general: { ...defaults.general, ...(saved.general || {}) }, ads: { ...defaults.ads, ...(saved.ads || {}) } }; } catch (e) { return fallback; }
-}
-export async function onRequestGet({ request, env }) {
-  if (!env.USERS) return json({ error: 'settings-not-configured', message: 'KV (USERS) सेटअप नहीं है।' }, 501);
-  if (!isAuthed(request, env)) return json({ error: 'unauthorized', message: 'गलत Admin Key।' }, 401);
-  return json({ settings: await load(env) });
-}
-export async function onRequestPost({ request, env }) {
-  if (!env.USERS) return json({ error: 'settings-not-configured', message: 'KV (USERS) सेटअप नहीं है।' }, 501);
-  if (!isAuthed(request, env)) return json({ error: 'unauthorized', message: 'गलत Admin Key।' }, 401);
-  let body; try { body = await request.json(); } catch (e) { return json({ error: 'bad-request' }, 400); }
-  const general = body.general || {}, ads = body.ads || {};
-  const settings = {
-    general: { siteName: cleanString(general.siteName, 80) || defaults.general.siteName, tagline: cleanString(general.tagline, 180), supportEmail: cleanString(general.supportEmail, 160), whatsapp: cleanString(general.whatsapp, 30), upiId: cleanString(general.upiId, 120), maintenance: general.maintenance === true, maintenanceMessage: cleanString(general.maintenanceMessage, 300) },
-    ads: { enabled: ads.enabled === true, provider: cleanString(ads.provider, 80), scriptUrl: cleanUrl(ads.scriptUrl), topCode: cleanCode(ads.topCode || ads.headerCode, 10000), contentCode: cleanCode(ads.contentCode, 10000), footerCode: cleanCode(ads.footerCode, 10000), stickyCode: cleanCode(ads.stickyCode, 10000) },
-    updatedAt: new Date().toISOString(),
-  };
-  await env.USERS.put(KEY, JSON.stringify(settings));
-  return json({ ok: true, settings });
-}
+const defaults = { general:{siteName:'Daily PosterHub',tagline:'हर दिन नया पोस्टर, आपके अपने अंदाज़ में',supportEmail:'support@posterhub.pages.dev',whatsapp:'916387617678',upiId:'canvapro@upi',maintenance:false,maintenanceMessage:'हम थोड़ी देर में वापस आएंगे।'}, ads:{enabled:false,provider:'Google AdSense',scriptUrl:'',topCode:'',contentCode:'',footerCode:'',stickyCode:''}, telegram:{enabled:false,botToken:'',chatId:'',events:{signup:true,login:true,contact:true,payment:true}} };
+const clean=(v,n)=>String(v||'').trim().slice(0,n); const code=(v,n)=>String(v||'').slice(0,n); const url=(v)=>/^https:\/\//i.test(clean(v,500))?clean(v,500):'';
+async function load(env){const fallback={general:{...defaults.general},ads:{...defaults.ads},telegram:{...defaults.telegram,events:{...defaults.telegram.events}}};if(!env.USERS)return fallback;const raw=await env.USERS.get(KEY);if(!raw)return fallback;try{const s=JSON.parse(raw);return{general:{...defaults.general,...(s.general||{})},ads:{...defaults.ads,...(s.ads||{})},telegram:{...defaults.telegram,...(s.telegram||{}),events:{...defaults.telegram.events,...((s.telegram||{}).events||{})}}}}catch(e){return fallback}}
+export async function onRequestGet({request,env}){if(!env.USERS)return json({error:'settings-not-configured',message:'KV (USERS) सेटअप नहीं है।'},501);if(!isAuthed(request,env))return json({error:'unauthorized',message:'गलत Admin Key।'},401);return json({settings:await load(env)})}
+export async function onRequestPost({request,env}){if(!env.USERS)return json({error:'settings-not-configured',message:'KV (USERS) सेटअप नहीं है।'},501);if(!isAuthed(request,env))return json({error:'unauthorized',message:'गलत Admin Key।'},401);let b;try{b=await request.json()}catch(e){return json({error:'bad-request'},400)}const g=b.general||{},a=b.ads||{},t=b.telegram||{};const settings={general:{siteName:clean(g.siteName,80)||defaults.general.siteName,tagline:clean(g.tagline,180),supportEmail:clean(g.supportEmail,160),whatsapp:clean(g.whatsapp,30),upiId:clean(g.upiId,120),maintenance:g.maintenance===true,maintenanceMessage:clean(g.maintenanceMessage,300)},ads:{enabled:a.enabled===true,provider:clean(a.provider,80),scriptUrl:url(a.scriptUrl),topCode:code(a.topCode||a.headerCode,10000),contentCode:code(a.contentCode,10000),footerCode:code(a.footerCode,10000),stickyCode:code(a.stickyCode,10000)},telegram:{enabled:t.enabled===true,botToken:clean(t.botToken,200),chatId:clean(t.chatId,80),events:{signup:t.events?.signup!==false,login:t.events?.login!==false,contact:t.events?.contact!==false,payment:t.events?.payment!==false}},updatedAt:new Date().toISOString()};await env.USERS.put(KEY,JSON.stringify(settings));return json({ok:true,settings})}
