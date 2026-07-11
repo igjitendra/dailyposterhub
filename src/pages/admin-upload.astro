@@ -42,7 +42,7 @@ const cats = categories.filter((c) => c.slug !== 'all');
     <div class='admin-grid'>
       <!-- Upload form -->
       <form id='uploadForm' class='up-card'>
-        <h2>नया पोस्टर अपलोड करें</h2>
+        <div class='card-head'><div><span class='admin-kicker'>NEW POSTER</span><h2>नया पोस्टर अपलोड करें</h2><p>Poster की जानकारी भरें और image upload करें।</p></div></div>
         <label>शीर्षक (Title)
           <input name='title' required placeholder='जैसे: सुप्रभात — फूल' />
         </label>
@@ -86,10 +86,31 @@ const cats = categories.filter((c) => c.slug !== 'all');
 
       <!-- List -->
       <div class='list-card'>
-        <h2>अपलोड किए गए पोस्टर</h2>
+        <div class='list-head'><div><span class='admin-kicker'>POSTER LIBRARY</span><h2>अपलोड किए गए पोस्टर</h2><p>जानकारी edit करें या poster हटाएं।</p></div><span id='posterCount' class='count-pill'>0 पोस्टर</span></div>
+        <div class='list-search'><span>⌕</span><input id='adminPosterSearch' type='search' placeholder='नाम या category से खोजें...' /></div>
         <div id='list' class='list'></div>
       </div>
     </div>
+  </div>
+
+  <div id='editModal' class='edit-modal' hidden>
+    <div class='edit-backdrop' data-edit-close></div>
+    <section class='edit-dialog' role='dialog' aria-modal='true' aria-labelledby='editTitleHeading'>
+      <div class='edit-head'><div><span class='admin-kicker'>EDIT POSTER</span><h2 id='editTitleHeading'>Poster की जानकारी बदलें</h2></div><button type='button' class='modal-close' data-edit-close aria-label='बंद करें'>×</button></div>
+      <form id='editForm'>
+        <input id='editId' type='hidden' />
+        <label>शीर्षक<input id='editTitle' required maxlength='160' /></label>
+        <div class='edit-grid'>
+          <label>Category<select id='editCategory' required>{cats.map((c) => (<option value={c.name}>{c.name}</option>))}</select></label>
+          <label>प्रकार<select id='editType'><option value='free'>Free</option><option value='pro'>Pro</option></select></label>
+        </div>
+        <label>विवरण<textarea id='editDescription' rows='3' maxlength='500'></textarea></label>
+        <label id='editDateWrap'>पोस्टर की तारीख़<input id='editPosterDate' type='date' /></label>
+        <label id='editFestivalWrap' hidden>त्योहार<select id='editFestivalChoice'><option value=''>त्योहार चुनें...</option>{festivalOptions.map((fest) => (<option value={fest.date + '|' + fest.name}>{fest.name} — {new Intl.DateTimeFormat('hi-IN', { day:'numeric', month:'long', year:'numeric' }).format(new Date(fest.date + 'T00:00:00'))}</option>))}</select></label>
+        <p id='editMsg' class='msg'></p>
+        <div class='modal-actions'><button type='button' class='btn btn-outline' data-edit-close>रद्द करें</button><button id='saveEditBtn' type='submit' class='btn btn-primary'>बदलाव Save करें</button></div>
+      </form>
+    </section>
   </div>
 
   <style>
@@ -112,9 +133,16 @@ const cats = categories.filter((c) => c.slug !== 'all');
     .admin-brand { display: flex; align-items: center; gap: 10px; font-size: 16px; }
     .bar-actions { display: flex; gap: 10px; }
 
-    .admin-grid { max-width: 1100px; margin: 0 auto; padding: 24px 20px 60px; display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: start; }
+    .admin-grid { max-width: 1240px; margin: 0 auto; padding: 24px 20px 60px; display: grid; grid-template-columns: minmax(340px,.82fr) minmax(0,1.18fr); gap: 22px; align-items: start; }
     .up-card, .list-card { background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 24px; box-shadow: var(--shadow-sm); }
-    .up-card h2, .list-card h2 { font-size: 18px; font-weight: 800; margin: 0 0 16px; }
+    .up-card h2, .list-card h2 { font-size: 20px; font-weight: 800; margin: 3px 0 0; }
+    .admin-kicker { color:var(--purple); font:800 10px Poppins,sans-serif; letter-spacing:.12em; }
+    .card-head p,.list-head p { margin:4px 0 18px; color:var(--muted); font-size:12.5px; }
+    .list-head { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; }
+    .count-pill { padding:7px 10px; border-radius:999px; background:#ede9fe; color:var(--purple); font-size:11px; font-weight:800; white-space:nowrap; }
+    .list-search { display:flex; align-items:center; gap:8px; margin:0 0 16px; padding:0 12px; border:1px solid var(--line); border-radius:11px; background:#faf9ff; }
+    .list-search span { color:var(--purple); font-size:22px; }
+    .list-search input { width:100%; min-height:44px; border:0; outline:0; background:transparent; font:600 13px inherit; }
     .up-card label { display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 600; margin-bottom: 14px; }
     .up-card input, .up-card select, .up-card textarea { border: 1px solid var(--line); border-radius: 10px; padding: 11px 13px; font-family: inherit; font-size: 14.5px; outline: none; background: #fff; }
     .up-card input:focus, .up-card select:focus, .up-card textarea:focus { border-color: var(--purple); }
@@ -130,17 +158,34 @@ const cats = categories.filter((c) => c.slug !== 'all');
     .daily-hint { font-size: 12px; color: var(--muted); margin: 8px 0 0; line-height: 1.5; }
     .up-card .btn { width: 100%; }
 
-    .list { display: flex; flex-direction: column; gap: 12px; }
-    .list .row { display: flex; align-items: center; gap: 12px; border: 1px solid var(--line); border-radius: 12px; padding: 10px; }
-    .list .row img { width: 48px; height: 60px; object-fit: cover; border-radius: 8px; background: var(--grad-soft); flex-shrink: 0; }
-    .row-info { flex: 1; display: flex; flex-direction: column; min-width: 0; }
-    .row-info strong { font-size: 14px; }
-    .row-info span { font-size: 12.5px; color: var(--muted); }
-    .list .del { background: #FEE2E2; color: #DC2626; border: none; border-radius: 8px; padding: 8px 14px; font-family: inherit; font-weight: 700; font-size: 13px; cursor: pointer; flex-shrink: 0; }
-    .list .del:hover { background: #FCA5A5; }
-    .muted { color: var(--muted); font-size: 14px; }
-
-    @media (max-width: 820px) { .admin-grid { grid-template-columns: 1fr; } }
+    .list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+    .list .row { display:grid; grid-template-columns:78px 1fr; gap:12px; border:1px solid var(--line); border-radius:14px; padding:10px; background:#fff; transition:.2s; }
+    .list .row:hover { border-color:#cfc3ff; box-shadow:0 8px 20px rgba(55,37,110,.08); }
+    .list .row img { width:78px; height:100px; object-fit:cover; border-radius:10px; background:var(--grad-soft); grid-row:1/3; }
+    .row-info { min-width:0; }
+    .row-info strong { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:14px; }
+    .row-info span { display:block; margin-top:4px; color:var(--muted); font-size:11px; line-height:1.45; }
+    .row-actions { display:flex; align-items:end; gap:7px; }
+    .row-action { min-height:36px; flex:1; border:1px solid; border-radius:9px; font:800 12px inherit; cursor:pointer; }
+    .row-action.edit { border-color:#c4b5fd; background:#f5f3ff; color:#6d28d9; }
+    .row-action.edit:hover { background:#7c3aed; color:#fff; }
+    .row-action.del { border-color:#fecaca; background:#fff1f2; color:#dc2626; }
+    .row-action.del:hover { background:#dc2626; color:#fff; }
+    .muted { grid-column:1/-1; color:var(--muted); font-size:14px; }
+    .edit-modal { position:fixed; inset:0; z-index:100; display:grid; place-items:center; padding:20px; }
+    .edit-backdrop { position:absolute; inset:0; background:rgba(23,20,42,.65); backdrop-filter:blur(3px); }
+    .edit-dialog { position:relative; width:min(100%,560px); max-height:calc(100vh - 40px); overflow:auto; padding:24px; border-radius:18px; background:#fff; box-shadow:0 25px 65px rgba(0,0,0,.28); }
+    .edit-head { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:18px; }
+    .edit-head h2 { margin:3px 0 0; font-size:21px; }
+    .modal-close { width:40px; height:40px; border:0; border-radius:10px; background:#f1eef8; color:#5d5770; font-size:25px; cursor:pointer; }
+    .edit-dialog label { display:flex; flex-direction:column; gap:6px; margin-bottom:14px; font-size:13px; font-weight:800; }
+    .edit-dialog input,.edit-dialog select,.edit-dialog textarea { width:100%; border:1px solid var(--line); border-radius:10px; padding:11px 12px; font:500 14px inherit; outline:0; }
+    .edit-dialog input:focus,.edit-dialog select:focus,.edit-dialog textarea:focus { border-color:var(--purple); box-shadow:0 0 0 3px rgba(124,58,237,.1); }
+    .edit-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .modal-actions { display:flex; justify-content:flex-end; gap:10px; padding-top:5px; }
+    @media (max-width:1050px) { .list { grid-template-columns:1fr; } }
+    @media (max-width:820px) { .admin-grid { grid-template-columns:1fr; } .list { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+    @media (max-width:600px) { .admin-bar { align-items:flex-start; padding:12px 15px; } .admin-brand strong { font-size:13px; } .bar-actions .btn { padding:8px 10px; font-size:11px; } .admin-grid { padding:16px 12px 45px; } .up-card,.list-card { padding:17px; } .list { grid-template-columns:1fr; } .edit-grid { grid-template-columns:1fr; gap:0; } .modal-actions .btn { flex:1; padding:10px; } }
   </style>
 
   <script>
@@ -185,11 +230,14 @@ const cats = categories.filter((c) => c.slug !== 'all');
     const dailyBox = document.querySelector('.daily-box');
     function syncCategoryFields() {
       const festival = categorySelect.value === 'त्योहार';
+      const special = categorySelect.value === 'विशेष दिवस';
       festivalFld.hidden = !festival;
       festivalChoice.required = festival;
       dailyBox.hidden = festival;
       if (!festival) festivalChoice.value = '';
       if (festival) { isDaily.checked = false; dateFld.style.display = 'none'; dateFld.querySelector('input').value = ''; }
+      if (special) { isDaily.checked = true; dateFld.style.display = 'flex'; }
+      dateFld.querySelector('input').required = special;
     }
     categorySelect.addEventListener('change', syncCategoryFields);
 
@@ -236,45 +284,70 @@ const cats = categories.filter((c) => c.slug !== 'all');
     });
 
     const listEl = $('#list');
+    const posterCount = $('#posterCount');
+    const searchInput = $('#adminPosterSearch');
+    let posterList = [];
     function esc(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
-
-    async function loadList() {
-      listEl.innerHTML = '<p class=\'muted\'>लोड हो रहा है...</p>';
-      try {
-        const r = await fetch('/api/templates');
-        const list = await r.json();
-        if (!Array.isArray(list) || !list.length) {
-          listEl.innerHTML = '<p class=\'muted\'>अभी कोई पोस्टर नहीं। ऊपर से अपलोड करें।</p>';
-          return;
-        }
-        listEl.innerHTML = '';
-        list.forEach((t) => {
-          const row = document.createElement('div');
-          row.className = 'row';
-          const badge = t.type === 'pro' ? 'Pro' : 'फ्री';
-          const dateTag = t.posterDate ? ` • 📅 ${esc(t.posterDate)}` : '';
-          const festivalTag = t.festivalName ? ` • 🔥 ${esc(t.festivalName)}` : '';
-          row.innerHTML = `<img src='${esc(t.img)}' alt='' loading='lazy'><div class='row-info'><strong>${esc(t.title)}</strong><span>${esc(t.category)} • ${badge}${festivalTag}${dateTag}</span></div><button class='del' data-id='${esc(t.id)}'>हटाएं</button>`;
-          listEl.appendChild(row);
-        });
-        listEl.querySelectorAll('.del').forEach((b) => {
-          b.addEventListener('click', async () => {
-            if (!confirm('इस पोस्टर को हटाएं?')) return;
-            b.disabled = true;
-            try {
-              const r = await fetch('/api/admin/delete', {
-                method: 'POST',
-                headers: Object.assign({ 'content-type': 'application/json' }, authHeaders()),
-                body: JSON.stringify({ id: b.getAttribute('data-id') }),
-              });
-              if (r.ok) { await loadList(); } else { b.disabled = false; alert('हटाने में त्रुटि'); }
-            } catch (e) { b.disabled = false; alert('नेटवर्क त्रुटि'); }
-          });
-        });
-      } catch (e) {
-        listEl.innerHTML = '<p class=\'muted\'>सूची लोड नहीं हुई</p>';
-      }
+    function renderList() {
+      const q = (searchInput.value || '').trim().toLowerCase();
+      const visible = posterList.filter((t) => ((t.title || '') + ' ' + (t.category || '') + ' ' + (t.festivalName || '')).toLowerCase().includes(q));
+      posterCount.textContent = posterList.length + ' पोस्टर';
+      listEl.innerHTML = '';
+      if (!visible.length) { listEl.innerHTML = '<p class="muted">कोई poster नहीं मिला।</p>'; return; }
+      visible.forEach((t) => {
+        const row = document.createElement('article'); row.className = 'row';
+        const badge = t.type === 'pro' ? 'PRO' : 'FREE';
+        const extra = [t.category, badge, t.festivalName, t.posterDate].filter(Boolean).map(esc).join(' • ');
+        row.innerHTML = `<img src="${esc(t.img)}" alt="" loading="lazy"><div class="row-info"><strong>${esc(t.title)}</strong><span>${extra}</span></div><div class="row-actions"><button class="row-action edit" data-edit="${esc(t.id)}">✎ Edit</button><button class="row-action del" data-delete="${esc(t.id)}">हटाएं</button></div>`;
+        listEl.appendChild(row);
+      });
+      listEl.querySelectorAll('[data-edit]').forEach((b) => b.addEventListener('click', () => openEdit(b.dataset.edit)));
+      listEl.querySelectorAll('[data-delete]').forEach((b) => b.addEventListener('click', () => deletePoster(b)));
     }
+    searchInput.addEventListener('input', renderList);
+    async function loadList() {
+      listEl.innerHTML = '<p class="muted">लोड हो रहा है...</p>';
+      try { const r = await fetch('/api/templates'); const list = await r.json(); posterList = Array.isArray(list) ? list : []; renderList(); }
+      catch (e) { listEl.innerHTML = '<p class="muted">सूची लोड नहीं हुई।</p>'; }
+    }
+    async function deletePoster(button) {
+      if (!confirm('इस poster को हमेशा के लिए हटाएं?')) return;
+      button.disabled = true; button.textContent = 'हट रहा...';
+      try { const r = await fetch('/api/admin/delete',{method:'POST',headers:Object.assign({'content-type':'application/json'},authHeaders()),body:JSON.stringify({id:button.dataset.delete})}); if(r.ok) await loadList(); else throw new Error(); }
+      catch(e){ button.disabled=false; button.textContent='हटाएं'; alert('Poster नहीं हट सका।'); }
+    }
+
+    const editModal = $('#editModal');
+    const editCategory = $('#editCategory');
+    function syncEditFields() {
+      const festival = editCategory.value === 'त्योहार';
+      const special = editCategory.value === 'विशेष दिवस';
+      $('#editFestivalWrap').hidden = !festival;
+      $('#editFestivalChoice').required = festival;
+      $('#editDateWrap').hidden = festival;
+      $('#editPosterDate').required = special;
+    }
+    editCategory.addEventListener('change', syncEditFields);
+    function openEdit(id) {
+      const t = posterList.find((x) => x.id === id); if (!t) return;
+      $('#editId').value=t.id; $('#editTitle').value=t.title||''; editCategory.value=t.category||''; $('#editType').value=t.type==='pro'?'pro':'free'; $('#editDescription').value=t.description||''; $('#editPosterDate').value=t.posterDate||'';
+      const choice=$('#editFestivalChoice'); choice.value='';
+      if(t.festivalName&&t.posterDate){ const value=t.posterDate+'|'+t.festivalName; if([].some.call(choice.options,(o)=>o.value===value)) choice.value=value; }
+      $('#editMsg').textContent=''; syncEditFields(); editModal.hidden=false; document.body.style.overflow='hidden';
+    }
+    function closeEdit(){ editModal.hidden=true; document.body.style.overflow=''; }
+    document.querySelectorAll('[data-edit-close]').forEach((x)=>x.addEventListener('click',closeEdit));
+    document.addEventListener('keydown',(e)=>{if(e.key==='Escape'&&!editModal.hidden)closeEdit()});
+    $('#editForm').addEventListener('submit', async (e) => {
+      e.preventDefault(); const btn=$('#saveEditBtn'), msg=$('#editMsg');
+      let festivalName='',festivalId='',posterDate=$('#editPosterDate').value;
+      if(editCategory.value==='त्योहार'){ const raw=$('#editFestivalChoice').value,at=raw.indexOf('|'); if(at>0){posterDate=raw.slice(0,at);festivalName=raw.slice(at+1);festivalId=(posterDate+'-'+festivalName).toLowerCase().replace(/[^a-z0-9\u0900-\u097f]+/g,'-').replace(/^-|-$/g,'');} }
+      const payload={id:$('#editId').value,title:$('#editTitle').value.trim(),category:editCategory.value,type:$('#editType').value,description:$('#editDescription').value.trim(),posterDate,festivalName,festivalId};
+      btn.disabled=true; msg.textContent='Save हो रहा है...';
+      try { const r=await fetch('/api/admin/edit',{method:'POST',headers:Object.assign({'content-type':'application/json'},authHeaders()),body:JSON.stringify(payload)}); const out=await r.json(); if(!r.ok)throw new Error(out.error||'Save नहीं हुआ'); msg.textContent='✓ जानकारी update हो गई'; await loadList(); setTimeout(closeEdit,500); }
+      catch(err){msg.textContent=err.message||'Save नहीं हुआ';}
+      btn.disabled=false;
+    });
 
     // auto-login agar key pehle se saved hai
     (async () => { const k = getKey(); if (k && await ping(k)) showPanel(); })();
