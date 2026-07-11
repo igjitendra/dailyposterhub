@@ -1,341 +1,203 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Icon from '../components/Icon.astro';
-import {
-  site, trustChips, heroPreviews, categories, proPerks,
-  steps, templates, stats, proUpsell, pricing,
-} from '../data/site.js';
+import { heroPreviews, categories } from '../data/site.js';
+
+const plans = [
+  {
+    name: 'Free', price: '₹0', period: 'हमेशा फ्री', tone: 'free', icon: 'image',
+    description: 'शुरुआत करने और रोज़ के पोस्टर बनाने के लिए।',
+    items: ['फ्री पोस्टर टेम्पलेट्स', 'नाम, फोटो और प्रोफेशन जोड़ें', 'JPG डाउनलोड और शेयर', 'डाउनलोड पर Daily PosterHub वाटरमार्क'],
+    cta: 'फ्री में शुरू करें', href: '/posters',
+  },
+  {
+    name: 'Pro', price: '₹21', period: 'प्रति माह', tone: 'pro', icon: 'crown', badge: 'सबसे लोकप्रिय',
+    description: 'व्यक्तिगत ब्रांडिंग और साफ़ HD पोस्टर के लिए।',
+    items: ['Free प्लान की सभी सुविधाएं', 'बिना वाटरमार्क डाउनलोड', 'HD क्वालिटी एक्सपोर्ट', 'प्रीमियम टेम्पलेट एक्सेस', 'अनलिमिटेड डाउनलोड'],
+    cta: 'Pro प्लान लें', href: '/payment?plan=monthly',
+  },
+  {
+    name: 'Business', price: '₹299', period: 'प्रति वर्ष', tone: 'business', icon: 'briefcase',
+    description: 'दुकान, एजेंसी और रोज़ की सोशल मीडिया branding के लिए।',
+    items: ['Pro प्लान की सभी सुविधाएं', 'अपना logo और business branding', 'ब्रांडिंग strip हटाने का विकल्प', 'बिज़नेस-फोकस्ड पोस्टर workflow'],
+    cta: 'Business शुरू करें', href: '/payment?plan=yearly',
+  },
+];
+
+const showcaseTemplates = [
+  { img: heroPreviews[0].img, title: 'सुप्रभात', category: 'गुड मॉर्निंग', type: 'free' },
+  { img: heroPreviews[1].img, title: 'जन्मदिन शुभकामनाएं', category: 'जन्मदिन', type: 'pro' },
+  { img: heroPreviews[2].img, title: 'जय श्री राम', category: 'धार्मिक', type: 'free' },
+  { img: heroPreviews[0].img, title: 'आज का संदेश', category: 'शुभकामनाएं', type: 'pro' },
+  { img: heroPreviews[1].img, title: 'खास अवसर', category: 'शुभकामनाएं', type: 'free' },
+  { img: heroPreviews[2].img, title: 'धार्मिक पोस्टर', category: 'त्योहार', type: 'pro' },
+];
+
+const faqs = [
+  ['क्या मैं फ्री में पोस्टर डाउनलोड कर सकता/सकती हूँ?', 'हाँ। Free प्लान में पोस्टर बनाना और डाउनलोड करना फ्री है। डाउनलोड की गई image पर Daily PosterHub का watermark रहेगा।'],
+  ['Pro प्लान में क्या मिलेगा?', 'Pro में watermark हट जाता है, HD export मिलता है और premium templates का access मिलता है। इसकी कीमत ₹21 प्रति माह या ₹99 प्रति वर्ष है।'],
+  ['Business प्लान किसके लिए है?', 'दुकानदार, एजेंसियां और नियमित social-media posting करने वाले लोग Business प्लान में अपना logo और branding इस्तेमाल कर सकते हैं। इसकी कीमत ₹299 प्रति वर्ष है।'],
+  ['पोस्टर बनाने के लिए क्या install करना होगा?', 'कुछ भी install नहीं करना है। Browser में template चुनें, नाम या फोटो जोड़ें और poster डाउनलोड या share करें।'],
+];
 ---
-<Layout>
+<Layout title='हिंदी पोस्टर बनाएं — Daily PosterHub' description='नाम, फोटो और संदेश जोड़कर सुंदर हिंदी पोस्टर बनाएं। फ्री पोस्टर डाउनलोड करें या Pro और Business प्लान से बिना watermark HD पोस्टर पाएं।'>
   <script is:inline>
-    // Logged-in users ko home par na aane do -> posters par bhej do.
-    fetch('/api/auth/me').then(function (r) { return r.json(); }).then(function (d) { if (d && d.user) { window.location.replace('/posters/'); } }).catch(function () {});
+    fetch('/api/auth/me').then(function (r) { return r.json(); }).then(function (d) {
+      if (d && d.user) window.location.replace('/posters/');
+    }).catch(function () {});
   </script>
-  <!-- ===================== HERO ===================== -->
+
   <section class='hero'>
+    <div class='hero-orb orb-one'></div><div class='hero-orb orb-two'></div>
     <div class='container hero-grid'>
-      <div class='hero-copy'>
-        <span class='eyebrow'><Icon name='star' size={15} /> भारत की #1 हिंदी पोस्टर वेबसाइट</span>
-        <h1>
-          अपना नाम, फोटो और संदेश के साथ
-          <span class='grad-text'>सुंदर हिंदी पोस्टर बनाएं</span>
-        </h1>
-        <p class='hero-sub'>
-          हजारों फ्री और प्रीमियम हिंदी पोस्टर टेम्पलेट्स —
-          गुड मॉर्निंग, शुभकामनाएं, बर्थडे, फेस्टिवल, बिज़नेस और बहुत कुछ।
-        </p>
-
-        <ul class='trust'>
-          {trustChips.map((c) => (
-            <li><Icon name={c.icon} size={16} /> {c.text}</li>
-          ))}
-        </ul>
-
-        <div class='hero-cta'>
-          <a href='/posters' class='btn btn-primary btn-lg cta-stack'>
-            <span class='cta-main'><Icon name='edit' size={18} /> पोस्टर बनाएं</span>
-            <span class='cta-sub'>फ्री में शुरू करें</span>
-          </a>
-          <a href='/categories' class='btn btn-outline btn-lg cta-stack'>
-            <span class='cta-main'>सभी पोस्टर देखें</span>
-            <span class='cta-sub'>सभी कैटेगरी ब्राउज़ करें</span>
-          </a>
+      <div class='hero-copy reveal'>
+        <span class='eyebrow hero-eyebrow'><Icon name='sparkles' size={15} /> हर दिन के लिए नया डिज़ाइन</span>
+        <h1>अपनी पहचान के साथ<br /><span>शानदार हिंदी पोस्टर</span> बनाएं</h1>
+        <p class='hero-sub'>नाम, फोटो, profession और संदेश जोड़ें। कुछ ही मिनटों में social media और WhatsApp के लिए तैयार पोस्टर डाउनलोड करें।</p>
+        <div class='hero-actions'>
+          <a href='/posters' class='btn btn-primary btn-lg'><Icon name='edit' size={18} /> फ्री पोस्टर बनाएं <Icon name='arrow-right' size={17} /></a>
+          <a href='#plans' class='text-link'>प्लान और कीमत देखें <Icon name='arrow-right' size={16} /></a>
         </div>
-
-        <div class='social-proof'>
-          <div class='avatars'>
-            <img src='/img/avatar-1.webp' alt='यूज़र' />
-            <img src='/img/avatar-2.webp' alt='यूज़र' />
-            <img src='/img/avatar-3.webp' alt='यूज़र' />
-          </div>
-          <p><strong>50,000+</strong> खुश उपयोगकर्ता हमारे साथ</p>
+        <div class='hero-points'>
+          <span><Icon name='check' size={17} /> मोबाइल पर आसान</span>
+          <span><Icon name='check' size={17} /> तुरंत डाउनलोड</span>
+          <span><Icon name='check' size={17} /> कोई app नहीं चाहिए</span>
         </div>
       </div>
 
-      <!-- Poster preview cards -->
-      <div class='hero-art'>
-        <figure class='poster-preview p-main'>
-          <img src={heroPreviews[0].img} alt={heroPreviews[0].title} loading='eager' />
-          <figcaption>{heroPreviews[0].title}</figcaption>
-        </figure>
-        <figure class='poster-preview p-top'>
-          <img src={heroPreviews[1].img} alt={heroPreviews[1].title} loading='eager' />
-        </figure>
-        <figure class='poster-preview p-bottom'>
-          <img src={heroPreviews[2].img} alt={heroPreviews[2].title} loading='eager' />
-        </figure>
-        <span class='hd-badge'><Icon name='download' size={16} /> HD डाउनलोड बिना वाटरमार्क</span>
+      <div class='hero-visual reveal'>
+        <div class='hero-ring ring-a'></div><div class='hero-ring ring-b'></div>
+        <div class='poster-card main-poster'>
+          <img src={heroPreviews[0].img} alt='सुप्रभात हिंदी पोस्टर का उदाहरण' loading='eager' />
+          <div class='poster-caption'><span class='caption-dot'></span> आपका नाम, आपकी पहचान</div>
+        </div>
+        <div class='poster-card side-poster top-poster'><img src={heroPreviews[1].img} alt='जन्मदिन पोस्टर का उदाहरण' loading='eager' /></div>
+        <div class='poster-card side-poster bottom-poster'><img src={heroPreviews[2].img} alt='धार्मिक पोस्टर का उदाहरण' loading='eager' /></div>
+        <div class='floating-chip chip-edit'><Icon name='edit' size={16} /> आसान एडिटिंग</div>
+        <div class='floating-chip chip-hd'><Icon name='download' size={16} /> HD डाउनलोड</div>
       </div>
     </div>
   </section>
 
-  <!-- ===================== CATEGORIES ===================== -->
-  <section class='section cat-section'>
+  <section class='quick-bar-wrap'>
+    <div class='container quick-bar reveal'>
+      <div><span class='quick-icon'><Icon name='image' size={20} /></span><p><strong>टेम्पलेट चुनें</strong><small>अपनी पसंद का design</small></p></div>
+      <span class='quick-line'></span>
+      <div><span class='quick-icon'><Icon name='edit' size={20} /></span><p><strong>अपनी details जोड़ें</strong><small>नाम, फोटो, profession</small></p></div>
+      <span class='quick-line'></span>
+      <div><span class='quick-icon'><Icon name='download' size={20} /></span><p><strong>डाउनलोड या शेयर करें</strong><small>कुछ ही clicks में</small></p></div>
+    </div>
+  </section>
+
+  <section class='section categories-section'>
     <div class='container'>
-      <div class='section-head'>
-        <h2 class='deco'>लोकप्रिय श्रेणियां</h2>
+      <div class='section-intro reveal'>
+        <span class='section-kicker'>हर मौके के लिए</span>
+        <h2>आज किस तरह का पोस्टर बनाना है?</h2>
+        <p>गुड मॉर्निंग से लेकर बिज़नेस ऑफर तक—अपनी category चुनें और अपना design तैयार करें।</p>
       </div>
-      <div class='cat-grid'>
-        {categories.map((c) => (
-          <a href={'/categories/' + c.slug} class='cat-card'>
-            <span class='cat-icon' style={'color:' + c.color + ';background:' + c.bg}>
-              <Icon name={c.icon} size={26} />
-            </span>
-            <span class='cat-name'>{c.name}</span>
+      <div class='category-grid'>
+        {categories.filter((c) => c.slug !== 'all').map((c) => (
+          <a href={'/categories/' + c.slug} class='category-card reveal'>
+            <span class='category-icon' style={'background:' + c.bg + ';color:' + c.color}><Icon name={c.icon} size={23} /></span>
+            <span>{c.name}</span><Icon name='arrow-right' size={16} />
           </a>
         ))}
       </div>
+      <div class='center-action'><a class='btn btn-outline' href='/categories'>सभी categories देखें <Icon name='arrow-right' size={16} /></a></div>
     </div>
   </section>
 
-  <!-- ===================== PRO STRIP ===================== -->
-  <section class='container'>
-    <div class='pro-strip'>
-      <div class='pro-strip-title'>
-        <Icon name='crown' size={22} />
-        <strong>Pro प्लान के फायदे</strong>
+  <section class='section workflow-section'>
+    <div class='container workflow-grid'>
+      <div class='workflow-copy reveal'>
+        <span class='section-kicker'>तेज़ और आसान</span>
+        <h2>पोस्टर बनाने का आसान तरीका</h2>
+        <p>Designing का अनुभव नहीं है? कोई समस्या नहीं। हमारा simple editor आपको हर step पर guide करता है।</p>
+        <a href='/posters' class='btn btn-primary'>पोस्टर चुनें <Icon name='arrow-right' size={16} /></a>
       </div>
-      <ul class='pro-perks'>
-        {proPerks.map((p) => (
-          <li><Icon name={p.icon} size={18} /> {p.text}</li>
-        ))}
-      </ul>
-      <a href='/pricing' class='btn btn-primary btn-sm'>Pro प्लान देखें</a>
+      <div class='workflow-steps reveal'>
+        <article><span class='step-number'>01</span><div><h3>टेम्पलेट चुनें</h3><p>अपने अवसर के मुताबिक कोई design select करें।</p></div><span class='step-icon'><Icon name='image' size={20} /></span></article>
+        <article><span class='step-number'>02</span><div><h3>अपना content जोड़ें</h3><p>नाम, फोटो, profession या छोटा message लिखें।</p></div><span class='step-icon'><Icon name='edit' size={20} /></span></article>
+        <article><span class='step-number'>03</span><div><h3>तैयार poster डाउनलोड करें</h3><p>JPG में save करें या WhatsApp पर सीधे share करें।</p></div><span class='step-icon'><Icon name='download' size={20} /></span></article>
+      </div>
     </div>
   </section>
 
-  <!-- ===================== HOW IT WORKS ===================== -->
-  <section class='section'>
+  <section class='section template-section'>
     <div class='container'>
-      <div class='section-head'>
-        <h2 class='deco'>पोस्टर बनाना अब हुआ बहुत आसान</h2>
-      </div>
-      <div class='steps-grid'>
-        {steps.map((s, i) => (
-          <div class='step-wrap'>
-            <div class='step-card'>
-              <span class='step-no'>{s.no}</span>
-              <span class='step-icon'><Icon name={s.icon} size={22} /></span>
-              <h4>{s.title}</h4>
-              <p>{s.desc}</p>
-            </div>
-            {i < steps.length - 1 && <span class='step-arrow'><Icon name='arrow-right' size={20} /></span>}
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== TEMPLATES ===================== -->
-  <section class='section'>
-    <div class='container'>
-      <div class='row-head'>
-        <h2>लोकप्रिय पोस्टर टेम्पलेट्स</h2>
-        <a href='/posters' class='see-all'>सभी देखें <Icon name='arrow-right' size={16} /></a>
-      </div>
-      <div class='tpl-grid'>
-        {templates.map((t) => (
-          <article class='tpl-card card'>
-            <div class='tpl-thumb'>
-              <img src={t.img} alt={t.title} loading='lazy' />
-              <span class={'badge ' + (t.type === 'pro' ? 'badge-pro' : 'badge-free')}>
-                {t.type === 'pro' ? 'Pro' : 'फ्री'}
-              </span>
-            </div>
-            <div class='tpl-body'>
-              <h4>{t.title}</h4>
-              <span class='tpl-cat'>{t.category}</span>
-              <a href='/posters' class='btn btn-primary btn-sm tpl-btn'><Icon name='edit' size={15} /> एडिट करें</a>
-            </div>
+      <div class='row-heading reveal'><div><span class='section-kicker'>लोकप्रिय designs</span><h2>तुरंत शुरू करने के लिए टेम्पलेट्स</h2></div><a href='/posters' class='text-link desktop-link'>सभी पोस्टर देखें <Icon name='arrow-right' size={16} /></a></div>
+      <div class='template-grid'>
+        {showcaseTemplates.map((t) => (
+          <article class='template-card reveal'>
+            <div class='template-image'><img src={t.img} alt={t.title} loading='lazy' /><span class={'plan-tag ' + t.type}>{t.type === 'pro' ? 'PRO' : 'FREE'}</span><a href='/posters' aria-label={t.title + ' edit करें'} class='template-edit'><Icon name='edit' size={17} /></a></div>
+            <div class='template-info'><h3>{t.title}</h3><p>{t.category}</p></div>
           </article>
         ))}
       </div>
+      <div class='center-action mobile-link'><a class='btn btn-outline' href='/posters'>सभी पोस्टर देखें <Icon name='arrow-right' size={16} /></a></div>
     </div>
   </section>
 
-  <!-- ===================== STATS BAR ===================== -->
-  <section class='container'>
-    <div class='stats-bar'>
-      {stats.map((s) => (
-        <div class='stat'>
-          <span class='stat-icon'><Icon name={s.icon} size={22} /></span>
-          <div>
-            <span class='stat-value'>{s.value}</span>
-            <span class='stat-label'>{s.label}</span>
-          </div>
-        </div>
-      ))}
+  <section class='plans-section' id='plans'>
+    <div class='container'>
+      <div class='section-intro light reveal'><span class='section-kicker'>सरल और साफ़ कीमत</span><h2>अपनी जरूरत का सही प्लान चुनें</h2><p>पहले Free में शुरू करें या बिना watermark और branding के लिए upgrade करें।</p></div>
+      <div class='plan-grid'>
+        {plans.map((plan) => (
+          <article class={'plan-card ' + plan.tone + ' reveal'}>
+            {plan.badge && <span class='popular-badge'><Icon name='star' size={13} /> {plan.badge}</span>}
+            <div class='plan-top'><span class='plan-icon'><Icon name={plan.icon} size={22} /></span><h3>{plan.name}</h3><p>{plan.description}</p></div>
+            <div class='price'><strong>{plan.price}</strong><span>{plan.period}</span></div>
+            {plan.name === 'Pro' && <p class='yearly-note'>या सिर्फ़ <b>₹99 / वर्ष</b> में</p>}
+            <a href={plan.cta === 'Pro प्लान लें' ? '/pricing' : plan.href} class={'btn plan-button ' + (plan.tone === 'free' ? 'btn-outline' : 'btn-primary')}>{plan.cta} <Icon name='arrow-right' size={16} /></a>
+            <ul>{plan.items.map((item) => <li><Icon name='check' size={16} /> {item}</li>)}</ul>
+          </article>
+        ))}
+      </div>
+      <p class='plans-note reveal'>सभी भुगतान पहले verify किए जाते हैं। Upgrade के बाद आपका plan account में activate कर दिया जाता है।</p>
     </div>
   </section>
 
-  <!-- ===================== PRO UPSELL + NEWSLETTER ===================== -->
-  <section class='section'>
-    <div class='container upsell-grid'>
-      <div class='upsell'>
-        <div class='upsell-title'><Icon name='crown' size={26} /> <h3>Pro बनें और अनलिमिटेड सुविधाओं का आनंद लें</h3></div>
-        <ul class='upsell-list'>
-          {proUpsell.map((t) => (
-            <li><Icon name='check' size={16} /> {t}</li>
-          ))}
-        </ul>
-        <div class='upsell-cta'>
-          <a href='/pricing' class='btn btn-gold btn-lg'>Pro प्लान देखें</a>
-          <span class='upsell-price'>मात्र {pricing.currency}{pricing.yearly} / साल से शुरू</span>
-        </div>
-      </div>
-
-      <div class='newsletter'>
-        <h4>न्यूज़लेटर सब्सक्राइब करें</h4>
-        <p>नए पोस्टर, ऑफर और अपडेट की जानकारी पाएं</p>
-        <form class='newsletter-row' onsubmit='return false'>
-          <input type='email' placeholder='अपना ईमेल डालें' required aria-label='ईमेल' />
-          <button class='btn btn-primary'><Icon name='send' size={16} /> सब्सक्राइब</button>
-        </form>
-        <p class='newsletter-note'>हम आपका डेटा सुरक्षित रखते हैं। स्पैम नहीं भेजेंगे।</p>
+  <section class='section trust-section'>
+    <div class='container trust-grid'>
+      <div class='trust-copy reveal'><span class='section-kicker'>आपके लिए बनाया गया</span><h2>रोज़ के पोस्टर काम को सरल बनाइए</h2><p>शुभकामनाएं, त्योहार, दुकान offers और social posts—अब हर design के लिए किसी designer का इंतज़ार नहीं।</p><a href='/pricing' class='text-link'>सभी plan सुविधाएं देखें <Icon name='arrow-right' size={16} /></a></div>
+      <div class='benefit-grid reveal'>
+        <div><span><Icon name='smartphone' size={21} /></span><h3>Mobile-first</h3><p>फोन पर आराम से इस्तेमाल करें।</p></div>
+        <div><span><Icon name='shield' size={21} /></span><h3>सुरक्षित account</h3><p>अपना account और plan आसानी से manage करें।</p></div>
+        <div><span><Icon name='infinity' size={21} /></span><h3>बार-बार इस्तेमाल</h3><p>जब चाहें नया poster बनाइए।</p></div>
+        <div><span><Icon name='headphones' size={21} /></span><h3>सहायता</h3><p>सवाल हो तो Help Center देखें।</p></div>
       </div>
     </div>
+  </section>
+
+  <section class='section faq-section'>
+    <div class='container faq-grid'>
+      <div class='faq-copy reveal'><span class='section-kicker'>सवाल-जवाब</span><h2>जानने योग्य बातें</h2><p>पहली बार poster बना रहे हैं? ये quick answers आपकी मदद करेंगे।</p><a href='/help' class='btn btn-outline'>Help Center <Icon name='arrow-right' size={16} /></a></div>
+      <div class='faq-list reveal'>{faqs.map(([q, a]) => <details><summary>{q}<Icon name='arrow-right' size={18} /></summary><p>{a}</p></details>)}</div>
+    </div>
+  </section>
+
+  <section class='final-cta'>
+    <div class='container final-inner reveal'><div><span class='section-kicker'>आज ही शुरू करें</span><h2>अपने अगले पोस्टर को यादगार बनाइए</h2><p>Template चुनें, अपनी details जोड़ें और तैयार design तुरंत डाउनलोड करें।</p></div><a href='/posters' class='btn btn-white btn-lg'>फ्री पोस्टर बनाएं <Icon name='arrow-right' size={18} /></a></div>
   </section>
 </Layout>
 
 <style>
-  /* ---------- HERO ---------- */
-  .hero { padding: 48px 0 36px; background: radial-gradient(1100px 480px at 78% -8%, #EDE9FE 0%, transparent 62%); overflow: hidden; }
-  .hero-grid { display: grid; grid-template-columns: 1.02fr .98fr; gap: 44px; align-items: center; }
-  .hero-copy h1 { font-size: 42px; line-height: 1.2; font-weight: 800; letter-spacing: -.4px; }
-  .hero-sub { margin-top: 16px; font-size: 16.5px; color: var(--muted); max-width: 520px; }
-  .eyebrow { display: inline-flex; align-items: center; gap: 6px; }
-  .eyebrow :global(.icon) { color: var(--gold); }
-
-  .trust { display: flex; flex-wrap: wrap; gap: 10px; margin: 22px 0; }
-  .trust li { display: inline-flex; align-items: center; gap: 7px; font-size: 13.5px; font-weight: 600; background: #fff; border: 1px solid var(--line); padding: 8px 14px; border-radius: 999px; box-shadow: var(--shadow-sm); }
-  .trust :global(.icon) { color: var(--purple); }
-
-  .hero-cta { display: flex; flex-wrap: wrap; gap: 14px; }
-  .cta-stack { flex-direction: column; align-items: flex-start; gap: 1px; padding: 12px 26px; line-height: 1.25; }
-  .cta-main { display: inline-flex; align-items: center; gap: 8px; font-size: 16px; }
-  .cta-sub { font-size: 12px; font-weight: 500; opacity: .85; }
-
-  .social-proof { display: flex; align-items: center; gap: 12px; margin-top: 26px; }
-  .avatars { display: flex; }
-  .avatars img { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #fff; object-fit: cover; margin-left: -12px; background: #ddd; }
-  .avatars img:first-child { margin-left: 0; }
-  .social-proof p { font-size: 14px; color: var(--muted); }
-
-  /* Poster previews */
-  .hero-art { position: relative; min-height: 440px; }
-  .poster-preview { position: absolute; border-radius: 18px; overflow: hidden; box-shadow: var(--shadow); background: #fff; border: 4px solid #fff; }
-  .poster-preview img { object-fit: cover; width: 100%; background: linear-gradient(135deg,#EDE9FE,#E0E7FF); }
-  .poster-preview figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: 10px 12px; font-size: 13px; font-weight: 700; color: #fff; background: linear-gradient(transparent, rgba(0,0,0,.55)); }
-  .p-main { width: 62%; left: 2%; top: 4%; z-index: 2; }
-  .p-main img { aspect-ratio: 3/4; }
-  .p-top { width: 34%; right: 2%; top: 0; z-index: 1; transform: rotate(4deg); }
-  .p-top img { aspect-ratio: 3/4; }
-  .p-bottom { width: 30%; right: 6%; top: 40%; z-index: 3; transform: rotate(-3deg); }
-  .p-bottom img { aspect-ratio: 3/4; }
-  .hd-badge { position: absolute; right: 8%; bottom: 6%; z-index: 4; display: inline-flex; align-items: center; gap: 6px; background: var(--grad); color: #fff; font-size: 12.5px; font-weight: 700; padding: 9px 14px; border-radius: 999px; box-shadow: var(--shadow); }
-
-  /* ---------- SECTION HEAD DECO ---------- */
-  .deco { display: inline-flex; align-items: center; gap: 14px; }
-  .deco::before, .deco::after { content: ''; width: 40px; height: 2px; background: linear-gradient(90deg, transparent, var(--purple)); }
-  .deco::after { background: linear-gradient(90deg, var(--purple), transparent); }
-
-  /* ---------- CATEGORIES ---------- */
-  .cat-section { background: #fff; border-radius: 28px; margin: 10px auto; box-shadow: var(--shadow-sm); }
-  .cat-grid { display: grid; grid-template-columns: repeat(9, 1fr); gap: 14px; }
-  .cat-card { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 20px 8px; border-radius: 16px; border: 1px solid var(--line); background: var(--bg); text-align: center; transition: transform .2s, box-shadow .2s; }
-  .cat-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); background: #fff; }
-  .cat-icon { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 16px; }
-  .cat-name { font-weight: 700; font-size: 13.5px; }
-
-  /* ---------- PRO STRIP ---------- */
-  .pro-strip { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; background: linear-gradient(135deg,#FEF6E0,#FDF0F5); border: 1px solid #F5E6C8; border-radius: 18px; padding: 18px 24px; margin-top: 10px; }
-  .pro-strip-title { display: inline-flex; align-items: center; gap: 8px; font-size: 16px; white-space: nowrap; }
-  .pro-strip-title :global(.icon) { color: var(--gold); }
-  .pro-perks { display: flex; flex-wrap: wrap; gap: 10px 22px; flex: 1; }
-  .pro-perks li { display: inline-flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 600; }
-  .pro-perks :global(.icon) { color: var(--purple); }
-
-  /* ---------- STEPS ---------- */
-  .steps-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-  .step-wrap { position: relative; display: flex; align-items: stretch; }
-  .step-card { position: relative; flex: 1; padding: 26px 20px; background: #fff; border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow-sm); }
-  .step-no { position: absolute; top: 16px; right: 18px; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--grad); color: #fff; font-weight: 800; font-size: 14px; }
-  .step-icon { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 14px; background: #EDE9FE; color: var(--purple); }
-  .step-card h4 { margin: 14px 0 6px; font-size: 16px; }
-  .step-card p { font-size: 13.5px; color: var(--muted); }
-  .step-arrow { display: grid; place-items: center; width: 30px; color: #C4B5FD; flex-shrink: 0; }
-
-  /* ---------- TEMPLATES ROW ---------- */
-  .row-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 26px; }
-  .row-head h2 { font-size: 26px; font-weight: 800; }
-  .see-all { display: inline-flex; align-items: center; gap: 5px; color: var(--purple); font-weight: 700; font-size: 15px; }
-  .tpl-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; }
-  .tpl-thumb { position: relative; }
-  .tpl-thumb img { aspect-ratio: 3/4; object-fit: cover; width: 100%; border-radius: var(--radius) var(--radius) 0 0; background: linear-gradient(135deg,#EDE9FE,#E0E7FF); }
-  .tpl-thumb .badge { position: absolute; top: 10px; left: 10px; }
-  .tpl-body { padding: 12px 12px 16px; }
-  .tpl-body h4 { font-size: 14px; }
-  .tpl-cat { display: block; font-size: 12px; color: var(--muted); margin: 3px 0 12px; }
-  .tpl-btn { width: 100%; gap: 6px; }
-
-  /* ---------- STATS ---------- */
-  .stats-bar { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; background: var(--dark); color: #fff; border-radius: 20px; padding: 30px 26px; }
-  .stat { display: flex; align-items: center; gap: 14px; }
-  .stat-icon { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 12px; background: rgba(255,255,255,.1); color: #C4B5FD; flex-shrink: 0; }
-  .stat-value { display: block; font-size: 24px; font-weight: 800; }
-  .stat-label { font-size: 13px; color: #b9b3d6; }
-
-  /* ---------- UPSELL + NEWSLETTER ---------- */
-  .upsell-grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: 22px; }
-  .upsell { background: var(--grad); color: #fff; border-radius: 22px; padding: 32px; }
-  .upsell-title { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
-  .upsell-title :global(.icon) { color: var(--gold); }
-  .upsell-title h3 { font-size: 22px; font-weight: 800; }
-  .upsell-list { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
-  .upsell-list li { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; }
-  .upsell-list :global(.icon) { color: var(--gold); flex-shrink: 0; }
-  .upsell-cta { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
-  .upsell-price { font-size: 14px; opacity: .9; }
-
-  .newsletter { background: #fff; border: 1px solid var(--line); border-radius: 22px; padding: 32px; box-shadow: var(--shadow-sm); }
-  .newsletter h4 { font-size: 20px; font-weight: 800; }
-  .newsletter > p { color: var(--muted); font-size: 14px; margin: 8px 0 20px; }
-  .newsletter-row { display: flex; gap: 8px; }
-  .newsletter-row input { flex: 1; border: 1px solid var(--line); border-radius: 999px; padding: 12px 16px; font-family: inherit; font-size: 14px; outline: none; }
-  .newsletter-row input:focus { border-color: var(--purple); }
-  .newsletter-row .btn { gap: 6px; }
-  .newsletter-note { font-size: 12.5px; color: var(--muted); margin-top: 14px; }
-
-  /* ---------- RESPONSIVE ---------- */
-  @media (max-width: 1024px) {
-    .hero-copy h1 { font-size: 34px; }
-    .cat-grid { grid-template-columns: repeat(5, 1fr); }
-    .tpl-grid { grid-template-columns: repeat(3, 1fr); }
-    .steps-grid { grid-template-columns: repeat(2, 1fr); }
-    .step-wrap:nth-child(2) .step-arrow { display: none; }
-    .stats-bar { grid-template-columns: repeat(3, 1fr); gap: 22px; }
-  }
-  @media (max-width: 900px) {
-    .hero-grid { grid-template-columns: 1fr; }
-    .hero-art { min-height: 400px; margin-top: 6px; }
-    .upsell-grid { grid-template-columns: 1fr; }
-  }
-  @media (max-width: 620px) {
-    .hero-copy h1 { font-size: 28px; }
-    .hero-sub { font-size: 15px; }
-    .hero-cta .btn { flex: 1; }
-    .cat-grid { grid-template-columns: repeat(3, 1fr); }
-    .tpl-grid { grid-template-columns: repeat(2, 1fr); }
-    .steps-grid { grid-template-columns: 1fr; }
-    .step-arrow { display: none !important; }
-    .stats-bar { grid-template-columns: 1fr; }
-    .upsell-list { grid-template-columns: 1fr; }
-    .row-head h2 { font-size: 21px; }
-    .newsletter-row { flex-direction: column; }
-    .newsletter-row .btn { width: 100%; justify-content: center; }
-  }
-  @media (max-width: 400px) {
-    .cat-grid { grid-template-columns: repeat(2, 1fr); }
-    .tpl-grid { grid-template-columns: 1fr; }
-  }
+  .hero { position:relative; overflow:hidden; padding:76px 0 86px; background:linear-gradient(135deg,#fbfaff 0%,#f0edff 52%,#e6edff 100%); }
+  .hero-orb { position:absolute; border-radius:50%; pointer-events:none; filter:blur(1px); opacity:.65; }.orb-one { width:380px;height:380px;right:-160px;top:-120px;background:#d9d0ff; }.orb-two { width:240px;height:240px;left:42%;bottom:-180px;background:#cde5ff; }
+  .hero-grid { display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;position:relative;z-index:1; }.hero-copy h1 { max-width:680px;font-size:clamp(39px,4.3vw,60px);font-weight:800;line-height:1.12;letter-spacing:-1.8px; }.hero-copy h1 span { color:var(--purple); }.hero-sub { max-width:590px;margin-top:21px;font-size:17px;color:var(--muted);line-height:1.75; }.hero-eyebrow { margin-bottom:19px;box-shadow:0 4px 14px rgba(124,58,237,.1); }.hero-actions { display:flex;align-items:center;gap:22px;margin-top:30px; }.text-link { display:inline-flex;align-items:center;gap:7px;color:var(--purple);font-size:15px;font-weight:800; }.text-link:hover { gap:11px; }.hero-points { display:flex;flex-wrap:wrap;gap:12px 20px;margin-top:27px;color:#504d65;font-size:13px;font-weight:700; }.hero-points span { display:inline-flex;align-items:center;gap:6px; }.hero-points :global(.icon) { color:#27a16b; }
+  .hero-visual { min-height:490px;position:relative; }.hero-ring { position:absolute;border:1px solid rgba(124,58,237,.14);border-radius:50%; }.ring-a { width:410px;height:410px;right:5%;top:28px; }.ring-b { width:325px;height:325px;right:18%;top:70px;border-style:dashed;animation:spin 30s linear infinite; }.poster-card { position:absolute;overflow:hidden;background:#fff;border:5px solid #fff;border-radius:22px;box-shadow:0 24px 50px rgba(64,45,112,.17); }.poster-card img { width:100%;height:100%;object-fit:cover; }.main-poster { width:245px;aspect-ratio:3/4;left:17%;top:10px;z-index:2;animation:float 6s ease-in-out infinite; }.side-poster { width:145px;aspect-ratio:3/4; }.top-poster { right:3%;top:38px;transform:rotate(8deg);animation:float 7s 1s ease-in-out infinite; }.bottom-poster { right:5%;bottom:29px;transform:rotate(-7deg);animation:float 6.3s .6s ease-in-out infinite; }.poster-caption { position:absolute;bottom:0;left:0;right:0;padding:12px 13px;background:linear-gradient(transparent,rgba(20,15,45,.86));color:#fff;font-size:12px;font-weight:700; }.caption-dot { display:inline-block;width:7px;height:7px;margin-right:5px;border-radius:50%;background:#7cf0b1; }.floating-chip { position:absolute;z-index:4;display:flex;align-items:center;gap:7px;padding:10px 13px;border-radius:12px;background:rgba(255,255,255,.94);box-shadow:0 12px 28px rgba(42,31,85,.12);font-size:12px;font-weight:800;color:#494360;backdrop-filter:blur(8px); }.floating-chip :global(.icon) { color:var(--purple); }.chip-edit { left:2%;bottom:71px;animation:float 5s .5s ease-in-out infinite; }.chip-hd { right:0;top:202px;animation:float 5.7s 1.2s ease-in-out infinite; }
+  .quick-bar-wrap { margin-top:-32px;position:relative;z-index:3; }.quick-bar { display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:center;background:#fff;border:1px solid var(--line);border-radius:18px;padding:19px 27px;box-shadow:0 16px 44px rgba(42,31,85,.1); }.quick-bar>div { display:flex;align-items:center;justify-content:center;gap:12px; }.quick-bar p { display:grid;line-height:1.3;font-size:14px; }.quick-bar small { margin-top:3px;color:var(--muted);font-size:12px; }.quick-icon { display:grid;place-items:center;width:42px;height:42px;border-radius:12px;background:#f0ecff;color:var(--purple); }.quick-line { height:34px;width:1px;background:var(--line); }
+  .section { padding:92px 0; }.section-intro { max-width:690px;margin:0 auto 45px;text-align:center; }.section-kicker { display:inline-block;margin-bottom:10px;color:var(--purple);font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase; }.section-intro h2,.row-heading h2,.workflow-copy h2,.trust-copy h2,.faq-copy h2 { font-size:clamp(28px,3.2vw,40px);font-weight:800;line-height:1.18;letter-spacing:-.8px; }.section-intro p,.workflow-copy>p,.trust-copy>p,.faq-copy>p { margin-top:14px;color:var(--muted);font-size:16px;line-height:1.75; }
+  .categories-section { background:#fff; }.category-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:14px; }.category-card { display:flex;align-items:center;gap:12px;min-height:79px;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:#fff;font-size:14px;font-weight:800;transition:.22s ease; }.category-card:hover { transform:translateY(-4px);border-color:#cabdff;box-shadow:0 15px 24px rgba(75,48,150,.1); }.category-card>:last-child { margin-left:auto;color:#a9a4bb; }.category-icon { display:grid;place-items:center;width:43px;height:43px;border-radius:12px;flex:none; }.center-action { margin-top:31px;text-align:center; }
+  .workflow-section { background:linear-gradient(180deg,#f6f5fb 0%,#eeebfa 100%); }.workflow-grid { display:grid;grid-template-columns:.86fr 1.14fr;align-items:center;gap:72px; }.workflow-copy .btn { margin-top:26px; }.workflow-steps { display:grid;gap:13px; }.workflow-steps article { display:grid;grid-template-columns:54px 1fr 45px;align-items:center;gap:16px;padding:20px;border:1px solid #e4ddf8;border-radius:16px;background:rgba(255,255,255,.76);transition:transform .22s ease,box-shadow .22s ease; }.workflow-steps article:hover { transform:translateX(7px);box-shadow:0 12px 26px rgba(79,50,155,.09); }.step-number { color:#a79cce;font-size:14px;font-weight:800; }.workflow-steps h3 { font-size:16px; }.workflow-steps p { margin-top:3px;color:var(--muted);font-size:13px; }.step-icon { display:grid;place-items:center;width:43px;height:43px;border-radius:13px;background:#e8e2ff;color:var(--purple); }
+  .template-section { background:#fff; }.row-heading { display:flex;justify-content:space-between;align-items:end;margin-bottom:34px; }.row-heading .section-kicker { margin-bottom:7px; }.template-grid { display:grid;grid-template-columns:repeat(6,1fr);gap:15px; }.template-card { overflow:hidden;border:1px solid var(--line);border-radius:15px;background:#fff;box-shadow:0 3px 13px rgba(35,28,65,.05);transition:.23s ease; }.template-card:hover { transform:translateY(-6px);box-shadow:0 18px 30px rgba(42,31,85,.13); }.template-image { position:relative;overflow:hidden;aspect-ratio:3/4;background:#eeeafd; }.template-image img { width:100%;height:100%;object-fit:cover;transition:transform .35s ease; }.template-card:hover img { transform:scale(1.06); }.plan-tag { position:absolute;top:10px;left:10px;border-radius:6px;padding:4px 7px;font-size:10px;font-weight:800;letter-spacing:.06em; }.plan-tag.free { background:#dbf6e5;color:#177142; }.plan-tag.pro { background:#ffeab3;color:#7a5100; }.template-edit { position:absolute;right:9px;bottom:9px;display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#fff;color:var(--purple);box-shadow:0 4px 12px rgba(0,0,0,.18);opacity:0;transform:translateY(6px);transition:.22s ease; }.template-card:hover .template-edit { opacity:1;transform:none; }.template-info { padding:11px 12px 13px; }.template-info h3 { font-size:14px;line-height:1.3; }.template-info p { margin-top:3px;color:var(--muted);font-size:11px; }.mobile-link { display:none; }
+  .plans-section { padding:94px 0 90px;background:#17142a;color:#fff;position:relative;overflow:hidden; }.plans-section:before { content:'';position:absolute;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.42),transparent 68%);left:-200px;top:-230px; }.plans-section:after { content:'';position:absolute;width:490px;height:490px;border-radius:50%;background:radial-gradient(circle,rgba(79,70,229,.35),transparent 69%);right:-250px;bottom:-260px; }.plans-section .container { position:relative;z-index:1; }.light .section-kicker { color:#c5b5ff; }.light p { color:#c0bbd6; }.plan-grid { display:grid;grid-template-columns:repeat(3,1fr);align-items:stretch;gap:19px; }.plan-card { position:relative;display:flex;flex-direction:column;padding:29px;border:1px solid rgba(255,255,255,.14);border-radius:19px;background:rgba(255,255,255,.06);backdrop-filter:blur(12px); }.plan-card.pro { border:2px solid #a992ff;background:linear-gradient(155deg,rgba(124,58,237,.38),rgba(70,53,162,.22));transform:translateY(-12px);box-shadow:0 20px 48px rgba(0,0,0,.23); }.popular-badge { position:absolute;top:-14px;left:50%;transform:translateX(-50%);display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border-radius:999px;background:#ffd565;color:#453100;white-space:nowrap;font-size:11px;font-weight:800; }.plan-top { min-height:125px; }.plan-icon { display:grid;place-items:center;width:43px;height:43px;margin-bottom:16px;border-radius:12px;background:rgba(255,255,255,.13);color:#e4dcff; }.plan-card.pro .plan-icon { background:#ffd565;color:#573c00; }.plan-top h3 { font-size:22px; }.plan-top p { margin-top:7px;color:#c6c0d9;font-size:13px;line-height:1.55; }.price { display:flex;align-items:baseline;gap:10px;margin:5px 0 7px; }.price strong { font-size:39px;line-height:1;font-family:Poppins,sans-serif;letter-spacing:-1px; }.price span,.yearly-note { color:#c9c3d9;font-size:12px; }.yearly-note { min-height:19px;margin:0 0 14px; }.yearly-note b { color:#fff; }.plan-button { width:100%;margin:12px 0 22px;border-radius:11px; }.plan-card ul { display:grid;gap:11px;padding-top:18px;border-top:1px solid rgba(255,255,255,.13); }.plan-card li { display:flex;align-items:flex-start;gap:8px;color:#e5e0f0;font-size:13px;line-height:1.45; }.plan-card li :global(.icon) { margin-top:2px;flex:none;color:#85e4ae; }.plans-note { margin-top:35px;text-align:center;color:#c0b9d2;font-size:12px; }
+  .trust-section { background:#fff; }.trust-grid,.faq-grid { display:grid;grid-template-columns:.86fr 1.14fr;gap:76px;align-items:center; }.trust-copy .text-link { margin-top:25px; }.benefit-grid { display:grid;grid-template-columns:repeat(2,1fr);gap:13px; }.benefit-grid>div { min-height:172px;padding:21px;border:1px solid var(--line);border-radius:16px;background:#fcfbff; }.benefit-grid span { display:grid;place-items:center;width:41px;height:41px;border-radius:11px;background:#ece8ff;color:var(--purple); }.benefit-grid h3 { margin-top:15px;font-size:15px; }.benefit-grid p { margin-top:4px;color:var(--muted);font-size:12.5px;line-height:1.55; }
+  .faq-section { background:#f4f2fa; }.faq-copy .btn { margin-top:25px; }.faq-list { display:grid;gap:10px; }.faq-list details { border:1px solid #e2ddeb;border-radius:13px;background:#fff;overflow:hidden; }.faq-list summary { display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px 19px;cursor:pointer;font-size:15px;font-weight:800;list-style:none; }.faq-list summary::-webkit-details-marker { display:none; }.faq-list summary :global(.icon) { color:var(--purple);transition:transform .2s; }.faq-list details[open] summary :global(.icon) { transform:rotate(90deg); }.faq-list p { padding:0 19px 18px;color:var(--muted);font-size:14px;line-height:1.7; }
+  .final-cta { padding:66px 0;background:var(--grad);color:#fff; }.final-inner { display:flex;align-items:center;justify-content:space-between;gap:30px; }.final-cta .section-kicker { color:#ddd5ff; }.final-cta h2 { font-size:clamp(28px,3.2vw,40px);line-height:1.2; }.final-cta p { max-width:660px;margin-top:10px;color:#eae6ff;font-size:16px; }.final-cta .btn-white { flex:none;border-radius:12px; }
+  .reveal { animation:reveal .65s both; }.category-card:nth-child(2),.template-card:nth-child(2),.plan-card:nth-child(2) { animation-delay:.06s; }.category-card:nth-child(3),.template-card:nth-child(3),.plan-card:nth-child(3) { animation-delay:.12s; }.category-card:nth-child(4),.template-card:nth-child(4) { animation-delay:.18s; }.category-card:nth-child(5),.template-card:nth-child(5) { animation-delay:.24s; }.category-card:nth-child(6),.template-card:nth-child(6) { animation-delay:.3s; } @keyframes reveal { from { opacity:0;transform:translateY(16px); } to { opacity:1;transform:none; } } @keyframes float { 0%,100% { translate:0 0; } 50% { translate:0 -10px; } } @keyframes spin { to { rotate:360deg; } } @media (prefers-reduced-motion:reduce) { *,*:before,*:after { animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important; } }
+  @media(max-width:1050px) { .hero-grid { gap:25px; }.main-poster { left:10%; }.template-grid { grid-template-columns:repeat(3,1fr); }.category-grid { grid-template-columns:repeat(3,1fr); }.trust-grid,.faq-grid,.workflow-grid { gap:43px; } }
+  @media(max-width:820px) { .hero { padding:56px 0 75px; }.hero-grid,.workflow-grid,.trust-grid,.faq-grid { grid-template-columns:1fr; }.hero-copy { text-align:center; }.hero-sub { margin-left:auto;margin-right:auto; }.hero-actions,.hero-points { justify-content:center; }.hero-visual { width:min(100%,550px);min-height:465px;margin:0 auto; }.quick-bar { grid-template-columns:1fr;gap:14px;padding:20px; }.quick-bar>div { justify-content:flex-start; }.quick-line { display:none; }.plan-grid { grid-template-columns:1fr;max-width:510px;margin:0 auto; }.plan-card.pro { transform:none; }.plan-top { min-height:auto; }.trust-copy,.faq-copy { max-width:580px; }.final-inner { align-items:flex-start;flex-direction:column; }.final-cta .btn { width:100%; }.section { padding:70px 0; } }
+  @media(max-width:560px) { .hero { padding-top:42px; }.hero-copy h1 { font-size:37px;letter-spacing:-1.2px; }.hero-sub { font-size:15px; }.hero-actions { flex-direction:column;gap:15px; }.hero-actions .btn { width:100%; }.hero-visual { min-height:385px; }.hero-ring { display:none; }.main-poster { width:190px;left:13%; }.side-poster { width:112px; }.top-poster { right:3%;top:32px; }.bottom-poster { right:5%;bottom:19px; }.chip-edit { left:1%;bottom:38px; }.chip-hd { right:0;top:185px; }.floating-chip { padding:8px 10px;font-size:11px; }.section { padding:57px 0; }.section-intro { margin-bottom:32px; }.category-grid { grid-template-columns:repeat(2,1fr);gap:10px; }.category-card { min-height:68px;padding:11px;font-size:12.5px;gap:8px; }.category-icon { width:35px;height:35px;border-radius:10px; }.category-card>:last-child { display:none; }.workflow-steps article { grid-template-columns:40px 1fr 38px;gap:10px;padding:15px; }.step-number { font-size:12px; }.step-icon { width:37px;height:37px;border-radius:10px; }.workflow-steps h3 { font-size:14px; }.workflow-steps p { font-size:12px; }.row-heading { margin-bottom:24px; }.desktop-link { display:none; }.template-grid { grid-template-columns:repeat(2,1fr);gap:11px; }.mobile-link { display:block; }.template-edit { display:none; }.plan-card { padding:23px; }.price strong { font-size:36px; }.benefit-grid { grid-template-columns:1fr 1fr;gap:10px; }.benefit-grid>div { min-height:150px;padding:16px; }.benefit-grid h3 { margin-top:11px;font-size:13px; }.benefit-grid p { font-size:11px; }.faq-list summary { padding:16px;font-size:14px; }.final-cta { padding:52px 0; } }
 </style>
