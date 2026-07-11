@@ -16,10 +16,10 @@ import Layout from '../layouts/Layout.astro';
             <!-- POSTER + photo circle only -->
             <div class='stage' id='stage'>
               <img id='posterImg' class='poster-img' alt='poster' crossorigin='anonymous' />
-              <img id='brandOverlay' class='brand-overlay' alt='branding' />
               <img id='wmMark' class='wm-mark show' src='/img/watermark.png' alt='watermark' crossorigin='anonymous' />
               <div class='photo-circle empty' id='photoCircle'>फोटो</div>
             </div>
+            <img id='brandOverlay' class='brand-overlay' alt='branding' />
 
             <!-- BOTTOM strip: name + number (outside image) -->
             <div class='name-strip' id='nameStrip'>
@@ -94,9 +94,9 @@ import Layout from '../layouts/Layout.astro';
   .photo-circle:active { cursor: grabbing; }
   .photo-circle.empty { background: rgba(255,255,255,.65); border: 3px dashed #B4145A; display: grid; place-items: center;
     color: #B4145A; font-weight: 800; font-size: 15px; line-height: 1; }
-  .brand-overlay { position: absolute; left: 50%; top: 82%; transform: translate(-50%,-50%); width: 55%; cursor: grab; touch-action: none; display: none; filter: drop-shadow(0 2px 6px rgba(0,0,0,.25)); }
-  .brand-overlay.show { display: block; }
-  .brand-overlay:active { cursor: grabbing; }
+  .brand-overlay { display:none; width:100%; max-height:105px; object-fit:contain; background:#fff; cursor:default; touch-action:none; }
+  .brand-overlay.show { display:block; }
+  .brand-overlay:active { cursor:default; }
   .date-badge { position: absolute; top: 12px; left: 12px; right: 12px; display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; pointer-events: none; z-index: 3; }
   .db-day, .db-date { display: inline-block; background: #7C3AED; color: #fff; font-size: 13px; font-weight: 700; padding: 10px 14px; line-height: 1; border-radius: 22px; white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,.28); }
   .db-date { background: #B4145A; }
@@ -168,7 +168,7 @@ import Layout from '../layouts/Layout.astro';
     var posterImg = document.getElementById('posterImg');
     posterImg.src = imgUrl || '/img/preview-morning.webp';
 
-    // आज की ��ारीख़ + दिन (ऊपर लेफ्ट दिन, राइट तारीख़)
+    // आज की ���ारीख़ + दिन (ऊपर लेफ्ट दिन, राइट तारीख़)
     var HDAYS = ['रविवार','सोमवार','मंगलवार','बुधवार','गुरुवार','शुक्रवार','शनिवार'];
     var HMON = ['जनवरी','फ़रवरी','मार्च','अप्रैल','मई','जून','जुलाई','अगस्त','सितंबर','अक्टूबर','नवंबर','दिसंबर'];
     var _now = new Date();
