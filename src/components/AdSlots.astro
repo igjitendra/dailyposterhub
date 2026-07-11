@@ -1,13 +1,15 @@
 ---
-const { placement = 'header' } = Astro.props;
-const targetId = placement === 'footer' ? 'dphAdFooter' : 'dphAdHeader';
-const codeKey = placement === 'footer' ? 'footerCode' : 'headerCode';
+const { placement = 'top' } = Astro.props;
+const keys = { top: 'topCode', content: 'contentCode', footer: 'footerCode', sticky: 'stickyCode' };
+const codeKey = keys[placement] || 'topCode';
+const targetId = 'dphAd' + placement.charAt(0).toUpperCase() + placement.slice(1);
 ---
-<div id={targetId} data-code-key={codeKey} class="dph-ad-slot" hidden aria-label="Advertisement"></div>
+<div id={targetId} data-code-key={codeKey} data-placement={placement} class="dph-ad-slot" hidden aria-label="Advertisement"></div>
 
 <style is:global>
   .dph-ad-slot[hidden] { display:none!important; }
-  .dph-ad-slot { width:min(100% - 32px, 1120px); min-height:1px; margin:16px auto; overflow:hidden; text-align:center; }
+  .dph-ad-slot { width:min(100% - 32px,1120px); min-height:1px; margin:16px auto; overflow:hidden; text-align:center; }
+  .dph-ad-slot[data-placement='sticky'] { position:fixed; z-index:9000; right:0; bottom:max(8px,env(safe-area-inset-bottom)); left:0; width:min(100% - 24px,720px); margin:0 auto; border-radius:12px; background:#fff; box-shadow:0 8px 32px rgba(20,15,50,.2); }
 </style>
 
 <script is:inline data-target={targetId}>
@@ -17,14 +19,20 @@ const codeKey = placement === 'footer' ? 'footerCode' : 'headerCode';
       if (!target || !code) return;
       target.hidden = false;
       target.appendChild(document.createRange().createContextualFragment(code));
+      target.querySelectorAll('script').forEach(function (oldScript) {
+        if (oldScript.dataset.dphExecuted) return;
+        var activeScript = document.createElement('script');
+        Array.prototype.forEach.call(oldScript.attributes, function (attr) { activeScript.setAttribute(attr.name, attr.value); });
+        activeScript.dataset.dphExecuted = 'true';
+        activeScript.text = oldScript.text || oldScript.textContent || '';
+        oldScript.parentNode.replaceChild(activeScript, oldScript);
+      });
     }
     fetch('/api/site-settings').then(function (r) { return r.json(); }).then(function (data) {
       var ads = data && data.ads;
       if (!ads || !ads.enabled) return;
       if (ads.scriptUrl && /^https:\/\//i.test(ads.scriptUrl) && !document.querySelector('script[data-dph-ad-script]')) {
-        var script = document.createElement('script');
-        script.async = true; script.src = ads.scriptUrl; script.dataset.dphAdScript = 'true';
-        document.head.appendChild(script);
+        var script = document.createElement('script'); script.async = true; script.src = ads.scriptUrl; script.dataset.dphAdScript = 'true'; document.head.appendChild(script);
       }
       addCode(ads[target.dataset.codeKey]);
     }).catch(function () {});
