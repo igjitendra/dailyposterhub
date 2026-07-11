@@ -1,4 +1,4 @@
-import { site } from '../data/site.js';
+import { site, categories } from '../data/site.js';
 
 export const prerender = true;
 
@@ -10,6 +10,7 @@ const staticRoutes = [
   'categories/',
   'pricing/',
   'tools/',
+  'make-profile-picture/',
   'blog/',
   'contact/',
   'help/',
@@ -30,6 +31,14 @@ export function GET() {
     urls.push('  <url><loc>' + base + '/' + r + '</loc><lastmod>' + today + '</lastmod></url>');
   });
 
+  // Category pages (all except 'all')
+  categories
+    .filter(function (c: any) { return c.slug !== 'all'; })
+    .forEach(function (c: any) {
+      urls.push('  <url><loc>' + base + '/categories/' + c.slug + '/</loc><lastmod>' + today + '</lastmod></url>');
+    });
+
+  // Blog posts
   Object.keys(posts).forEach(function (k) {
     const mod = posts[k] || {};
     const fm = mod.frontmatter || {};
