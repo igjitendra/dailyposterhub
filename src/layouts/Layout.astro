@@ -2,6 +2,7 @@
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import WhatsAppChannel from '../components/WhatsAppChannel.astro';
+import PwaInstall from '../components/PwaInstall.astro';
 import { site } from '../data/site.js';
 import '../styles/global.css';
 
@@ -24,6 +25,13 @@ const canonical = canonicalUrl || new URL(Astro.url.pathname, Astro.site).toStri
     <meta name='google-site-verification' content='Dj9P89zgmtY-LbYCkKg5YBwyikn0w5brmaXJXjHSjCo' />
     <meta name='p:domain_verify' content='d2e378215232ab144dfa7a0050252354' />
     <link rel='icon' type='image/svg+xml' href='/favicon.svg' />
+    <link rel='manifest' href='/manifest.webmanifest' />
+    <meta name='theme-color' content='#7C3AED' />
+    <meta name='mobile-web-app-capable' content='yes' />
+    <meta name='apple-mobile-web-app-capable' content='yes' />
+    <meta name='apple-mobile-web-app-status-bar-style' content='default' />
+    <meta name='apple-mobile-web-app-title' content='PosterHub' />
+    <link rel='apple-touch-icon' href='/pwa-icon-192.png' />
     <link rel='canonical' href={canonical} />
 
     <title>{title}</title>
@@ -58,5 +66,6 @@ const canonical = canonicalUrl || new URL(Astro.url.pathname, Astro.site).toStri
     </main>
     <Footer />
     <WhatsAppChannel />
+    <PwaInstall />
   </body>
 </html>

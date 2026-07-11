@@ -1,0 +1,81 @@
+<div id="pwaInstallSheet" class="pwa-sheet" hidden>
+  <div class="pwa-backdrop" data-pwa-close></div>
+  <section class="pwa-card" role="dialog" aria-modal="true" aria-labelledby="pwaTitle">
+    <button class="pwa-close" type="button" aria-label="बंद करें" data-pwa-close>×</button>
+    <div class="pwa-app-icon">D</div>
+    <div class="pwa-copy">
+      <span class="pwa-kicker">Daily PosterHub App</span>
+      <h2 id="pwaTitle">ऐप इंस्टॉल करें</h2>
+      <p id="pwaMessage">तेज़ access और बेहतर अनुभव के लिए Daily PosterHub को अपने फोन में जोड़ें।</p>
+    </div>
+    <button id="pwaInstallButton" class="pwa-install" type="button">इंस्टॉल करें</button>
+    <button id="pwaLaterButton" class="pwa-later" type="button">अभी नहीं</button>
+  </section>
+</div>
+
+<style is:global>
+  .pwa-sheet[hidden] { display:none!important; }
+  .pwa-sheet { position:fixed; inset:0; z-index:10000; display:flex; align-items:flex-end; justify-content:center; }
+  .pwa-backdrop { position:absolute; inset:0; background:rgba(21,17,43,.32); backdrop-filter:blur(2px); }
+  .pwa-card { position:relative; width:min(100%,520px); margin:0 10px calc(10px + env(safe-area-inset-bottom)); padding:22px 21px 18px; border:1px solid rgba(255,255,255,.72); border-radius:23px; background:rgba(255,255,255,.98); box-shadow:0 -14px 45px rgba(20,14,50,.23); text-align:center; animation:pwaSlideUp .35s cubic-bezier(.2,.8,.2,1); }
+  .pwa-close { position:absolute; top:11px; right:13px; display:grid; place-items:center; width:34px; height:34px; border:0; border-radius:50%; background:#f0edf8; color:#69637c; font:400 25px/1 Arial,sans-serif; cursor:pointer; }
+  .pwa-app-icon { display:grid; place-items:center; width:58px; height:58px; margin:0 auto 12px; border-radius:17px; background:linear-gradient(135deg,#7C3AED,#4F46E5); box-shadow:0 9px 19px rgba(92,54,204,.3); color:#fff; font:800 31px Poppins,Arial,sans-serif; }
+  .pwa-kicker { color:#7C3AED; font-size:11px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; }
+  .pwa-copy h2 { margin:4px 0 5px; color:#1E1B2E; font-size:21px; line-height:1.25; }
+  .pwa-copy p { max-width:320px; margin:0 auto 16px; color:#6B6880; font-size:13px; line-height:1.55; }
+  .pwa-install { width:100%; min-height:48px; border:0; border-radius:12px; background:linear-gradient(135deg,#7C3AED,#4F46E5); box-shadow:0 8px 17px rgba(88,51,196,.24); color:#fff; font:800 15px 'Noto Sans Devanagari',Poppins,sans-serif; cursor:pointer; }
+  .pwa-later { width:100%; margin-top:4px; min-height:38px; border:0; background:transparent; color:#716c82; font:700 13px 'Noto Sans Devanagari',Poppins,sans-serif; cursor:pointer; }
+  @keyframes pwaSlideUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+  @media (min-width:761px) { .pwa-sheet { display:none!important; } }
+  @media (prefers-reduced-motion:reduce) { .pwa-card { animation:none; } }
+</style>
+
+<script is:inline>
+  (function () {
+    var sheet = document.getElementById('pwaInstallSheet');
+    var installBtn = document.getElementById('pwaInstallButton');
+    var laterBtn = document.getElementById('pwaLaterButton');
+    var message = document.getElementById('pwaMessage');
+    var deferredPrompt = null;
+    var isMobile = window.matchMedia && window.matchMedia('(max-width: 760px)').matches;
+    var isStandalone = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    var isIOS = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+    var dismissedKey = 'dph_pwa_prompt_dismissed_at';
+
+    if (!isMobile || isStandalone || !sheet) return;
+    function mayShow() {
+      var last = Number(localStorage.getItem(dismissedKey) || 0);
+      return !last || Date.now() - last > 7 * 24 * 60 * 60 * 1000;
+    }
+    function show() { if (mayShow()) sheet.hidden = false; }
+    function close() { sheet.hidden = true; localStorage.setItem(dismissedKey, String(Date.now())); }
+    document.querySelectorAll('[data-pwa-close]').forEach(function (el) { el.addEventListener('click', close); });
+    laterBtn.addEventListener('click', close);
+
+    window.addEventListener('beforeinstallprompt', function (event) {
+      event.preventDefault();
+      deferredPrompt = event;
+      window.setTimeout(show, 1300);
+    });
+    window.addEventListener('appinstalled', function () { deferredPrompt = null; sheet.hidden = true; localStorage.setItem(dismissedKey, String(Date.now())); });
+
+    if (isIOS) {
+      message.textContent = 'Safari में शेयर बटन दबाएं, फिर “Add to Home Screen” चुनकर ऐप इंस्टॉल करें।';
+      installBtn.textContent = 'समझ गया';
+      installBtn.addEventListener('click', close);
+      window.setTimeout(show, 1700);
+    } else {
+      installBtn.addEventListener('click', async function () {
+        if (!deferredPrompt) { close(); return; }
+        deferredPrompt.prompt();
+        await deferredPrompt.userChoice;
+        deferredPrompt = null;
+        close();
+      });
+    }
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () { navigator.serviceWorker.register('/sw.js').catch(function () {}); });
+    }
+  })();
+</script>
