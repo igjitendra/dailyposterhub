@@ -81,7 +81,6 @@ const cats = categories.filter((c) => c.slug !== 'all');
     </div>
   </div>
 
-  <div id='editModal' class='edit-modal' hidden><div class='edit-card'><button id='editClose' class='edit-close' type='button'>×</button><h2>पोस्टर Edit करें</h2><input id='editId' type='hidden'><label>शीर्षक<input id='editTitle'></label><label>श्रेणी<select id='editCategory'>{cats.map((c) => (<option value={c.name}>{c.name}</option>))}</select></label><label>Type<select id='editType'><option value='free'>फ्री</option><option value='pro'>Pro</option></select></label><label>Festival / Special Date<input id='editDate' type='date'></label><label>विवरण<textarea id='editDesc' rows='3'></textarea></label><button id='editSave' type='button' class='btn btn-primary'>बदलाव Save करें</button><p id='editMsg' class='msg'></p></div></div>
   <style>
     * { box-sizing: border-box; }
     body.admin { margin: 0; background: var(--bg); min-height: 100vh; font-family: 'Noto Sans Devanagari', 'Poppins', sans-serif; color: var(--ink); }
@@ -126,7 +125,6 @@ const cats = categories.filter((c) => c.slug !== 'all');
     .list .del { background: #FEE2E2; color: #DC2626; border: none; border-radius: 8px; padding: 8px 14px; font-family: inherit; font-weight: 700; font-size: 13px; cursor: pointer; flex-shrink: 0; }
     .list .del:hover { background: #FCA5A5; }
     .muted { color: var(--muted); font-size: 14px; }
-    .edit-modal[hidden]{display:none}.edit-modal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:18px;background:rgba(24,18,45,.45)}.edit-card{position:relative;width:min(100%,470px);padding:24px;border-radius:18px;background:#fff;box-shadow:0 20px 60px rgba(0,0,0,.28)}.edit-card h2{margin:0 0 15px}.edit-card label{display:flex;flex-direction:column;gap:5px;margin:11px 0;font-size:13px;font-weight:700}.edit-card input,.edit-card select,.edit-card textarea{border:1px solid var(--line);border-radius:9px;padding:10px;font:14px inherit}.edit-card .btn{width:100%;margin-top:8px}.edit-close{position:absolute;right:12px;top:10px;border:0;background:#eee9f8;width:32px;height:32px;border-radius:50%;font-size:22px;cursor:pointer}.list .edit{background:#ede9fe;color:#5b21b6;border:none;border-radius:8px;padding:8px 12px;font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;flex-shrink:0}
 
     @media (max-width: 820px) { .admin-grid { grid-template-columns: 1fr; } }
   </style>
@@ -173,9 +171,6 @@ const cats = categories.filter((c) => c.slug !== 'all');
       dateFld.style.display = isDaily.checked ? 'flex' : 'none';
       if (!isDaily.checked) dateFld.querySelector('input').value = '';
     });
-
-    const categorySelect = document.querySelector('select[name=category]');
-    categorySelect.addEventListener('change', () => { if (categorySelect.value === 'त्योहार') { isDaily.checked = true; dateFld.style.display = 'flex'; } });
 
     const fileInput = $('#imageInput');
     const preview = $('#preview');
@@ -228,10 +223,9 @@ const cats = categories.filter((c) => c.slug !== 'all');
           row.className = 'row';
           const badge = t.type === 'pro' ? 'Pro' : 'फ्री';
           const dateTag = t.posterDate ? ` • 📅 ${esc(t.posterDate)}` : '';
-          row.innerHTML = `<img src='${esc(t.img)}' alt='' loading='lazy'><div class='row-info'><strong>${esc(t.title)}</strong><span>${esc(t.category)} • ${badge}${dateTag}</span></div><button class='edit' data-id='${esc(t.id)}'>Edit</button><button class='del' data-id='${esc(t.id)}'>हटाएं</button>`;
+          row.innerHTML = `<img src='${esc(t.img)}' alt='' loading='lazy'><div class='row-info'><strong>${esc(t.title)}</strong><span>${esc(t.category)} • ${badge}${dateTag}</span></div><button class='del' data-id='${esc(t.id)}'>हटाएं</button>`;
           listEl.appendChild(row);
         });
-        listEl.querySelectorAll('.edit').forEach((b) => { b.addEventListener('click', () => { const t = list.find(x => x.id === b.dataset.id); if (!t) return; $('#editId').value=t.id;$('#editTitle').value=t.title||'';$('#editCategory').value=t.category||'';$('#editType').value=t.type||'free';$('#editDate').value=t.posterDate||'';$('#editDesc').value=t.description||'';$('#editModal').hidden=false; }); });
         listEl.querySelectorAll('.del').forEach((b) => {
           b.addEventListener('click', async () => {
             if (!confirm('इस पोस्टर को हटाएं?')) return;
@@ -250,9 +244,6 @@ const cats = categories.filter((c) => c.slug !== 'all');
         listEl.innerHTML = '<p class=\'muted\'>सूची लोड नहीं हुई</p>';
       }
     }
-
-    $('#editClose').addEventListener('click', () => { $('#editModal').hidden=true; });
-    $('#editSave').addEventListener('click', async () => { const payload={id:$('#editId').value,title:$('#editTitle').value,category:$('#editCategory').value,type:$('#editType').value,posterDate:$('#editDate').value,description:$('#editDesc').value}; const r=await fetch('/api/admin/edit',{method:'POST',headers:Object.assign({'content-type':'application/json'},authHeaders()),body:JSON.stringify(payload)}); const d=await r.json(); if(r.ok){$('#editModal').hidden=true;await loadList();}else{$('#editMsg').textContent=d.error||'Save नहीं हुआ';} });
 
     // auto-login agar key pehle se saved hai
     (async () => { const k = getKey(); if (k && await ping(k)) showPanel(); })();
