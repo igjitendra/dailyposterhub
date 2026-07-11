@@ -31,5 +31,7 @@ export async function onRequestGet({ request, env }) {
 
   users.sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
   const pro = users.filter((u) => u.plan === 'pro').length;
-  return json({ users, total: users.length, pro, free: users.length - pro });
+  const business = users.filter((u) => u.plan === 'business').length;
+  const free = users.filter((u) => (u.plan || 'free') === 'free').length;
+  return json({ users, total: users.length, pro, business, free });
 }

@@ -18,7 +18,8 @@ import Icon from '../components/Icon.astro';
 
         <div class='stats' id='stats' hidden>
           <div class='stat'><span class='num' id='stTotal'>0</span><span class='lbl'>कुल यूज़र</span></div>
-          <div class='stat'><span class='num' id='stPro'>0</span><span class='lbl'>Pro</span></div>
+          <div class='stat pro-stat'><span class='num' id='stPro'>0</span><span class='lbl'>Pro</span></div>
+          <div class='stat biz-stat'><span class='num' id='stBusiness'>0</span><span class='lbl'>Business</span></div>
           <div class='stat'><span class='num' id='stFree'>0</span><span class='lbl'>Free</span></div>
         </div>
 
@@ -104,6 +105,14 @@ import Icon from '../components/Icon.astro';
   .au-msg.err { background: #FEE2E2; color: #B91C1C; }
   .au-msg.ok { background: #DCFCE7; color: #166534; }
   .muted { color: var(--muted); font-size: 14px; padding: 8px 0; }
+  .au-wrap { padding:52px 20px 80px; background:radial-gradient(700px 360px at 92% 0,#ded5ff,transparent 58%),#f6f5fb; }
+  .au-inner { max-width:1040px; gap:20px; }
+  .au-card { border-radius:18px; border:1px solid #e6e1f2; box-shadow:0 8px 26px rgba(47,32,100,.07); }
+  .au-card h1 { font-size:25px; }.au-card h2 { font-size:19px; }
+  .stats { grid-template-columns:repeat(4,1fr); }.stat { padding:18px 12px; background:#fbfaff; }.stat .num { font-size:28px; }.pro-stat .num{color:#b77900}.biz-stat .num{color:#6d28d9}
+  .manual { background:linear-gradient(120deg,#fff,#f5f1ff); }.manual h2:after{content:' प्लान बदलें'; color:var(--purple); font-size:13px; margin-left:8px; font-weight:700; }
+  .au-btns { flex-wrap:wrap; }.au-btns .btn{min-height:46px}.list-head{margin-bottom:18px}.search{min-width:250px;padding:11px 13px}.utable th{background:#faf9fd}.utable tr:hover td{background:#fcfbff}.row-actions{display:flex;gap:6px}.to-biz{background:#ede9fe;color:#5b21b6}.to-pro{background:#fef3c7;color:#854d0e}
+  @media(max-width:620px){.au-wrap{padding:28px 14px 60px}.au-card{padding:20px 16px}.stats{grid-template-columns:repeat(2,1fr)}.key-row{flex-direction:column}.key-row .btn{width:100%}.au-btns{flex-direction:column}.au-btns .btn{width:100%}.search{width:100%;min-width:0}.utable{min-width:660px}.table-wrap{border:1px solid var(--line);border-radius:10px}.row-actions{flex-direction:column}}
 </style>
 
 <script is:inline>
@@ -125,6 +134,7 @@ import Icon from '../components/Icon.astro';
       document.getElementById('stats').hidden = false;
       document.getElementById('stTotal').textContent = d.total || 0;
       document.getElementById('stPro').textContent = d.pro || 0;
+      document.getElementById('stBusiness').textContent = d.business || 0;
       document.getElementById('stFree').textContent = d.free || 0;
     }
 
@@ -146,9 +156,9 @@ import Icon from '../components/Icon.astro';
         var isBiz = u.plan === 'business';
         var isPro = u.plan === 'pro' || isBiz;
         var badge = isBiz ? '<span class="badge badge-pro">BUSINESS</span>' : (isPro ? '<span class="badge badge-pro">PRO</span>' : '<span class="badge badge-free">FREE</span>');
-        var btn = isPro
+        var btn = isBiz
           ? '<button class="btn-mini to-free" data-email="' + esc(u.email) + '" data-plan="free">Free करें</button>'
-          : '<button class="btn-mini to-pro" data-email="' + esc(u.email) + '" data-plan="pro">Pro चालू</button>';
+          : (isPro ? '<span class="row-actions"><button class="btn-mini to-biz" data-email="' + esc(u.email) + '" data-plan="business">Business</button><button class="btn-mini to-free" data-email="' + esc(u.email) + '" data-plan="free">Free</button></span>' : '<span class="row-actions"><button class="btn-mini to-pro" data-email="' + esc(u.email) + '" data-plan="pro">Pro</button><button class="btn-mini to-biz" data-email="' + esc(u.email) + '" data-plan="business">Business</button></span>');
         tr.innerHTML = '<td><div class="u-cell"><span class="u-av"' + avStyle + '>' + avText + '</span>' +
           '<div><div class="u-name">' + esc(u.name || '—') + '</div><div class="u-email">' + esc(u.email) + '</div></div></div></td>' +
           '<td>' + badge + '</td><td class="u-since">' + fmtDate(u.createdAt) + '</td><td>' + btn + '</td>';
