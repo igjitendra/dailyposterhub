@@ -63,6 +63,9 @@ export const categories = [
   { icon: 'flame', name: 'त्योहार', slug: 'festival', color: '#F97316', bg: '#FFEDD5' },
   { icon: 'briefcase', name: 'बिज़नेस', slug: 'business', color: '#92400E', bg: '#F1E9DF' },
   { icon: 'instagram', name: 'सोशल मीडिया', slug: 'social-media', color: '#DB2777', bg: '#FCE7F3' },
+  { icon: 'zap', name: 'Motivational', slug: 'motivational', color: '#2563EB', bg: '#DBEAFE' },
+  { icon: 'moon', name: 'Sad Story', slug: 'sad-story', color: '#475569', bg: '#E2E8F0' },
+  { icon: 'heart', name: 'सुविचार', slug: 'suvichar', color: '#BE185D', bg: '#FCE7F3' },
   { icon: 'sparkles', name: 'विशेष दिवस', slug: 'special-days', color: '#7C3AED', bg: '#EDE9FE' },
   { icon: 'grid', name: 'और देखें', slug: 'all', color: '#7C3AED', bg: '#EDE9FE' },
 ];
